@@ -98,25 +98,32 @@ const TabItem: React.FC<TabItemProps> = ({ service, isActive, onClick }) => {
 export const ServicesWeOfferSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const goToNext = useCallback(() => {
+    if (isAnimating) return;
+    setIsAnimating(true);
     setActiveIndex((prev) => (prev + 1) % servicesData.length);
-  }, []);
+    setTimeout(() => setIsAnimating(false), 600);
+  }, [isAnimating]);
 
   // Auto-rotate every 5 seconds
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || isAnimating) return;
 
     const interval = setInterval(() => {
       goToNext();
     }, 5000);
 
     return () => clearInterval(interval);
-  }, [isPaused, goToNext]);
+  }, [isPaused, isAnimating, goToNext]);
 
   const handleTabClick = (index: number) => {
+    if (isAnimating || index === activeIndex) return;
+    setIsAnimating(true);
     setActiveIndex(index);
     setIsPaused(true);
+    setTimeout(() => setIsAnimating(false), 600);
     // Resume auto-rotation after 10 seconds of inactivity
     setTimeout(() => setIsPaused(false), 10000);
   };
@@ -152,28 +159,45 @@ export const ServicesWeOfferSection: React.FC = () => {
           <div className="flex-1 flex flex-col gap-6">
             {/* Image */}
             <div className="h-[400px] rounded-2xl overflow-hidden relative">
-              <img
-                src={activeService.image}
-                alt={activeService.title}
-                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500"
-                key={activeService.id}
-              />
+              {servicesData.map((service, index) => (
+                <img
+                  key={service.id}
+                  src={service.image}
+                  alt={service.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
+                  style={{
+                    opacity: index === activeIndex ? 1 : 0,
+                    pointerEvents: index === activeIndex ? 'auto' : 'none',
+                  }}
+                />
+              ))}
             </div>
 
             {/* Text Content */}
-            <div className="flex flex-col gap-4">
-              <h3
-                className="text-[32px] font-semibold text-[#e5e5e7] leading-[1.4]"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-              >
-                {activeService.title}
-              </h3>
-              <p
-                className="text-base text-[#cececf] leading-[1.5]"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {activeService.description}
-              </p>
+            <div className="flex flex-col gap-4 relative min-h-[120px]">
+              {servicesData.map((service, index) => (
+                <div
+                  key={service.id}
+                  className="absolute inset-0 flex flex-col gap-4 transition-opacity duration-500 ease-in-out"
+                  style={{
+                    opacity: index === activeIndex ? 1 : 0,
+                    pointerEvents: index === activeIndex ? 'auto' : 'none',
+                  }}
+                >
+                  <h3
+                    className="text-[32px] font-semibold text-[#e5e5e7] leading-[1.4]"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    {service.title}
+                  </h3>
+                  <p
+                    className="text-base text-[#cececf] leading-[1.5]"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {service.description}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

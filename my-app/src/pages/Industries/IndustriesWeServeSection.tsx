@@ -125,6 +125,14 @@ const IndustryTab: React.FC<IndustryTabProps> = ({
 
 export const IndustriesWeServeSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleTabClick = (index: number) => {
+    if (isAnimating || index === activeIndex) return;
+    setIsAnimating(true);
+    setActiveIndex(index);
+    setTimeout(() => setIsAnimating(false), 600);
+  };
 
   const activeIndustry = industriesData[activeIndex];
 
@@ -140,7 +148,7 @@ export const IndustriesWeServeSection: React.FC = () => {
                 key={industry.id}
                 industry={industry}
                 isActive={index === activeIndex}
-                onClick={() => setActiveIndex(index)}
+                onClick={() => handleTabClick(index)}
               />
             ))}
           </div>
@@ -148,28 +156,46 @@ export const IndustriesWeServeSection: React.FC = () => {
           {/* Right - Industry Details */}
           <div className="flex-1 flex flex-col gap-6 items-center">
             {/* Image */}
-            <div className="w-full h-[400px] rounded-2xl overflow-hidden">
-              <img
-                src={activeIndustry.image}
-                alt={activeIndustry.title}
-                className="w-full h-full object-cover"
-              />
+            <div className="w-full h-[400px] rounded-2xl overflow-hidden relative">
+              {industriesData.map((industry, index) => (
+                <img
+                  key={industry.id}
+                  src={industry.image}
+                  alt={industry.title}
+                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
+                  style={{
+                    opacity: index === activeIndex ? 1 : 0,
+                    pointerEvents: index === activeIndex ? 'auto' : 'none',
+                  }}
+                />
+              ))}
             </div>
 
             {/* Title and Description */}
-            <div className="flex flex-col gap-4 w-full">
-              <h3
-                className="text-[32px] font-semibold text-[#e5e5e7] leading-[1.4]"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-              >
-                {activeIndustry.title}
-              </h3>
-              <p
-                className="text-base text-[#cececf] leading-[1.5]"
-                style={{ fontFamily: "'Inter', sans-serif" }}
-              >
-                {activeIndustry.description}
-              </p>
+            <div className="flex flex-col gap-4 w-full relative min-h-[120px]">
+              {industriesData.map((industry, index) => (
+                <div
+                  key={industry.id}
+                  className="absolute inset-0 flex flex-col gap-4 transition-opacity duration-500 ease-in-out"
+                  style={{
+                    opacity: index === activeIndex ? 1 : 0,
+                    pointerEvents: index === activeIndex ? 'auto' : 'none',
+                  }}
+                >
+                  <h3
+                    className="text-[32px] font-semibold text-[#e5e5e7] leading-[1.4]"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    {industry.title}
+                  </h3>
+                  <p
+                    className="text-base text-[#cececf] leading-[1.5]"
+                    style={{ fontFamily: "'Inter', sans-serif" }}
+                  >
+                    {industry.description}
+                  </p>
+                </div>
+              ))}
             </div>
           </div>
         </div>

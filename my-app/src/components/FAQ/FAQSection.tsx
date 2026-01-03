@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { Add, Subtract } from "@carbon/icons-react";
 
 // Background image for FAQ section
@@ -73,6 +73,22 @@ const FAQItemComponent: React.FC<FAQItemComponentProps> = ({
   isOpen,
   onToggle,
 }) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [height, setHeight] = useState<number>(0);
+
+  useEffect(() => {
+    if (contentRef.current) {
+      if (isOpen) {
+        // Set height to the actual content height
+        const contentHeight = contentRef.current.scrollHeight;
+        setHeight(contentHeight);
+      } else {
+        // Collapse smoothly
+        setHeight(0);
+      }
+    }
+  }, [isOpen]);
+
   return (
     <div className="border-b border-[#323335]">
       <button
@@ -90,13 +106,18 @@ const FAQItemComponent: React.FC<FAQItemComponentProps> = ({
         </span>
       </button>
       <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isOpen ? "max-h-[500px] opacity-100 pb-8" : "max-h-0 opacity-0"
-        }`}
+        className="overflow-hidden transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)]"
+        style={{
+          maxHeight: `${height}px`,
+          opacity: isOpen ? 1 : 0,
+          transitionProperty: "max-height, opacity",
+        }}
       >
-        <p className="text-xl text-[#cececf] leading-[1.5] max-w-[900px]">
-          {item.answer}
-        </p>
+        <div ref={contentRef} className="pb-8">
+          <p className="text-xl text-[#cececf] leading-[1.5] max-w-[900px]">
+            {item.answer}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -106,7 +127,14 @@ export const FAQSection: React.FC = () => {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
 
   const handleToggle = (index: number) => {
+    // Preserve scroll position
+    const scrollY = window.scrollY;
     setOpenIndex(openIndex === index ? null : index);
+    
+    // Restore scroll position after state update
+    requestAnimationFrame(() => {
+      window.scrollTo(0, scrollY);
+    });
   };
 
   return (

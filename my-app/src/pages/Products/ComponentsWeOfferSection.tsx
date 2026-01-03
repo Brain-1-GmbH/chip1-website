@@ -193,6 +193,14 @@ const ComponentCard: React.FC<ComponentCardProps> = ({ component }) => {
 
 export const ComponentsWeOfferSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
+
+  const handleTabClick = (index: number) => {
+    if (isAnimating || index === activeIndex) return;
+    setIsAnimating(true);
+    setActiveIndex(index);
+    setTimeout(() => setIsAnimating(false), 600);
+  };
 
   const activeCategory = categoriesData[activeIndex];
 
@@ -216,31 +224,42 @@ export const ComponentsWeOfferSection: React.FC = () => {
                 key={category.id}
                 category={category}
                 isActive={index === activeIndex}
-                onClick={() => setActiveIndex(index)}
+                onClick={() => handleTabClick(index)}
               />
             ))}
           </div>
 
           {/* Right - Component Cards */}
           <div className="flex-1 flex flex-col relative">
-            {/* Decorative dots */}
-            <div className="absolute -left-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
-              {activeCategory.components.map((_, i) => (
-                <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
-              ))}
-            </div>
-            <div className="absolute -right-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
-              {activeCategory.components.map((_, i) => (
-                <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
-              ))}
-            </div>
+            {categoriesData.map((category, categoryIndex) => (
+              <div
+                key={category.id}
+                className="absolute inset-0 flex flex-col transition-opacity duration-500 ease-in-out"
+                style={{
+                  opacity: categoryIndex === activeIndex ? 1 : 0,
+                  pointerEvents: categoryIndex === activeIndex ? 'auto' : 'none',
+                }}
+              >
+                {/* Decorative dots */}
+                <div className="absolute -left-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
+                  {category.components.map((_, i) => (
+                    <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
+                  ))}
+                </div>
+                <div className="absolute -right-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
+                  {category.components.map((_, i) => (
+                    <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
+                  ))}
+                </div>
 
-            {/* Component list */}
-            <div className="flex flex-col">
-              {activeCategory.components.map((component) => (
-                <ComponentCard key={component.id} component={component} />
-              ))}
-            </div>
+                {/* Component list */}
+                <div className="flex flex-col">
+                  {category.components.map((component) => (
+                    <ComponentCard key={component.id} component={component} />
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
