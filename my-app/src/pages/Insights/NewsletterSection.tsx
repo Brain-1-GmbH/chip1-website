@@ -1,0 +1,174 @@
+import React, { useState } from "react";
+import { Checkmark, ChevronDown } from "@carbon/icons-react";
+
+// Import background image
+import bgImage from "../../assets/Picture-14.png";
+
+const benefits = [
+  "Monitor key component prices",
+  "Identify lifecycle risks early",
+  "Access vetted alternatives",
+  "Quality control insights",
+  "Supply disruptions analysis",
+];
+
+export const NewsletterSection: React.FC = () => {
+  const [formData, setFormData] = useState({
+    email: "",
+    companyName: "",
+    country: "",
+    message: "",
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    console.log("Newsletter subscription:", formData);
+  };
+
+  return (
+    <section className="bg-[#0e0e0f] px-20 py-16">
+      <div className="max-w-[1280px] mx-auto relative rounded-3xl overflow-hidden">
+        {/* Background Image with Overlay */}
+        <div className="absolute inset-0 opacity-[0.12]">
+          <img
+            src={bgImage}
+            alt=""
+            className="w-full h-full object-cover"
+          />
+        </div>
+        <div
+          className="absolute inset-0"
+          style={{
+            background:
+              "linear-gradient(rgb(14, 14, 15) 0%, rgba(14, 14, 15, 0) 20%, rgba(14, 14, 15, 0) 80%, rgb(14, 14, 15) 100%)",
+          }}
+        />
+
+        {/* Content Container */}
+        <div className="relative flex gap-10 items-center px-6 py-0">
+          {/* Left Side - Title and Benefits */}
+          <div className="flex-1 flex flex-col gap-4 py-14">
+            <h2
+              className="text-[40px] font-semibold text-[#efeff0] leading-[1.3]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              "The Chipline": monthly updates for supply chain leaders
+            </h2>
+
+            <p
+              className="text-2xl text-[#cececf] leading-[1.4]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              What you'll get in under 3 minutes:
+            </p>
+
+            {/* Benefits List */}
+            <div className="flex flex-col gap-2 w-[534px]">
+              {benefits.map((benefit, index) => (
+                <div key={index} className="flex items-center gap-4">
+                  <div className="w-8 h-8 flex items-center justify-center">
+                    <Checkmark size={24} className="text-[#99c221]" />
+                  </div>
+                  <p className="text-base text-[#cececf] leading-[1.5]">
+                    {benefit}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Right Side - Form */}
+          <div className="flex-1 flex flex-col gap-12 items-center">
+            <form
+              onSubmit={handleSubmit}
+              className="flex flex-col gap-4 w-full max-w-[595px]"
+            >
+              {/* Company Email */}
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[#cececf] leading-[1.5]">
+                  Company Email
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="Enter company email"
+                  className="h-12 px-4 py-2 bg-[#1c1d22] border border-[#323335] rounded-lg text-base text-white placeholder-[#323335] focus:outline-none focus:border-[#99c221] transition-colors"
+                />
+              </div>
+
+              {/* Company Name */}
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[#cececf] leading-[1.5]">
+                  Company Name
+                </label>
+                <input
+                  type="text"
+                  name="companyName"
+                  value={formData.companyName}
+                  onChange={handleInputChange}
+                  placeholder="Enter company name"
+                  className="h-12 px-4 py-2 bg-[#1c1d22] border border-[#323335] rounded-lg text-base text-white placeholder-[#323335] focus:outline-none focus:border-[#99c221] transition-colors"
+                />
+              </div>
+
+              {/* Country */}
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[#cececf] leading-[1.5]">
+                  Your Country
+                </label>
+                <div className="relative">
+                  <input
+                    type="text"
+                    name="country"
+                    value={formData.country}
+                    onChange={handleInputChange}
+                    placeholder="Select your country"
+                    className="w-full h-12 px-4 py-2 pr-10 bg-[#1c1d22] border border-[#323335] rounded-lg text-base text-white placeholder-[#323335] focus:outline-none focus:border-[#99c221] transition-colors"
+                  />
+                  <ChevronDown
+                    size={24}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#858586]"
+                  />
+                </div>
+              </div>
+
+              {/* Message */}
+              <div className="flex flex-col gap-1">
+                <label className="text-sm text-[#cececf] leading-[1.5]">
+                  Message{" "}
+                  <span className="text-white/40">(optional)</span>
+                </label>
+                <textarea
+                  name="message"
+                  value={formData.message}
+                  onChange={handleInputChange}
+                  placeholder="Write message"
+                  rows={4}
+                  className="px-4 py-2 bg-[#1c1d22] border border-[#323335] rounded-lg text-base text-white placeholder-[#323335] focus:outline-none focus:border-[#99c221] transition-colors resize-none h-32"
+                />
+              </div>
+            </form>
+
+            {/* Subscribe Button */}
+            <button
+              type="submit"
+              className="bg-[#99c221] text-[#05080d] text-base font-semibold px-4 py-3 rounded-3xl w-[200px] h-12 flex items-center justify-center hover:bg-[#aad435] transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] border-t border-[#ceea6c]"
+            >
+              Subscribe
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+};
+
