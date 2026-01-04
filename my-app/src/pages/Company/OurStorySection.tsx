@@ -1,15 +1,15 @@
 import React from "react";
 
 // Import timeline images
-import img2001 from "../../assets/Picture-20.png";
-import img2005 from "../../assets/Picture-21.png";
-import img2007 from "../../assets/Picture-22.png";
-import img2009 from "../../assets/Picture-23.png";
-import img2012 from "../../assets/Picture-24.png";
-import img2016 from "../../assets/Picture-25.png";
-import img2019 from "../../assets/Picture-26.png";
-import img2024 from "../../assets/Picture-27.png";
-import imgToday from "../../assets/Picture-28.png";
+import img2001 from "../../assets/image 169-2.png";
+import img2005 from "../../assets/image 169-3.png";
+import img2007 from "../../assets/image 169-4.png";
+import img2009 from "../../assets/image 169-5.png";
+import img2012 from "../../assets/image 169-6.png";
+import img2016 from "../../assets/image 169-7.png";
+import img2019 from "../../assets/image 170-2.png";
+import img2024 from "../../assets/image 171-2.png";
+import imgToday from "../../assets/image 172-2.png";
 
 interface TimelineItem {
   year: string;

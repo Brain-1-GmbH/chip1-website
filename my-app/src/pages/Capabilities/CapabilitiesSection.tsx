@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ChevronRight } from "@carbon/icons-react";
 
 // Import images for each capability
-import imgTesting from "../../assets/Picture-25.png";
-import imgWarehouse from "../../assets/Picture-26.png";
-import imgGlobal from "../../assets/Picture-27.png";
-import imgProgramming from "../../assets/Picture-28.png";
-import imgPackaging from "../../assets/Picture-29.png";
-import imgReporting from "../../assets/Picture-30.png";
+import imgTesting from "../../assets/9f4721981b9c1884c241f08f6c42cf1f67c62501.png";
+import imgWarehouse from "../../assets/04e34253eb222c2efb2cc600d81965337771fe36.jpg";
+import imgGlobal from "../../assets/9e7234906a15f55c89b9256932514df27b17078d.jpg";
+import imgProgramming from "../../assets/87c4719c6b4f8965d13a2f360035a2c65f2f832f.jpg";
+import imgPackaging from "../../assets/483c36b3a89fd7a34393a33421e9033aab8782fb.png";
+import imgReporting from "../../assets/54dc757194b237eb6479486d92e9dd2d26a1ce26.jpg";
 
 interface CapabilityItem {
   id: string;

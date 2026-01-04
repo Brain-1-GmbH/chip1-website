@@ -1,7 +1,7 @@
 import React from "react";
 
 // Import hero background image
-import heroBg from "../../assets/Picture-1.png";
+import heroBg from "../../assets/f19cc08cb6e32f981e8f2d194fbcf11a743a58d4.jpg";
 
 export const InsightsHeroSection: React.FC = () => {
   return (

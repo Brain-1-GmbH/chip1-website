@@ -1,9 +1,9 @@
 import React from "react";
 
 // Import images for the cards
-import imgIntegrity from "../../assets/Picture-29.png";
-import imgReliability from "../../assets/Picture-30.png";
-import imgInnovation from "../../assets/Picture-31.png";
+import imgIntegrity from "../../assets/ee2012c62e4847e31a8dbaec4ba5452b833b71b8.png";
+import imgReliability from "../../assets/55121ab2dde75365593e108196d7d023bd3a4d4e.png";
+import imgInnovation from "../../assets/571414e5e434938fa1da4c356b039a598f4b3fb6.png";
 
 interface ValueCardProps {
   title: string;

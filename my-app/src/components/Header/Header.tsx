@@ -1,5 +1,5 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { ChevronDown } from "@carbon/icons-react";
 
 const navItems = [
@@ -14,6 +14,8 @@ const navItems = [
 ];
 
 export const Header: React.FC = () => {
+  const location = useLocation();
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 flex items-center px-10 py-5">
       {/* Logo */}
@@ -44,12 +46,18 @@ export const Header: React.FC = () => {
 
       {/* Navigation - Centered */}
       <nav className="flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
-        {navItems.map((item) =>
-          item.href.startsWith("/") ? (
+        {navItems.map((item) => {
+          const isActive = item.href.startsWith("/") && location.pathname === item.href;
+          
+          return item.href.startsWith("/") ? (
             <Link
               key={item.label}
               to={item.href}
-              className="flex items-center gap-1 text-white text-sm font-medium hover:text-[#B8D434] transition-colors"
+              className={`flex items-center gap-1 text-sm font-medium transition-colors ${
+                isActive 
+                  ? "text-[#B8D434]" 
+                  : "text-white hover:text-[#B8D434]"
+              }`}
             >
               {item.label}
               {item.hasDropdown && <ChevronDown size={14} />}
@@ -63,8 +71,8 @@ export const Header: React.FC = () => {
               {item.label}
               {item.hasDropdown && <ChevronDown size={14} />}
             </a>
-          )
-        )}
+          );
+        })}
       </nav>
 
       {/* Right spacer for balance */}

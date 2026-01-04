@@ -2,15 +2,15 @@ import React, { useState } from "react";
 import { ChevronRight } from "@carbon/icons-react";
 
 // Import industry images (reusing available assets)
-import imgAutomotive from "../../assets/Picture-33.png";
-import imgAerospace from "../../assets/Picture-34.png";
-import imgIndustrial from "../../assets/Picture-35.png";
-import imgConsumer from "../../assets/Picture-36.png";
-import imgMedical from "../../assets/Picture-29.png";
-import imgTelecom from "../../assets/Picture-30.png";
-import imgEnergy from "../../assets/Picture-31.png";
-import imgComputing from "../../assets/Picture-32.png";
-import imgIoT from "../../assets/Picture-10.png";
+import imgAutomotive from "../../assets/5e82b13a08d7f1bad166aa1bdc7a5a6b6b54a71c.png";
+import imgAerospace from "../../assets/62ae3ec5991e192f616b1284190f4ec8d85ff888.png";
+import imgIndustrial from "../../assets/1c2b0a965f3bdef5db739cb90876f5b18cf02b2b.png";
+import imgConsumer from "../../assets/de1648210b62a5961d1668957c37d1fcd28d0968.png";
+import imgMedical from "../../assets/c1fba696d974df18951bd2272cb397d04eb710a4.png";
+import imgTelecom from "../../assets/1fb182c6aa8da0a981a973159799127800762922.png";
+import imgEnergy from "../../assets/883d9511c3ffdf751aac039313198a88c3404a20.png";
+import imgComputing from "../../assets/96b0f35c690c0a959f0a383d4fefa74dfbbad950.png";
+import imgIoT from "../../assets/575d16e137d3b53e7a89806ec3a48a1a3fd9eacf.png";
 
 interface IndustryData {
   id: string;

@@ -1,10 +1,10 @@
 import React from "react";
 
 // Import packaging images
-import img1 from "../../assets/Picture-34.png";
-import img2 from "../../assets/Picture-35.png";
-import img3 from "../../assets/Picture-36.png";
-import img4 from "../../assets/Picture-10.png";
+import img1 from "../../assets/image 222-11.png";
+import img2 from "../../assets/image 222-12.png";
+import img3 from "../../assets/image 222-13.png";
+import img4 from "../../assets/image 222-14.png";
 
 interface PackagingStep {
   number: number;

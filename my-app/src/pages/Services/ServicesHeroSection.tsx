@@ -1,5 +1,5 @@
 import React from "react";
-import imgBackground from "../../assets/Picture-35.png";
+import imgBackground from "../../assets/6da0f5ddcf4ed4f390fe4b5a8e18cb18a9c8ab2a.png";
 
 interface ServicesHeroSectionProps {
   tag?: string;

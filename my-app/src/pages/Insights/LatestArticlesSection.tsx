@@ -1,12 +1,12 @@
 import React from "react";
 
 // Import article images
-import img1 from "../../assets/Picture-2.png";
-import img2 from "../../assets/Picture-3.png";
-import img3 from "../../assets/Picture-4.png";
-import img4 from "../../assets/Picture-5.png";
-import img5 from "../../assets/Picture-6.png";
-import featuredImg from "../../assets/Picture-7.png";
+import img1 from "../../assets/efd049b79e26ba1429ad41ab5c5cc7291d7400a6.png";
+import img2 from "../../assets/9a41f7f102d0c8c55f2f46042ff605095d286cb5.png";
+import img3 from "../../assets/36e5e6a82f42541d06978c44dd226ba9eced4ae9.png";
+import img4 from "../../assets/a3517dbafb2338b9abfdf9ced57560d6d63f1554.png";
+import img5 from "../../assets/efa5ef267e0273c46f1e7268abea426abdf49c2e.png";
+import featuredImg from "../../assets/efd049b79e26ba1429ad41ab5c5cc7291d7400a6 copy.png";
 
 interface ArticleItem {
   id: number;

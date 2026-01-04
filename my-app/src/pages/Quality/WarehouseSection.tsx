@@ -1,12 +1,12 @@
 import React from "react";
 
 // Import warehouse images
-import img1 from "../../assets/Picture-18.png";
-import img2 from "../../assets/Picture-19.png";
-import img3 from "../../assets/Picture-20.png";
-import img4 from "../../assets/Picture-21.png";
-import img5 from "../../assets/Picture-22.png";
-import img6 from "../../assets/Picture-23.png";
+import img1 from "../../assets/Frame 41.png";
+import img2 from "../../assets/Frame 41-2.png";
+import img3 from "../../assets/Frame 41-3.png";
+import img4 from "../../assets/Frame 41-4.png";
+import img5 from "../../assets/Frame 41-5.png";
+import img6 from "../../assets/Frame 41-6.png";
 
 interface WarehouseFeature {
   id: string;

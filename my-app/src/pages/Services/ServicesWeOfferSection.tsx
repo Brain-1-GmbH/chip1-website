@@ -2,12 +2,12 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ChevronRight } from "@carbon/icons-react";
 
 // Import images for each service
-import imgShortage from "../../assets/Picture-35.png";
-import imgCostReduction from "../../assets/Picture-36.png";
-import imgExcessInventory from "../../assets/Picture-20.png";
-import imgQualityAssurance from "../../assets/Picture-21.png";
-import imgSupplyChain from "../../assets/Picture-22.png";
-import imgCustomized from "../../assets/Picture-23.png";
+import imgShortage from "../../assets/941edb178a5b78fb1e830c178f3a470c3339c159.jpg";
+import imgCostReduction from "../../assets/b54883385a044ffeedf0a85b03b8b7d954dc0b17.jpg";
+import imgExcessInventory from "../../assets/9c1284035c09d0d720734412e97c76f59e8d3f49.jpg";
+import imgQualityAssurance from "../../assets/cb49c02c33b6d15bbb887ddbef003d98833f352f.png";
+import imgSupplyChain from "../../assets/29a9b6ead21098b9ea294506ee7469d9fd7baf13.jpg";
+import imgCustomized from "../../assets/6c6325d2103c5cac495a1e844b2cb19823748f34.jpg";
 
 interface ServiceItem {
   id: string;

@@ -1,5 +1,5 @@
 import React from "react";
-import imgBackground from "../../assets/Picture-12.png";
+import imgBackground from "../../assets/f0d7bd6a48bf189b34b28bb837e803bf5765a994 copy.png";
 
 export const QualityHeroSection: React.FC = () => {
   return (

@@ -1,7 +1,7 @@
 import React from "react";
 
 // Background image for Company hero
-import companyHeroBg from "../../assets/Picture-19.png";
+import companyHeroBg from "../../assets/1c3d9fa78d1c27b4e0bbe9456e57cb226b901842.jpg";
 
 interface CompanyHeroSectionProps {
   tag?: string;

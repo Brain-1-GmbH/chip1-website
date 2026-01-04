@@ -1,16 +1,16 @@
 import React from "react";
 
 // Import step images
-import img1 from "../../assets/Picture-24.png";
-import img2 from "../../assets/Picture-25.png";
-import img3 from "../../assets/Picture-26.png";
-import img4 from "../../assets/Picture-27.png";
-import img5 from "../../assets/Picture-28.png";
-import img6 from "../../assets/Picture-29.png";
-import img7 from "../../assets/Picture-30.png";
-import img8 from "../../assets/Picture-31.png";
-import img9 from "../../assets/Picture-32.png";
-import img10 from "../../assets/Picture-33.png";
+import img1 from "../../assets/image 222.png";
+import img2 from "../../assets/image 222-2.png";
+import img3 from "../../assets/image 222-3.png";
+import img4 from "../../assets/image 222-4.png";
+import img5 from "../../assets/image 222-5.png";
+import img6 from "../../assets/image 222-6.png";
+import img7 from "../../assets/image 222-7.png";
+import img8 from "../../assets/image 222-8.png";
+import img9 from "../../assets/image 222-9.png";
+import img10 from "../../assets/image 222-10.png";
 
 interface VerificationStep {
   number: number;

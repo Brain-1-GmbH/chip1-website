@@ -1,9 +1,9 @@
 import React from "react";
 
 // Import leader images
-import imgSasan from "../../assets/Picture-32.png";
-import imgDamon from "../../assets/Picture-33.png";
-import imgVolkan from "../../assets/Picture-34.png";
+import imgSasan from "../../assets/1.png";
+import imgDamon from "../../assets/2.png";
+import imgVolkan from "../../assets/3.png";
 
 interface LeaderCardProps {
   name: string;
@@ -16,12 +16,15 @@ const LeaderCard: React.FC<LeaderCardProps> = ({ name, role, image, description 
   return (
     <div className="relative flex-1 h-[466px] rounded-2xl overflow-hidden border border-[#333] flex flex-col justify-end p-4 group cursor-pointer">
       {/* Background Image */}
-      <div className="absolute inset-0 pointer-events-none">
-        <img
-          src={image}
-          alt={name}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
+      <div 
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage: `url(${image})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center center',
+          backgroundRepeat: 'no-repeat',
+        }}
+      >
         {/* Gradient Overlay - stays visible */}
         <div
           className="absolute inset-0"

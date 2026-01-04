@@ -7,12 +7,14 @@ import { ProductsPage } from "./pages/Products/ProductsPage";
 import { IndustriesPage } from "./pages/Industries/IndustriesPage";
 import { QualityPage } from "./pages/Quality/QualityPage";
 import { InsightsPage } from "./pages/Insights/InsightsPage";
+import { ScrollToTop } from "./components/ScrollToTop";
 
 import "./App.css";
 
 function App() {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/" element={<HomePage />} />
         <Route path="/company" element={<CompanyPage />} />

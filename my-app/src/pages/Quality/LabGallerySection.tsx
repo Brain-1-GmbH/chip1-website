@@ -1,20 +1,20 @@
 import React from "react";
 
-// Import gallery images (reusing available assets)
-import img1 from "../../assets/Picture-1.png";
-import img2 from "../../assets/Picture-2.png";
-import img3 from "../../assets/Picture-3.png";
-import img4 from "../../assets/Picture-4.png";
-import img5 from "../../assets/Picture-5.png";
-import img6 from "../../assets/Picture-6.png";
-import img7 from "../../assets/Picture-7.png";
-import img8 from "../../assets/Picture-8.png";
-import img9 from "../../assets/Picture-9.png";
-import img10 from "../../assets/Picture-10.png";
-import img11 from "../../assets/Picture-11.png";
-import img12 from "../../assets/Picture-12.png";
-import img13 from "../../assets/Picture-13.png";
-import img14 from "../../assets/Picture-14.png";
+// Import gallery images - using warehouse, testing, and verification images (no chips)
+import img1 from "../../assets/Frame 41.png";
+import img2 from "../../assets/Frame 41-2.png";
+import img3 from "../../assets/Frame 41-3.png";
+import img4 from "../../assets/Frame 41-4.png";
+import img5 from "../../assets/Frame 41-5.png";
+import img6 from "../../assets/Frame 41-6.png";
+import img7 from "../../assets/8b82eb57d7256cc50c1670728afeab437a39c4cd.png";
+import img8 from "../../assets/faa445785a11f0ad87420d6a8cc35fa956ca3273.png";
+import img9 from "../../assets/df64faf26596b4a319efc1f642d0d2f6670d3376.png";
+import img10 from "../../assets/38879d89f3e380685c56941a61a91b920f7f9abe.jpg";
+import img11 from "../../assets/38e5e03e0479e9aff6e9db435e1a1c5bb3ec159a.jpg";
+import img12 from "../../assets/image 222.png";
+import img13 from "../../assets/image 222-2.png";
+import img14 from "../../assets/image 222-3.png";
 
 // Top row images
 const topRowImages = [

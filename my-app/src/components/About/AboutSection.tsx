@@ -7,19 +7,21 @@ import productImg from "../../assets/Picture-2.png";
 import servicesImg from "../../assets/Picture-3.png";
 import qualityImg from "../../assets/Picture-4.png";
 import capabilitiesImg from "../../assets/Picture-5.png";
-import insight1Img from "../../assets/Picture-6.png";
-import insight2Img from "../../assets/Picture-7.png";
-import insight3Img from "../../assets/Picture-8.png";
-import insight4Img from "../../assets/Picture-9.png";
+// Insights images from Insights page
+import insight1Img from "../../assets/efd049b79e26ba1429ad41ab5c5cc7291d7400a6.png";
+import insight2Img from "../../assets/9a41f7f102d0c8c55f2f46042ff605095d286cb5.png";
+import insight3Img from "../../assets/36e5e6a82f42541d06978c44dd226ba9eced4ae9.png";
+import insight4Img from "../../assets/a3517dbafb2338b9abfdf9ced57560d6d63f1554.png";
+import insight5Img from "../../assets/efa5ef267e0273c46f1e7268abea426abdf49c2e.png";
 
 // Certificate images
-import cert1 from "../../assets/Picture-10.png";
-import cert2 from "../../assets/Picture-11.png";
-import cert3 from "../../assets/Picture-12.png";
-import cert4 from "../../assets/Picture-13.png";
-import cert5 from "../../assets/Picture-14.png";
-import cert6 from "../../assets/Picture-15.png";
-import cert7 from "../../assets/Picture-16.png";
+import cert1 from "../../assets/Ellipse 31.svg";
+import cert2 from "../../assets/image 265.png";
+import cert3 from "../../assets/image 266.png";
+import cert4 from "../../assets/image 269.png";
+import cert5 from "../../assets/Union-2.svg";
+import cert6 from "../../assets/Union.svg";
+import cert7 from "../../assets/32121507.png";
 
 const stats = [
   { value: "$100M+", label: "in-stock inventory" },
@@ -85,7 +87,7 @@ const insights = [
     title: "Streamlined RFQs and Ordering",
     description:
       "Registered users of MyChip1 can seamlessly request quotes (RFQs) through the platform. Simply upload your BOM or enter the parts you need, and the system will guide you through a quick RFQ process.",
-    image: insight1Img,
+    image: insight5Img,
   },
 ];
 

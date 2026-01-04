@@ -2,11 +2,11 @@ import React, { useState } from "react";
 import { ChevronRight } from "@carbon/icons-react";
 
 // Import testing images
-import imgVisual from "../../assets/Picture-13.png";
-import imgElectrical from "../../assets/Picture-14.png";
-import imgXRay from "../../assets/Picture-15.png";
-import imgDecapsulation from "../../assets/Picture-16.png";
-import imgSolderability from "../../assets/Picture-17.png";
+import imgVisual from "../../assets/8b82eb57d7256cc50c1670728afeab437a39c4cd.png";
+import imgElectrical from "../../assets/faa445785a11f0ad87420d6a8cc35fa956ca3273.png";
+import imgXRay from "../../assets/df64faf26596b4a319efc1f642d0d2f6670d3376.png";
+import imgDecapsulation from "../../assets/38879d89f3e380685c56941a61a91b920f7f9abe.jpg";
+import imgSolderability from "../../assets/38e5e03e0479e9aff6e9db435e1a1c5bb3ec159a.jpg";
 
 interface TestingMethod {
   id: string;

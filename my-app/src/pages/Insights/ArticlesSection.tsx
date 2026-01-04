@@ -2,12 +2,12 @@ import React from "react";
 import { ArrowUpRight } from "@carbon/icons-react";
 
 // Import article images
-import img1 from "../../assets/Picture-8.png";
-import img2 from "../../assets/Picture-9.png";
-import img3 from "../../assets/Picture-10.png";
-import img4 from "../../assets/Picture-11.png";
-import img5 from "../../assets/Picture-12.png";
-import img6 from "../../assets/Picture-13.png";
+import img1 from "../../assets/image 195.png";
+import img2 from "../../assets/image 195-2.png";
+import img3 from "../../assets/image 195-3.png";
+import img4 from "../../assets/image 195-4.png";
+import img5 from "../../assets/image 195-5.png";
+import img6 from "../../assets/image 195-6.png";
 
 interface ArticleCard {
   id: number;

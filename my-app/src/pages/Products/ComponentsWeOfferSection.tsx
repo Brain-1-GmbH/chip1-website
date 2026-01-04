@@ -2,14 +2,76 @@ import React, { useState } from "react";
 import { ChevronRight } from "@carbon/icons-react";
 
 // Import component images
-import imgMicrocontrollers from "../../assets/Picture-1.png";
-import imgDSPs from "../../assets/Picture-2.png";
-import imgASICs from "../../assets/Picture-3.png";
-import imgFPGAs from "../../assets/Picture-4.png";
-import imgAmplifiers from "../../assets/Picture-5.png";
-import imgInterfaceICs from "../../assets/Picture-6.png";
-import imgMemoryICs from "../../assets/Picture-7.png";
-import imgVoltageRegulators from "../../assets/Picture-8.png";
+// First category - Integrated circuits (ICs) - 8 images
+import imgMicrocontrollers from "../../assets/image 153.png";
+import imgDSPs from "../../assets/image 153-1.png";
+import imgASICs from "../../assets/image 153-2.png";
+import imgFPGAs from "../../assets/image 153-3.png";
+import imgAmplifiers from "../../assets/image 153-4.png";
+import imgInterfaceICs from "../../assets/image 153-5.png";
+import imgMemoryICs from "../../assets/image 153-6.png";
+import imgVoltageRegulators from "../../assets/image 153-7.png";
+
+// Second category - Memory - 5 images
+import imgDRAM from "../../assets/dram.png";
+import imgSRAM from "../../assets/sram.png";
+import imgFlash from "../../assets/falsh.png";
+import imgEEPROM from "../../assets/eerom.png";
+import imgSSD from "../../assets/ssd.png";
+
+// Third category - Processors - 3 images
+import imgCPU from "../../assets/image 153 copy.png";
+import imgGPU from "../../assets/image 153-1 copy.png";
+import imgMPU from "../../assets/image 153-2 copy.png";
+
+// Fourth category - Discrete Semiconductors - 5 images
+import imgDiodes from "../../assets/image 153 copy 2.png";
+import imgTransistors from "../../assets/image 153-1 copy 2.png";
+import imgThyristors from "../../assets/image 153-2 copy 2.png";
+import imgMOSFETs from "../../assets/image 153-3 copy.png";
+import imgDiscreteExtra from "../../assets/image 153-4 copy.png";
+
+// Fifth category - Passive Components - 4 images
+import imgResistors from "../../assets/image 153 copy 3.png";
+import imgCapacitors from "../../assets/image 153-1 copy 3.png";
+import imgInductors from "../../assets/image 153-2 copy 3.png";
+import imgFilters from "../../assets/image 153-3 copy 2.png";
+
+// Sixth category - Electromechanical Components - 6 images
+import imgRelays from "../../assets/image 153 copy 4.png";
+import imgSwitches from "../../assets/image 153-1 copy 4.png";
+import imgConnectors from "../../assets/image 153-2 copy 4.png";
+import imgMotors from "../../assets/image 153-3 copy 3.png";
+import imgElectroExtra1 from "../../assets/image 153-4 copy 2.png";
+import imgElectroExtra2 from "../../assets/image 153-5 copy.png";
+
+// Seventh category - Sensors and Modules - 5 images
+import imgTempSensors from "../../assets/image 153 copy 5.png";
+import imgPressureSensors from "../../assets/image 153-1 copy 5.png";
+import imgMotionSensors from "../../assets/image 153-2 copy 5.png";
+import imgProximitySensors from "../../assets/image 153-3 copy 4.png";
+import imgSensorsExtra from "../../assets/image 153-4 copy 3.png";
+
+// Eighth category - Power Components - 5 images
+import imgRegulators from "../../assets/image 153 copy 6.png";
+import imgConverters from "../../assets/image 153-1 copy 6.png";
+import imgInverters from "../../assets/image 153-2 copy 6.png";
+import imgBatteries from "../../assets/image 153-3 copy 5.png";
+import imgPowerExtra from "../../assets/image 153-4 copy 4.png";
+
+// Ninth category - Optoelectronics - 5 images
+import imgLEDs from "../../assets/image 153 copy 7.png";
+import imgDisplays from "../../assets/image 153-1 copy 7.png";
+import imgPhotodiodes from "../../assets/image 153-2 copy 7.png";
+import imgLasers from "../../assets/image 153-3 copy 6.png";
+import imgOptoExtra from "../../assets/image 153-4 copy 5.png";
+
+// Tenth category - RF and Microwave Components - 5 images
+import imgRFAmps from "../../assets/image 153 copy 8.png";
+import imgMixers from "../../assets/image 153-1 copy 8.png";
+import imgOscillators from "../../assets/image 153-2 copy 8.png";
+import imgAntennas from "../../assets/image 153-3 copy 7.png";
+import imgRFExtra from "../../assets/image 153-4 copy 6.png";
 
 interface ComponentItem {
   id: string;
@@ -42,19 +104,20 @@ const categoriesData: CategoryData[] = [
     id: "memory",
     title: "Memory",
     components: [
-      { id: "dram", name: "DRAM", image: imgMemoryICs },
-      { id: "sram", name: "SRAM", image: imgMicrocontrollers },
-      { id: "flash", name: "Flash Memory", image: imgDSPs },
-      { id: "eeprom", name: "EEPROM", image: imgASICs },
+      { id: "dram", name: "DRAM", image: imgDRAM },
+      { id: "sram", name: "SRAM", image: imgSRAM },
+      { id: "flash", name: "Flash Memory", image: imgFlash },
+      { id: "eeprom", name: "EEPROM", image: imgEEPROM },
+      { id: "ssd", name: "SSD", image: imgSSD },
     ],
   },
   {
     id: "processors",
     title: "Processors",
     components: [
-      { id: "cpu", name: "CPUs", image: imgMicrocontrollers },
-      { id: "gpu", name: "GPUs", image: imgFPGAs },
-      { id: "mpu", name: "MPUs", image: imgDSPs },
+      { id: "cpu", name: "CPUs", image: imgCPU },
+      { id: "gpu", name: "GPUs", image: imgGPU },
+      { id: "mpu", name: "MPUs", image: imgMPU },
       { id: "soc", name: "System on Chip", image: imgASICs },
     ],
   },
@@ -62,70 +125,77 @@ const categoriesData: CategoryData[] = [
     id: "discrete",
     title: "Discrete Semiconductors",
     components: [
-      { id: "diodes", name: "Diodes", image: imgAmplifiers },
-      { id: "transistors", name: "Transistors", image: imgInterfaceICs },
-      { id: "thyristors", name: "Thyristors", image: imgVoltageRegulators },
-      { id: "mosfets", name: "MOSFETs", image: imgFPGAs },
+      { id: "diodes", name: "Diodes", image: imgDiodes },
+      { id: "transistors", name: "Transistors", image: imgTransistors },
+      { id: "thyristors", name: "Thyristors", image: imgThyristors },
+      { id: "mosfets", name: "MOSFETs", image: imgMOSFETs },
+      { id: "discrete-extra", name: "IGBTs", image: imgDiscreteExtra },
     ],
   },
   {
     id: "passive",
     title: "Passive Components",
     components: [
-      { id: "resistors", name: "Resistors", image: imgVoltageRegulators },
-      { id: "capacitors", name: "Capacitors", image: imgMemoryICs },
-      { id: "inductors", name: "Inductors", image: imgInterfaceICs },
-      { id: "filters", name: "Filters", image: imgAmplifiers },
+      { id: "resistors", name: "Resistors", image: imgResistors },
+      { id: "capacitors", name: "Capacitors", image: imgCapacitors },
+      { id: "inductors", name: "Inductors", image: imgInductors },
+      { id: "filters", name: "Filters", image: imgFilters },
     ],
   },
   {
     id: "electromechanical",
     title: "Electromechanical Components",
     components: [
-      { id: "relays", name: "Relays", image: imgMicrocontrollers },
-      { id: "switches", name: "Switches", image: imgDSPs },
-      { id: "connectors", name: "Connectors", image: imgASICs },
-      { id: "motors", name: "Motors", image: imgFPGAs },
+      { id: "relays", name: "Relays", image: imgRelays },
+      { id: "switches", name: "Switches", image: imgSwitches },
+      { id: "connectors", name: "Connectors", image: imgConnectors },
+      { id: "motors", name: "Motors", image: imgMotors },
+      { id: "fuses", name: "Fuses", image: imgElectroExtra1 },
+      { id: "circuit-breakers", name: "Circuit Breakers", image: imgElectroExtra2 },
     ],
   },
   {
     id: "sensors",
     title: "Sensors and Modules",
     components: [
-      { id: "temp", name: "Temperature Sensors", image: imgAmplifiers },
-      { id: "pressure", name: "Pressure Sensors", image: imgInterfaceICs },
-      { id: "motion", name: "Motion Sensors", image: imgMemoryICs },
-      { id: "proximity", name: "Proximity Sensors", image: imgVoltageRegulators },
+      { id: "temp", name: "Temperature Sensors", image: imgTempSensors },
+      { id: "pressure", name: "Pressure Sensors", image: imgPressureSensors },
+      { id: "motion", name: "Motion Sensors", image: imgMotionSensors },
+      { id: "proximity", name: "Proximity Sensors", image: imgProximitySensors },
+      { id: "sensors-extra", name: "IoT Modules", image: imgSensorsExtra },
     ],
   },
   {
     id: "power",
     title: "Power Components",
     components: [
-      { id: "regulators", name: "Voltage Regulators", image: imgVoltageRegulators },
-      { id: "converters", name: "DC-DC Converters", image: imgMicrocontrollers },
-      { id: "inverters", name: "Inverters", image: imgDSPs },
-      { id: "batteries", name: "Battery Management", image: imgASICs },
+      { id: "regulators", name: "Voltage Regulators", image: imgRegulators },
+      { id: "converters", name: "DC-DC Converters", image: imgConverters },
+      { id: "inverters", name: "Inverters", image: imgInverters },
+      { id: "batteries", name: "Battery Management", image: imgBatteries },
+      { id: "power-extra", name: "Transformers", image: imgPowerExtra },
     ],
   },
   {
     id: "opto",
     title: "Optoelectronics",
     components: [
-      { id: "leds", name: "LEDs", image: imgFPGAs },
-      { id: "displays", name: "Displays", image: imgAmplifiers },
-      { id: "photodiodes", name: "Photodiodes", image: imgInterfaceICs },
-      { id: "lasers", name: "Laser Diodes", image: imgMemoryICs },
+      { id: "leds", name: "LEDs", image: imgLEDs },
+      { id: "displays", name: "Displays", image: imgDisplays },
+      { id: "photodiodes", name: "Photodiodes", image: imgPhotodiodes },
+      { id: "lasers", name: "Laser Diodes", image: imgLasers },
+      { id: "opto-extra", name: "Optocouplers", image: imgOptoExtra },
     ],
   },
   {
     id: "rf",
     title: "RF and Microwave Components",
     components: [
-      { id: "rfamps", name: "RF Amplifiers", image: imgAmplifiers },
-      { id: "mixers", name: "Mixers", image: imgVoltageRegulators },
-      { id: "oscillators", name: "Oscillators", image: imgMicrocontrollers },
-      { id: "antennas", name: "Antennas", image: imgDSPs },
+      { id: "rfamps", name: "RF Amplifiers", image: imgRFAmps },
+      { id: "mixers", name: "Mixers", image: imgMixers },
+      { id: "oscillators", name: "Oscillators", image: imgOscillators },
+      { id: "antennas", name: "Antennas", image: imgAntennas },
+      { id: "rf-extra", name: "RF Modules", image: imgRFExtra },
     ],
   },
 ];
@@ -205,7 +275,7 @@ export const ComponentsWeOfferSection: React.FC = () => {
   const activeCategory = categoriesData[activeIndex];
 
   return (
-    <section className="bg-[#0e0e0f] px-20 py-24">
+    <section className="bg-[#0e0e0f] px-20 py-24 pb-32">
       <div className="max-w-[1280px] mx-auto">
         {/* Title */}
         <h2
@@ -231,35 +301,36 @@ export const ComponentsWeOfferSection: React.FC = () => {
 
           {/* Right - Component Cards */}
           <div className="flex-1 flex flex-col relative">
-            {categoriesData.map((category, categoryIndex) => (
-              <div
-                key={category.id}
-                className="absolute inset-0 flex flex-col transition-opacity duration-500 ease-in-out"
-                style={{
-                  opacity: categoryIndex === activeIndex ? 1 : 0,
-                  pointerEvents: categoryIndex === activeIndex ? 'auto' : 'none',
-                }}
-              >
-                {/* Decorative dots */}
-                <div className="absolute -left-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
-                  {category.components.map((_, i) => (
-                    <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
-                  ))}
-                </div>
-                <div className="absolute -right-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
-                  {category.components.map((_, i) => (
-                    <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
-                  ))}
-                </div>
+            {categoriesData.map((category, categoryIndex) => {
+              const isActive = categoryIndex === activeIndex;
+              if (!isActive) return null;
+              
+              return (
+                <div
+                  key={category.id}
+                  className="flex flex-col transition-opacity duration-500 ease-in-out opacity-100"
+                >
+                  {/* Decorative dots */}
+                  <div className="absolute -left-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
+                    {category.components.map((_, i) => (
+                      <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
+                    ))}
+                  </div>
+                  <div className="absolute -right-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
+                    {category.components.map((_, i) => (
+                      <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
+                    ))}
+                  </div>
 
-                {/* Component list */}
-                <div className="flex flex-col">
-                  {category.components.map((component) => (
-                    <ComponentCard key={component.id} component={component} />
-                  ))}
+                  {/* Component list */}
+                  <div className="flex flex-col">
+                    {category.components.map((component) => (
+                      <ComponentCard key={component.id} component={component} />
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       </div>
