@@ -1,0 +1,9 @@
+{
+  "rewrites": [
+    {
+      "source": "/api/:path*",
+      "destination": "https://stage.chip1.info/api/:path*"
+    }
+  ]
+}
+
