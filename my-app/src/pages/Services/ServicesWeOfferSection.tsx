@@ -128,8 +128,6 @@ export const ServicesWeOfferSection: React.FC = () => {
     setTimeout(() => setIsPaused(false), 10000);
   };
 
-  const activeService = servicesData[activeIndex];
-
   return (
     <section className="bg-[#0e0e0f] px-20 py-20">
       <div className="max-w-[1280px] mx-auto">

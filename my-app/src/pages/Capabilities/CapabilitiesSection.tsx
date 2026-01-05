@@ -128,8 +128,6 @@ export const CapabilitiesSection: React.FC = () => {
     setTimeout(() => setIsPaused(false), 10000);
   };
 
-  const activeCapability = capabilitiesData[activeIndex];
-
   return (
     <section className="bg-[#0e0e0f] px-20 py-20">
       <div className="max-w-[1280px] mx-auto">

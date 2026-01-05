@@ -1,4 +1,3 @@
-import React from "react";
 import SwitchFromLib from "react-switch";
 
 interface SwitchProps {

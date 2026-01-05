@@ -134,8 +134,6 @@ export const IndustriesWeServeSection: React.FC = () => {
     setTimeout(() => setIsAnimating(false), 600);
   };
 
-  const activeIndustry = industriesData[activeIndex];
-
   return (
     <section className="bg-[#0e0e0f] px-20 py-24">
       <div className="max-w-[1280px] mx-auto">

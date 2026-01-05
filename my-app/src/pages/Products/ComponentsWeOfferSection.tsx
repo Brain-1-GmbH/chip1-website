@@ -272,8 +272,6 @@ export const ComponentsWeOfferSection: React.FC = () => {
     setTimeout(() => setIsAnimating(false), 600);
   };
 
-  const activeCategory = categoriesData[activeIndex];
-
   return (
     <section className="bg-[#0e0e0f] px-20 py-24 pb-32">
       <div className="max-w-[1280px] mx-auto">
