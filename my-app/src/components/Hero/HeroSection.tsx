@@ -103,6 +103,8 @@ export const HeroSection: React.FC = () => {
   const getOnePartData = (part: SearchResult) => {
     setSelectedPart(null);
     setPartDataLoading(part.id);
+    // Keep search results visible while loading - will hide when data loads
+    
     let url = `/api/part/public/parts/full-details?id=${part.id}`;
 
     if (part.globalPartId) {
@@ -112,12 +114,16 @@ export const HeroSection: React.FC = () => {
     axios.get(url).then((res) => {
       setSelectedPart(res.data);
       setPartDataLoading(null);
+      // Hide search results dropdown only after data is loaded
+      setSearchResult([]);
     });
   };
 
   const renderPart = () => {
     // @ts-expect-error - TODO: fix this
     const partData = selectedPart?.data?.globalPart;
+    const hasData = !!partData;
+    const healthScore = partData?.overallRiskPercentage?.replace("%", "") || 0;
 
     return (
       <div className="flex gap-4 w-full">
@@ -127,11 +133,11 @@ export const HeroSection: React.FC = () => {
 
           <div className="w-32 h-32 mb-3">
             <CircularProgressbar
-              value={partData?.overallRiskPercentage?.replace("%", "")}
-              text={partData?.overallRiskPercentage?.replace("%", "")}
+              value={healthScore}
+              text={hasData ? String(healthScore) : "N/A"}
               styles={{
                 path: {
-                  stroke: "#A4D233",
+                  stroke: hasData ? "#A4D233" : "#3F4451",
                   strokeLinecap: "round",
                 },
                 trail: {
@@ -139,7 +145,7 @@ export const HeroSection: React.FC = () => {
                 },
                 text: {
                   fill: "#FFFFFF",
-                  fontSize: "24px",
+                  fontSize: hasData ? "24px" : "18px",
                   fontWeight: "bold",
                 },
               }}
@@ -275,24 +281,7 @@ export const HeroSection: React.FC = () => {
                   </div>
                 ))
             ) : (
-              <>
-                <div className="border-b border-gray-700 pb-3">
-                  <p className="text-white font-semibold text-sm mb-1 break-all">
-                    C2012X7R1E334K
-                  </p>
-                  <p className="text-gray-400 text-xs break-all">
-                    TDK • Pin to Pin Drop in Replacement
-                  </p>
-                </div>
-                <div>
-                  <p className="text-white font-semibold text-sm mb-1 break-all">
-                    MCAST21GSB7334KTNA01
-                  </p>
-                  <p className="text-gray-400 text-xs break-all">
-                    Taiyo Yuden • Pin to Pin Compatible
-                  </p>
-                </div>
-              </>
+              <p className="text-gray-400 text-sm">No alternatives available</p>
             )}
           </div>
         </div>
@@ -342,14 +331,8 @@ export const HeroSection: React.FC = () => {
 
         {/* Search Section */}
         <div className="flex flex-col items-center gap-6">
-          {/* Search Input Container */}
-          <div
-            className={`transition-all duration-300 ${
-              searchResult?.length > 0
-                ? "p-4 bg-[#17181a]/80 backdrop-blur-sm rounded-2xl border border-[rgba(77,77,78,0.34)]"
-                : ""
-            }`}
-          >
+          {/* Search Input Container - positioned relative for dropdown */}
+          <div className="relative">
             {/* Search Input */}
             <div className="relative flex items-center">
               <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
@@ -381,13 +364,13 @@ export const HeroSection: React.FC = () => {
               )}
             </div>
 
-            {/* Search Results */}
+            {/* Search Results Dropdown - absolute positioned overlay */}
             {searchResult?.length > 0 && (
-              <div className="flex flex-col mt-3">
+              <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-[#17181a]/95 backdrop-blur-md rounded-2xl border border-[rgba(77,77,78,0.34)] shadow-2xl z-50">
                 <p className="text-sm text-[#8e8e8f] mb-2">
                   {searchResult.length} results found
                 </p>
-                <ul className="flex flex-col gap-2 w-[495px]">
+                <ul className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
                   {searchResult.map((result: SearchResult) => (
                     <div
                       key={result.id}
@@ -487,16 +470,22 @@ export const HeroSection: React.FC = () => {
           </div>
         </div>
 
-        {/* Category Cards */}
-        <div className="flex items-center gap-6">
-          {categories.map((category) => (
-            <CategoryCard
-              key={category.title}
-              title={category.title}
-              subtitle={category.subtitle}
-            />
-          ))}
-        </div>
+        {/* Category Cards OR Selected Part Details */}
+        {selectedPart ? (
+          <div className="flex items-center w-[1000px] bg-[#1F222B] border border-solid border-[#494B59] rounded-3xl p-6">
+            {renderPart()}
+          </div>
+        ) : (
+          <div className="flex items-center gap-6">
+            {categories.map((category) => (
+              <CategoryCard
+                key={category.title}
+                title={category.title}
+                subtitle={category.subtitle}
+              />
+            ))}
+          </div>
+        )}
       </div>
 
       {/* No Result Warning */}
@@ -506,14 +495,6 @@ export const HeroSection: React.FC = () => {
             No result found in internal search. Please enter full part number
             (you can use external system)
           </p>
-        </div>
-      )}
-
-      {/* Selected Part Details */}
-      {/* @ts-expect-error - TODO: fix this */}
-      {selectedPart?.data?.globalPart && (
-        <div className="mt-8 flex items-center w-[1000px] bg-[#1F222B] border border-solid border-[#494B59] rounded-3xl p-6">
-          {renderPart()}
         </div>
       )}
     </section>
