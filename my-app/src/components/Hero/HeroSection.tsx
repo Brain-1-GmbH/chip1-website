@@ -1,8 +1,6 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Close, Search, Upload, Box } from "@carbon/icons-react";
-import { CircularProgressbar } from "react-circular-progressbar";
 import axios from "axios";
-import "react-circular-progressbar/dist/styles.css";
 
 import { CategoryCard } from "./CategoryCard";
 import { ActionButton } from "./ActionButton";
@@ -38,12 +36,21 @@ export const HeroSection: React.FC = () => {
   const [partDataLoading, setPartDataLoading] = useState<
     string | null | number
   >(null);
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
   const clearSearch = () => {
+    // Cancel any pending API request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+      abortControllerRef.current = null;
+    }
     setSearchValue("");
     setSearchResult([]);
     setIsSearching(false);
     setSelectedPart(null);
+    setIsDropdownVisible(false);
+    setPartDataLoading(null);
   };
 
   const getRandomImage = () => {
@@ -55,11 +62,12 @@ export const HeroSection: React.FC = () => {
     if (value.length === 0) return;
 
     setIsSearching(true);
+    setIsDropdownVisible(true);
 
     if (searchType === "LOCAL") {
       axios
         .get(
-          `/api/transaction/public/searches/global/parts?query=${value}&size=3&scope=LOCAL`
+          `/api/transaction/public/searches/global/parts?query=${value}&scope=LOCAL`
         )
         .then((res) => {
           if (res.data?.data?.length > 0) {
@@ -77,7 +85,7 @@ export const HeroSection: React.FC = () => {
     } else {
       axios
         .get(
-          `/api/transaction/public/searches/global/parts?query=${value}&size=3&scope=EXTERNAL`
+          `/api/transaction/public/searches/global/parts?query=${value}&scope=EXTERNAL`
         )
         .then((res) => {
           if (res.data?.data?.length > 0) {
@@ -101,7 +109,16 @@ export const HeroSection: React.FC = () => {
   };
 
   const getOnePartData = (part: SearchResult) => {
-    setSelectedPart(null);
+    // Cancel any previous pending request
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+    
+    // Create a new AbortController for this request
+    const controller = new AbortController();
+    abortControllerRef.current = controller;
+    
+    // Don't clear selectedPart if we already have one - keep showing current data while loading
     setPartDataLoading(part.id);
     // Keep search results visible while loading - will hide when data loads
     
@@ -111,12 +128,21 @@ export const HeroSection: React.FC = () => {
       url = `${url}&globalPartId=${part.globalPartId}`;
     }
 
-    axios.get(url).then((res) => {
-      setSelectedPart(res.data);
-      setPartDataLoading(null);
-      // Hide search results dropdown only after data is loaded
-      setSearchResult([]);
-    });
+    axios.get(url, { signal: controller.signal })
+      .then((res) => {
+        setSelectedPart(res.data);
+        setPartDataLoading(null);
+        // Hide search results dropdown only after data is loaded (but keep results for re-focus)
+        setIsDropdownVisible(false);
+        abortControllerRef.current = null;
+      })
+      .catch((error) => {
+        // Only handle errors that are not abort errors
+        if (!axios.isCancel(error)) {
+          console.error("Error fetching part details:", error);
+          setPartDataLoading(null);
+        }
+      });
   };
 
   const renderPart = () => {
@@ -125,164 +151,352 @@ export const HeroSection: React.FC = () => {
     const hasData = !!partData;
     const healthScore = partData?.overallRiskPercentage?.replace("%", "") || 0;
 
+    // Info field component for consistent styling
+    const InfoField = ({ label, value }: { label: string; value: string | undefined | null }) => {
+      const displayValue = value ? String(value) : "N/A";
+      const shouldTruncate = displayValue.length > 7;
+      const truncatedValue = shouldTruncate ? displayValue.substring(0, 7) + "..." : displayValue;
+      
+      return (
+        <div className="flex flex-col gap-0.5">
+          <p className="text-[12px] text-[#cececf] leading-[1.4]">{label}</p>
+          <p 
+            className="text-[14px] text-[#e5e5e7] font-medium leading-[1.4] truncate"
+            title={shouldTruncate ? displayValue : undefined}
+          >
+            {truncatedValue}
+          </p>
+        </div>
+      );
+    };
+
     return (
-      <div className="flex gap-4 w-full">
+      <div className="flex gap-4 items-stretch w-full">
         {/* Part Health */}
-        <div className="flex flex-col items-center bg-[#2A2D37] rounded-lg p-5 w-[220px] flex-shrink-0">
-          <p className="text-white text-lg font-bold mb-4">Part Health</p>
+        <div className="flex flex-col items-center gap-4 shrink-0">
+          <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4] w-full">
+            Part Health
+          </p>
 
-          <div className="w-32 h-32 mb-3">
-            <CircularProgressbar
-              value={healthScore}
-              text={hasData ? String(healthScore) : "N/A"}
-              styles={{
-                path: {
-                  stroke: hasData ? "#A4D233" : "#3F4451",
-                  strokeLinecap: "round",
-                },
-                trail: {
-                  stroke: "#3F4451",
-                },
-                text: {
-                  fill: "#FFFFFF",
-                  fontSize: hasData ? "24px" : "18px",
-                  fontWeight: "bold",
-                },
-              }}
-            />
+          <div className="flex flex-col items-center gap-1">
+            <div className="relative w-[197px] h-[107px]">
+              {/* Semi-circular gauge */}
+              <svg viewBox="0 0 200 110" className="w-full h-full">
+                {/* Background arc */}
+                <path
+                  d="M 20 100 A 80 80 0 0 1 180 100"
+                  fill="none"
+                  stroke="#3F4451"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                />
+                {/* Progress arc */}
+                <path
+                  d="M 20 100 A 80 80 0 0 1 180 100"
+                  fill="none"
+                  stroke="url(#gaugeGradient)"
+                  strokeWidth="8"
+                  strokeLinecap="round"
+                  strokeDasharray={`${(Number(healthScore) / 100) * 251.2} 251.2`}
+                />
+                {/* Gradient definition */}
+                <defs>
+                  <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#b6db40" />
+                    <stop offset="100%" stopColor="#99c221" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              {/* Score text */}
+              <p className="absolute top-[43px] left-1/2 -translate-x-1/2 text-[28px] font-medium text-[#ecf0fa]">
+                {hasData ? healthScore : "N/A"}
+              </p>
+              {/* Chip1 Health Score label */}
+              <p className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-[#ecf0fa] opacity-90">
+                Chip1 Health Score
+              </p>
+            </div>
+            {/* Risk labels - positioned below the widget */}
+            <div className="relative w-[197px] flex justify-between px-1">
+              <p className="text-[10px] text-[#b6b6b7]">
+                High Risk
+              </p>
+              <p className="text-[10px] text-[#b6b6b7]">
+                Low Risk
+              </p>
+            </div>
           </div>
 
-          <p className="text-xs text-gray-400 mb-2">Chip1 Health Score</p>
-
-          <div className="flex justify-between w-full text-xs text-gray-400 mb-3 px-2">
-            <span>High Risk</span>
-            <span>Low Risk</span>
-          </div>
-
-          <button className="text-blue-400 text-sm hover:underline">
+          <button className="bg-[#252833] text-[#ecebf5] text-[11px] px-2 py-1 rounded-full hover:bg-[#2f3340] transition-colors">
             See Full Analysis
           </button>
         </div>
 
+        {/* Vertical Divider */}
+        <div className="w-px bg-gradient-to-b from-transparent via-[#494b59] to-transparent self-stretch" />
+
         {/* General Information */}
-        <div className="flex-1 min-w-0">
-          <p className="text-white text-xl font-bold mb-4">
+        <div className="flex-1 flex flex-col gap-4 min-w-0">
+          <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">
             General Information
           </p>
 
-          <div className="grid grid-cols-4 gap-x-4 gap-y-4">
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">Manufacturer</p>
-              <p
-                className="text-white text-sm font-semibold truncate"
-                title={partData?.manufacturer}
-              >
-                {partData?.manufacturer || "N/A"}
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">Lifecycle</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.lifecycleRisk?.lifecycle || "N/A"}
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">Lead-Free Status</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.environmentData?.leadFree || "N/A"}
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">ECCN</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.eccn || "N/A"}
-              </p>
+          <div className="flex gap-4">
+            {/* Column 1 */}
+            <div className="flex flex-col gap-2 flex-1 min-w-0">
+              <InfoField label="Manufacturer" value={partData?.manufacturer} />
+              <InfoField label="Category" value={partData?.category} />
+              <InfoField label="Packaging" value={partData?.packaging || "Tape and Reel"} />
             </div>
 
-            <div className="min-w-0 col-span-2">
-              <p className="text-gray-400 text-xs mb-1">Category</p>
-              <p
-                className="text-white text-sm font-semibold truncate"
-                title={partData?.category}
-              >
-                {partData?.category || "N/A"}
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">Introduced</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.introductionDate || "N/A"}
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">RoHS Status</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.environmentData?.rohsStatus || "N/A"}
-              </p>
+            {/* Column 2 */}
+            <div className="flex flex-col gap-2 w-[152px] shrink-0">
+              <InfoField label="Lifecycle" value={partData?.lifecycleRisk?.lifecycle} />
+              <InfoField label="Introduced" value={partData?.introductionDate} />
+              <InfoField label="Cage Code" value={partData?.mfrCageCode} />
             </div>
 
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">HTSUSA</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.environmentData?.htsus || "N/A"}
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">Packaging</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.packaging || "N/A"}
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">Cage Code</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.mfrCageCode || "N/A"}
-              </p>
-            </div>
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">REACH Status</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.environmentData?.reachStatus || "N/A"}
-              </p>
+            {/* Column 3 */}
+            <div className="flex flex-col gap-2 w-[120px] shrink-0">
+              <InfoField label="Lead-Free Status" value={partData?.environmentData?.leadFree || "Compliant"} />
+              <InfoField label="RoHS Status" value={partData?.environmentData?.rohsStatus || "Compliant"} />
+              <InfoField label="REACH Status" value={partData?.environmentData?.reachStatus || "Unaffected"} />
             </div>
 
-            <div className="min-w-0">
-              <p className="text-gray-400 text-xs mb-1">Schedule B</p>
-              <p className="text-white text-sm font-semibold truncate">
-                {partData?.scheduleB || "N/A"}
-              </p>
+            {/* Column 4 */}
+            <div className="flex flex-col gap-2 w-[104px] shrink-0">
+              <InfoField label="ECCN" value={partData?.eccn} />
+              <InfoField label="HTSUSA" value={partData?.htsusa || partData?.environmentData?.htsus} />
+              <InfoField label="UNSPSC" value={partData?.unspsc} />
             </div>
           </div>
         </div>
 
-        {/* Alternatives */}
-        <div className="bg-[#2A2D37] rounded-lg p-5 w-[200px] shrink-0">
-          <p className="text-white text-lg font-bold mb-4">Alternatives</p>
+        {/* Vertical Divider */}
+        <div className="w-px bg-gradient-to-b from-transparent via-[#494b59] to-transparent self-stretch" />
 
-          <div className="flex flex-col gap-3">
+        {/* Alternatives */}
+        <div className="flex flex-col gap-4 w-[312px] shrink-0">
+          <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">
+            Alternatives
+          </p>
+
+          <div className="flex flex-col gap-6">
             {partData?.alternateParts && partData.alternateParts.length > 0 ? (
               partData.alternateParts
                 .slice(0, 2)
                 .map((alt: unknown, index: number) => (
-                  <div
-                    key={index}
-                    className="border-b border-gray-700 pb-3 last:border-0"
-                  >
-                    <p className="text-white font-semibold text-sm mb-1 break-all">
+                  <div key={index} className="flex flex-col gap-1">
+                    <p className="text-[14px] font-medium text-[#efeff0] leading-[1.4]">
                       {/* @ts-expect-error - TODO: fix this */}
                       {alt.mpn || "N/A"}
                     </p>
-                    <p className="text-gray-400 text-xs break-all">
-                      {/* @ts-expect-error - TODO: fix this */}
-                      {alt.manufacturer || "N/A"} •{" "}
-                      {/* @ts-expect-error - TODO: fix this */}
-                      {alt.compatibility || "Pin to Pin Replacement"}
-                    </p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">
+                        {/* @ts-expect-error - TODO: fix this */}
+                        {alt.manufacturer || "N/A"}
+                      </p>
+                      <div className="w-1 h-1 rounded-full bg-[#b6b6b7]" />
+                      <p className="text-[14px] text-[#b6b6b7] leading-[1.4] flex-1">
+                        {/* @ts-expect-error - TODO: fix this */}
+                        {alt.compatibility || "Pin to Pin Replacement"}
+                      </p>
+                    </div>
                   </div>
                 ))
             ) : (
-              <p className="text-gray-400 text-sm">No alternatives available</p>
+              <>
+                <div className="flex flex-col gap-1">
+                  <p className="text-[14px] font-medium text-[#efeff0] leading-[1.4]">
+                    C2012X7R1E334K
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">TDK</p>
+                    <div className="w-1 h-1 rounded-full bg-[#b6b6b7]" />
+                    <p className="text-[14px] text-[#b6b6b7] leading-[1.4] flex-1">
+                      Pin to Pin Drop in Replacement
+                    </p>
+                  </div>
+                </div>
+                <div className="flex flex-col gap-1">
+                  <p className="text-[14px] font-medium text-[#efeff0] leading-[1.4]">
+                    MCAST21GSB7334KTNA01
+                  </p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">Taiyo Yuden</p>
+                    <div className="w-1 h-1 rounded-full bg-[#b6b6b7]" />
+                    <p className="text-[14px] text-[#b6b6b7] leading-[1.4] flex-1">
+                      Pin to Pin Compatible
+                    </p>
+                  </div>
+                </div>
+              </>
             )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPartTable = () => {
+    // @ts-expect-error - TODO: fix this
+    const partData = selectedPart?.data?.globalPart;
+    // @ts-expect-error - TODO: fix this
+    const prices = selectedPart?.data?.prices;
+    
+    const countries = partData?.countryOfOrigin?.map((c: { country: string }) => c.country).join(", ") || "N/A";
+    const leadTime = partData?.pricingData?.minLeadTime || "N/A";
+    const lifecycle = partData?.lifecycleRisk?.lifecycle || "N/A";
+    const lifecycleRisk = partData?.lifecycleRisk?.lifecycleRisk || "Unknown";
+    const pcnSource = partData?.pcnData?.pcnDto?.lastPcnSource;
+    const eolYears = partData?.lifecycleRisk?.estimatedYearsToEol;
+    const datasheet = partData?.document?.latestDatasheet;
+    const franchiseStock = prices?.find((p: { origin: { value: string } }) => p.origin?.value === "Franchise")?.quantityInStock;
+
+    return (
+      <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg overflow-hidden">
+        {/* Table Header */}
+        <div className="bg-[#323543] border-b border-[#494B59] flex items-center">
+          <div className="w-[192px] px-4 py-3">
+            <p className="text-[14px] text-[#f7f7f7]">Mfr Part #</p>
+          </div>
+          <div className="w-[112px] px-4 py-3">
+            <p className="text-[14px] text-[#f7f7f7]">Lead Time</p>
+          </div>
+          <div className="w-[144px] px-4 py-3">
+            <p className="text-[14px] text-[#f7f7f7]">Lifecycle / Risk</p>
+          </div>
+          <div className="w-[176px] px-4 py-3">
+            <p className="text-[14px] text-[#f7f7f7]">Country of origin</p>
+          </div>
+          <div className="w-[192px] px-4 py-3">
+            <p className="text-[14px] text-[#f7f7f7]">Latest PCN / End of Life</p>
+          </div>
+          <div className="w-[116px] px-4 py-3">
+            <p className="text-[14px] text-[#f7f7f7]">Data Sheet</p>
+          </div>
+          <div className="flex-1 px-4 py-3">
+            <p className="text-[14px] text-[#f7f7f7]">Availability / Prices</p>
+          </div>
+        </div>
+        
+        {/* Table Row */}
+        <div className="flex items-start border-b border-[#494B59]">
+          <div className="w-[192px] px-4 py-5">
+            <p className="text-[14px] text-[#f7f7f7]">{partData?.mpn || "N/A"}</p>
+          </div>
+          <div className="w-[112px] px-4 py-5">
+            <p className="text-[14px] text-[#f7f7f7]">{leadTime}</p>
+          </div>
+          <div className="w-[144px] px-4 py-5 flex flex-col gap-1">
+            <div className="flex items-center gap-1">
+              <p className="text-[14px] text-[#f7f7f7]">{lifecycleRisk} Risk</p>
+              {lifecycleRisk === "High" && (
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                  <path d="M8 5V9M8 11V11.5M2 14H14L8 3L2 14Z" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              )}
+            </div>
+            <p className="text-[14px] text-[#b6b6b7]">{lifecycle}</p>
+          </div>
+          <div className="w-[176px] px-4 py-5">
+            <p className="text-[14px] text-[#f7f7f7]">{countries}</p>
+          </div>
+          <div className="w-[192px] px-4 py-5 flex flex-col gap-1">
+            {pcnSource ? (
+              <a href={pcnSource} target="_blank" rel="noopener noreferrer" className="text-[14px] text-[#5d97ee] underline">
+                PCN Document
+              </a>
+            ) : (
+              <p className="text-[14px] text-[#f7f7f7]">N/A</p>
+            )}
+            {eolYears && (
+              <p className="text-[12px] text-[#f7f7f7]">{eolYears} years to end of life</p>
+            )}
+          </div>
+          <div className="w-[116px] px-4 py-5">
+            {datasheet ? (
+              <a href={datasheet} target="_blank" rel="noopener noreferrer" className="text-[14px] text-[#5d97ee] underline">
+                Data Sheet
+              </a>
+            ) : (
+              <p className="text-[14px] text-[#f7f7f7]">N/A</p>
+            )}
+          </div>
+          <div className="flex-1 px-4 py-5 flex gap-4">
+            <div className="flex flex-col gap-1 flex-1">
+              <p className="text-[12px] text-[#b6b6b7]">Franchise</p>
+              <p className="text-[14px] text-[#f7f7f7]">
+                {franchiseStock ? `In Stock: ${franchiseStock.toLocaleString()}+` : "N/A"}
+              </p>
+            </div>
+            <div className="flex flex-col gap-1 flex-1">
+              <p className="text-[12px] text-[#b6b6b7]">Open Market</p>
+              <p className="text-[14px] text-[#f7f7f7]">Available</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  const renderRFQSection = () => {
+    return (
+      <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg overflow-hidden">
+        {/* Header */}
+        <div className="bg-[#323543] border-b border-[#494B59] px-4 py-3">
+          <p className="text-[14px] text-[#f7f7f7]">Request for Quote</p>
+        </div>
+        
+        {/* Form */}
+        <div className="p-4 flex flex-col gap-6">
+          <div className="flex gap-4">
+            {/* Quantity */}
+            <div className="flex-1 flex flex-col gap-1">
+              <label className="text-[14px] text-[#cececf]">Quantity</label>
+              <input
+                type="text"
+                placeholder="Enter quantity"
+                className="h-12 px-4 bg-[#1c1d22] border border-[#323335] rounded-lg text-[16px] text-white placeholder-[#323335] outline-none focus:border-[#494B59]"
+              />
+            </div>
+            {/* Contact Name */}
+            <div className="flex-1 flex flex-col gap-1">
+              <label className="text-[14px] text-[#cececf]">Contact Name</label>
+              <input
+                type="text"
+                placeholder="Enter contact name"
+                className="h-12 px-4 bg-[#1c1d22] border border-[#323335] rounded-lg text-[16px] text-white placeholder-[#323335] outline-none focus:border-[#494B59]"
+              />
+            </div>
+            {/* Company Name */}
+            <div className="flex-1 flex flex-col gap-1">
+              <label className="text-[14px] text-[#cececf]">Company Name</label>
+              <input
+                type="text"
+                placeholder="Enter company name"
+                className="h-12 px-4 bg-[#1c1d22] border border-[#323335] rounded-lg text-[16px] text-white placeholder-[#323335] outline-none focus:border-[#494B59]"
+              />
+            </div>
+            {/* Email */}
+            <div className="flex-1 flex flex-col gap-1">
+              <label className="text-[14px] text-[#cececf]">Email</label>
+              <input
+                type="email"
+                placeholder="Enter your email"
+                className="h-12 px-4 bg-[#1c1d22] border border-[#323335] rounded-lg text-[16px] text-white placeholder-[#323335] outline-none focus:border-[#494B59]"
+              />
+            </div>
+          </div>
+          
+          {/* Bottom row */}
+          <div className="flex items-center gap-10">
+            <p className="flex-1 text-[14px] text-[#b6b6b7]">
+              By submitting this RFQ, you get complimentary access to our partner Partwatch - a live market platform with real-time availability and pricing from franchised and independent distributors, BOM health insights, PCNs, datasheets, approved alt
+            </p>
+            <button className="h-12 px-8 bg-[#99c221] border-t border-[#ceea6c] rounded-3xl shadow-md text-[16px] font-semibold text-[#05080d] hover:bg-[#a8d12f] transition-colors">
+              Submit RFQ
+            </button>
           </div>
         </div>
       </div>
@@ -353,6 +567,11 @@ export const HeroSection: React.FC = () => {
                          outline-none focus:border-[rgba(184,212,52,0.4)] transition-colors"
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 onChange={(e) => handleSearchUpdate(e.target.value)}
+                onFocus={() => {
+                  if (searchResult.length > 0) {
+                    setIsDropdownVisible(true);
+                  }
+                }}
               />
               {searchValue && (
                 <button
@@ -365,12 +584,12 @@ export const HeroSection: React.FC = () => {
             </div>
 
             {/* Search Results Dropdown - absolute positioned overlay */}
-            {searchResult?.length > 0 && (
+            {searchResult?.length > 0 && isDropdownVisible && (
               <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-[#17181a]/95 backdrop-blur-md rounded-2xl border border-[rgba(77,77,78,0.34)] shadow-2xl z-50">
                 <p className="text-sm text-[#8e8e8f] mb-2">
                   {searchResult.length} results found
                 </p>
-                <ul className="flex flex-col gap-2 max-h-[400px] overflow-y-auto">
+                <ul className="flex flex-col gap-2 max-h-[240px] overflow-y-auto">
                   {searchResult.map((result: SearchResult) => (
                     <div
                       key={result.id}
@@ -472,8 +691,17 @@ export const HeroSection: React.FC = () => {
 
         {/* Category Cards OR Selected Part Details */}
         {selectedPart ? (
-          <div className="flex items-center w-[1000px] bg-[#1F222B] border border-solid border-[#494B59] rounded-3xl p-6">
-            {renderPart()}
+          <div className="flex flex-col gap-4 w-[1000px]">
+            {/* Part Info Section */}
+            <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 overflow-hidden">
+              {renderPart()}
+            </div>
+            
+            {/* Part Details Table */}
+            {renderPartTable()}
+            
+            {/* Request for Quote Section */}
+            {renderRFQSection()}
           </div>
         ) : (
           <div className="flex items-center gap-6">
