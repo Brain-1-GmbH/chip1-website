@@ -1,12 +1,32 @@
 import React, { useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { Close, Search, Upload, Box } from "@carbon/icons-react";
 import axios from "axios";
 
 import { CategoryCard } from "./CategoryCard";
 import { ActionButton } from "./ActionButton";
 import { SimpleLoader } from "../UI/SimpleLoader";
-import { Switch } from "../UI/Switch";
-import { images } from "../../images";
+
+// Utility function to save API response to JSON file
+const saveApiResponseToFile = (data: unknown, partId: string, mpn?: string) => {
+  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+  const filename = mpn 
+    ? `api-response-${mpn.replace(/[^a-z0-9]/gi, '_')}-${partId}-${timestamp}.json`
+    : `api-response-${partId}-${timestamp}.json`;
+  
+  const jsonString = JSON.stringify(data, null, 2);
+  const blob = new Blob([jsonString], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  
+  URL.revokeObjectURL(url);
+};
 
 interface SearchResult {
   id: string;
@@ -28,10 +48,12 @@ const categories = [
 ];
 
 export const HeroSection: React.FC = () => {
+  const navigate = useNavigate();
   const [searchValue, setSearchValue] = useState("");
   const [isSearching, setIsSearching] = useState(false);
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
-  const [searchType, setSearchType] = useState<"LOCAL" | "EXTERNAL">("LOCAL");
+  const [hasExternalResults, setHasExternalResults] = useState(false);
+  const [isLoadingExternal, setIsLoadingExternal] = useState(false);
   const [selectedPart, setSelectedPart] = useState<unknown | null>(null);
   const [partDataLoading, setPartDataLoading] = useState<
     string | null | number
@@ -51,56 +73,82 @@ export const HeroSection: React.FC = () => {
     setSelectedPart(null);
     setIsDropdownVisible(false);
     setPartDataLoading(null);
+    setHasExternalResults(false);
+    setIsLoadingExternal(false);
   };
 
-  const getRandomImage = () => {
-    if (images.length === 0) return "";
-    return images[Math.floor(Math.random() * images.length)];
-  };
 
   const handleSearch = (value: string) => {
     if (value.length === 0) return;
 
     setIsSearching(true);
     setIsDropdownVisible(true);
+    setHasExternalResults(false);
+    setIsLoadingExternal(false);
 
-    if (searchType === "LOCAL") {
-      axios
-        .get(
-          `/api/transaction/public/searches/global/parts?query=${value}&scope=LOCAL`
-        )
-        .then((res) => {
-          if (res.data?.data?.length > 0) {
-            setSearchResult(
-              res.data?.data.map((item: SearchResult) => ({
-                ...item,
-                imagePath: getRandomImage(),
-                type: "LOCAL",
-              }))
+    // Always search LOCAL by default
+    axios
+      .get(
+        `/api/transaction/public/searches/global/parts?query=${value}&scope=LOCAL`
+      )
+      .then((res) => {
+        if (res.data?.data?.length > 0) {
+          setSearchResult(
+            res.data?.data.map((item: SearchResult) => ({
+              ...item,
+              imagePath: "",
+              type: "LOCAL",
+            }))
+          );
+        } else {
+          setSearchResult([]);
+        }
+
+        setIsSearching(false);
+      })
+      .catch(() => {
+        setIsSearching(false);
+        setSearchResult([]);
+      });
+  };
+
+  const handleExternalSearch = (value: string) => {
+    if (value.length === 0 || hasExternalResults || isLoadingExternal) return;
+
+    setIsLoadingExternal(true);
+
+    axios
+      .get(
+        `/api/transaction/public/searches/global/parts?query=${value}&scope=EXTERNAL`
+      )
+      .then((res) => {
+        if (res.data?.data?.length > 0) {
+          const externalResults = res.data?.data.map((item: SearchResult) => ({
+            ...item,
+            imagePath: "",
+            type: "EXTERNAL",
+          }));
+          
+          // Merge external results with existing local results
+          // Filter out duplicates based on id or mpn
+          setSearchResult((prev) => {
+            const existingIds = new Set(prev.map(r => r.id));
+            const existingMpns = new Set(prev.map(r => r.mpn.toLowerCase()));
+            
+            const newExternalResults = externalResults.filter(
+              (ext: SearchResult) => !existingIds.has(ext.id) && !existingMpns.has(ext.mpn.toLowerCase())
             );
-          }
+            
+            return [...prev, ...newExternalResults];
+          });
+        }
 
-          setIsSearching(false);
-        });
-    } else {
-      axios
-        .get(
-          `/api/transaction/public/searches/global/parts?query=${value}&scope=EXTERNAL`
-        )
-        .then((res) => {
-          if (res.data?.data?.length > 0) {
-            setSearchResult(
-              res.data?.data.map((item: SearchResult) => ({
-                ...item,
-                imagePath: getRandomImage(),
-                type: "EXTERNAL",
-              }))
-            );
-          }
-
-          setIsSearching(false);
-        });
-    }
+        setHasExternalResults(true);
+        setIsLoadingExternal(false);
+      })
+      .catch(() => {
+        setIsLoadingExternal(false);
+      });
   };
 
   const handleSearchUpdate = (newValue: string) => {
@@ -135,6 +183,10 @@ export const HeroSection: React.FC = () => {
         // Hide search results dropdown only after data is loaded (but keep results for re-focus)
         setIsDropdownVisible(false);
         abortControllerRef.current = null;
+        
+        // Save API response to JSON file
+        const mpn = part.mpn || (res.data?.data?.globalPart?.mpn);
+        saveApiResponseToFile(res.data, part.id, mpn);
       })
       .catch((error) => {
         // Only handle errors that are not abort errors
@@ -283,7 +335,24 @@ export const HeroSection: React.FC = () => {
 
           <div className="flex flex-col gap-6">
             {partData?.alternateParts && partData.alternateParts.length > 0 ? (
-              partData.alternateParts
+              [...partData.alternateParts]
+                .sort((a: unknown, b: unknown) => {
+                  // @ts-expect-error - TODO: fix this
+                  const aCompat = (a.compatibility || "").toLowerCase();
+                  // @ts-expect-error - TODO: fix this
+                  const bCompat = (b.compatibility || "").toLowerCase();
+                  
+                  // Check if compatibility contains "drop" (for "drop-in" or "drop in")
+                  const aIsDropIn = aCompat.includes("drop");
+                  const bIsDropIn = bCompat.includes("drop");
+                  
+                  // Pin-to-pin drop-in replacements should come first
+                  if (aIsDropIn && !bIsDropIn) return -1;
+                  if (!aIsDropIn && bIsDropIn) return 1;
+                  
+                  // If both or neither are drop-in, maintain original order
+                  return 0;
+                })
                 .slice(0, 2)
                 .map((alt: unknown, index: number) => (
                   <div key={index} className="flex flex-col gap-1">
@@ -567,6 +636,11 @@ export const HeroSection: React.FC = () => {
                          outline-none focus:border-[rgba(184,212,52,0.4)] transition-colors"
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 onChange={(e) => handleSearchUpdate(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && searchValue.length > 0 && !hasExternalResults) {
+                    handleExternalSearch(searchValue);
+                  }
+                }}
                 onFocus={() => {
                   if (searchResult.length > 0) {
                     setIsDropdownVisible(true);
@@ -586,6 +660,11 @@ export const HeroSection: React.FC = () => {
             {/* Search Results Dropdown - absolute positioned overlay */}
             {searchResult?.length > 0 && isDropdownVisible && (
               <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-[#17181a]/95 backdrop-blur-md rounded-2xl border border-[rgba(77,77,78,0.34)] shadow-2xl z-50">
+                {!hasExternalResults && (
+                  <p className="text-sm text-[#8e8e8f] mb-2">
+                    {isLoadingExternal ? "Loading extended results..." : "Press enter to view extended results"}
+                  </p>
+                )}
                 <p className="text-sm text-[#8e8e8f] mb-2">
                   {searchResult.length} results found
                 </p>
@@ -599,11 +678,9 @@ export const HeroSection: React.FC = () => {
                     >
                       {result.type === "LOCAL" && (
                         <>
-                          <img
-                            src={result.imagePath}
-                            alt={result.mpn}
-                            className="w-10 h-10 rounded-lg object-cover"
-                          />
+                          <div className="w-10 h-10 rounded-lg bg-[#323543] flex items-center justify-center shrink-0">
+                            <Box size={20} className="text-[#8e8e8f]" />
+                          </div>
                           <div className="flex flex-col flex-1 min-w-0">
                             <p className="text-sm font-semibold text-[#efeff0] truncate">
                               {result.mpn}
@@ -626,19 +703,9 @@ export const HeroSection: React.FC = () => {
                       )}
                       {result.type === "EXTERNAL" && (
                         <>
-                          {result?.images?.length && result.images.length > 0 ? (
-                            <img
-                              src={result.images[0]}
-                              alt={result.mpn}
-                              className="w-10 h-10 rounded-lg object-cover"
-                            />
-                          ) : (
-                            <img
-                              src={result.imagePath}
-                              alt={result.mpn}
-                              className="w-10 h-10 rounded-lg object-cover"
-                            />
-                          )}
+                          <div className="w-10 h-10 rounded-lg bg-[#323543] flex items-center justify-center shrink-0">
+                            <Box size={20} className="text-[#8e8e8f]" />
+                          </div>
                           <div className="flex flex-col flex-1 min-w-0">
                             <p className="text-sm font-semibold text-[#efeff0] truncate">
                               {result.mpn}
@@ -672,20 +739,8 @@ export const HeroSection: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2 flex-wrap justify-center">
-            <ActionButton icon={<Upload size={18} />} label="Upload a BOM" />
-            <ActionButton icon={<Box size={18} />} label="Sell excess" />
-          </div>
-
-          {/* Search Type Toggle */}
-          <div className="flex items-center gap-3">
-            <p className="text-sm text-[#8e8e8f]">LOCAL</p>
-            <Switch
-              checked={searchType === "EXTERNAL"}
-              onChange={(checked: boolean) =>
-                setSearchType(checked ? "EXTERNAL" : "LOCAL")
-              }
-            />
-            <p className="text-sm text-[#8e8e8f]">EXTERNAL</p>
+            <ActionButton icon={<Upload size={18} />} label="Upload a BOM" onClick={() => navigate("/upload-bom")} />
+            <ActionButton icon={<Box size={18} />} label="Sell excess" onClick={() => navigate("/sell-excess")} />
           </div>
         </div>
 
@@ -715,16 +770,6 @@ export const HeroSection: React.FC = () => {
           </div>
         )}
       </div>
-
-      {/* No Result Warning */}
-      {!searchType && (
-        <div className="mt-4 flex flex-col items-center justify-center w-[500px]">
-          <p className="text-sm text-red-500 text-center">
-            No result found in internal search. Please enter full part number
-            (you can use external system)
-          </p>
-        </div>
-      )}
     </section>
   );
 };

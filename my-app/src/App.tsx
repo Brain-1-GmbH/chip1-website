@@ -7,6 +7,8 @@ import { ProductsPage } from "./pages/Products/ProductsPage";
 import { IndustriesPage } from "./pages/Industries/IndustriesPage";
 import { QualityPage } from "./pages/Quality/QualityPage";
 import { InsightsPage } from "./pages/Insights/InsightsPage";
+import { UploadBOMPage } from "./pages/UploadBOM/UploadBOMPage";
+import { SellExcessPage } from "./pages/SellExcess/SellExcessPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 
 import "./App.css";
@@ -24,6 +26,8 @@ function App() {
         <Route path="/industries" element={<IndustriesPage />} />
         <Route path="/quality" element={<QualityPage />} />
         <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/upload-bom" element={<UploadBOMPage />} />
+        <Route path="/sell-excess" element={<SellExcessPage />} />
       </Routes>
     </Router>
   );
