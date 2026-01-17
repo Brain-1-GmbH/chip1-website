@@ -6,6 +6,7 @@ import {
   LogoLinkedin,
   LogoYoutube,
 } from "@carbon/icons-react";
+import logoImg from "../../assets/alpha_logo.png";
 
 const quickLinks = [
   { label: "Company", href: "#" },
@@ -37,29 +38,12 @@ export const Footer: React.FC = () => {
           {/* Left - Logo and Description */}
           <div className="flex flex-col gap-6 w-[420px]">
             {/* Logo */}
-            <a href="/" className="flex items-center gap-1">
-              <svg
-                width="32"
-                height="32"
-                viewBox="0 0 28 28"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-                <path
-                  d="M4.5 4.5L14 14M14 14L23.5 4.5M14 14L4.5 23.5M14 14L23.5 23.5"
-                  stroke="#B8D434"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                />
-                <circle cx="4.5" cy="4.5" r="2" fill="#B8D434" />
-                <circle cx="23.5" cy="4.5" r="2" fill="#B8D434" />
-                <circle cx="4.5" cy="23.5" r="2" fill="#B8D434" />
-                <circle cx="23.5" cy="23.5" r="2" fill="#B8D434" />
-                <circle cx="14" cy="14" r="2.5" fill="#B8D434" />
-              </svg>
-              <span className="text-white text-2xl font-semibold tracking-tight">
-                Chip<span className="text-white">1</span>
-              </span>
+            <a href="/" className="flex items-center">
+              <img
+                src={logoImg}
+                alt="Chip1 Logo"
+                className="h-12 w-auto"
+              />
             </a>
 
             {/* Description */}

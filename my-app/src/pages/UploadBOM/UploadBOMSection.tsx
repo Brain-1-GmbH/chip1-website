@@ -2,7 +2,8 @@ import React, { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Document, Close, ChevronDown, Checkmark } from "@carbon/icons-react";
 import { DatePicker } from "../../components/UI/DatePicker";
-import warehouseImg from "../../assets/Frame 41.png";
+import { CustomDropdown } from "../../components/UI/CustomDropdown";
+import companyBg from "../../assets/Picture-1.png";
 
 interface ProjectFormData {
   projectName: string;
@@ -148,7 +149,7 @@ export const UploadBOMSection: React.FC = () => {
 
         {/* Description */}
         <p className="text-sm text-[#b6b6b7] leading-[1.5]" style={{ fontFamily: "Inter, sans-serif" }}>
-          Upload your Bill of Materials file to continue. Once the project is created, additional parts can be added at any time.
+          You may skip this step. Once the project is created, additional parts can be added at any time.
         </p>
       </div>
 
@@ -285,40 +286,32 @@ export const UploadBOMSection: React.FC = () => {
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
               Project Type
             </label>
-            <div className="relative">
-              <select
-                value={formData.projectType}
-                onChange={(e) => handleInputChange("projectType", e.target.value)}
-                className={`w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm outline-none focus:border-[#99c221] transition-colors appearance-none cursor-pointer ${formData.projectType ? "text-[#f7f7f7]" : "text-[#8e8e8f]"}`}
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
-                <option value="" disabled>Select project type</option>
-                <option value="BoM (Sourcing/Purchasing)">BoM (Sourcing/Purchasing)</option>
-                <option value="RFQ">RFQ</option>
-                <option value="Inventory">Inventory</option>
-              </select>
-              <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8e8e8f] pointer-events-none" />
-            </div>
+            <CustomDropdown
+              value={formData.projectType}
+              onChange={(value) => handleInputChange("projectType", value)}
+              options={[
+                { value: "BoM (Sourcing/Purchasing)", label: "BoM (Sourcing/Purchasing)" },
+                { value: "RFQ", label: "RFQ" },
+                { value: "Inventory", label: "Inventory" },
+              ]}
+              placeholder="Select project type"
+            />
           </div>
 
           <div className="flex-1 flex flex-col gap-1">
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
               BoM Type
             </label>
-            <div className="relative">
-              <select
-                value={formData.bomType}
-                onChange={(e) => handleInputChange("bomType", e.target.value)}
-                className={`w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm outline-none focus:border-[#99c221] transition-colors appearance-none cursor-pointer ${formData.bomType ? "text-[#f7f7f7]" : "text-[#8e8e8f]"}`}
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
-                <option value="" disabled>Select BoM type</option>
-                <option value="Standard">Standard</option>
-                <option value="Multi-level">Multi-level</option>
-                <option value="Configurable">Configurable</option>
-              </select>
-              <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8e8e8f] pointer-events-none" />
-            </div>
+            <CustomDropdown
+              value={formData.bomType}
+              onChange={(value) => handleInputChange("bomType", value)}
+              options={[
+                { value: "Standard", label: "Standard" },
+                { value: "Multi-level", label: "Multi-level" },
+                { value: "Configurable", label: "Configurable" },
+              ]}
+              placeholder="Select BoM type"
+            />
           </div>
         </div>
 
@@ -328,20 +321,16 @@ export const UploadBOMSection: React.FC = () => {
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
               Production Stage
             </label>
-            <div className="relative">
-              <select
-                value={formData.productionStage}
-                onChange={(e) => handleInputChange("productionStage", e.target.value)}
-                className={`w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm outline-none focus:border-[#99c221] transition-colors appearance-none cursor-pointer ${formData.productionStage ? "text-[#f7f7f7]" : "text-[#8e8e8f]"}`}
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
-                <option value="" disabled>Select stage</option>
-                <option value="Prototype">Prototype</option>
-                <option value="Pre-production">Pre-production</option>
-                <option value="Production">Production</option>
-              </select>
-              <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8e8e8f] pointer-events-none" />
-            </div>
+            <CustomDropdown
+              value={formData.productionStage}
+              onChange={(value) => handleInputChange("productionStage", value)}
+              options={[
+                { value: "Prototype", label: "Prototype" },
+                { value: "Pre-production", label: "Pre-production" },
+                { value: "Production", label: "Production" },
+              ]}
+              placeholder="Select stage"
+            />
           </div>
 
           <div className="flex-1 flex flex-col gap-1">
@@ -539,8 +528,8 @@ export const UploadBOMSection: React.FC = () => {
           
           <div className="w-full h-[473px] rounded-2xl overflow-hidden bg-[#1a1a1b]">
             <img
-              src={warehouseImg}
-              alt="Warehouse facility"
+              src={companyBg}
+              alt="Company building"
               className="w-full h-full object-cover"
             />
           </div>

@@ -2,7 +2,8 @@ import React, { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowLeft, Download, Document, Close, ChevronDown, Checkmark } from "@carbon/icons-react";
 import { DatePicker } from "../../components/UI/DatePicker";
-import warehouseImg from "../../assets/Frame 41.png";
+import { CustomDropdown } from "../../components/UI/CustomDropdown";
+import companyBg from "../../assets/Picture-1.png";
 
 interface ExcessFormData {
   projectName: string;
@@ -159,12 +160,12 @@ export const SellExcessSection: React.FC = () => {
           className="text-[32px] font-medium text-[#efeff0] leading-[1.4]"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
-          Upload your Inventory
+          Upload Excess
         </h1>
 
         {/* Description */}
         <p className="text-sm text-[#b6b6b7] leading-[1.5]" style={{ fontFamily: "Inter, sans-serif" }}>
-          Upload your excess inventory file to continue. Once the project is created, additional parts can be added at any time.
+          You may skip this step. Once the project is created, additional parts can be added at any time.
         </p>
       </div>
 
@@ -301,17 +302,12 @@ export const SellExcessSection: React.FC = () => {
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
               Project Type
             </label>
-            <div className="relative">
-              <select
-                value={formData.projectType}
-                onChange={(e) => handleInputChange("projectType", e.target.value)}
-                className="w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] outline-none focus:border-[#99c221] transition-colors appearance-none cursor-pointer"
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
-                <option value="Excess (Sales)">Excess (Sales)</option>
-              </select>
-              <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8e8e8f] pointer-events-none" />
-            </div>
+            <CustomDropdown
+              value={formData.projectType}
+              onChange={(value) => handleInputChange("projectType", value)}
+              options={[{ value: "Excess (Sales)", label: "Excess (Sales)" }]}
+              placeholder="Select"
+            />
           </div>
 
           <div className="flex-1 flex flex-col gap-1">
@@ -346,20 +342,16 @@ export const SellExcessSection: React.FC = () => {
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
               Inventory Owner
             </label>
-            <div className="relative">
-              <select
-                value={formData.inventoryOwner}
-                onChange={(e) => handleInputChange("inventoryOwner", e.target.value)}
-                className={`w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm outline-none focus:border-[#99c221] transition-colors appearance-none cursor-pointer ${formData.inventoryOwner ? "text-[#f7f7f7]" : "text-[#8e8e8f]"}`}
-                style={{ fontFamily: "Inter, sans-serif" }}
-              >
-                <option value="" disabled>Select</option>
-                <option value="Company">Company</option>
-                <option value="Individual">Individual</option>
-                <option value="Third Party">Third Party</option>
-              </select>
-              <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8e8e8f] pointer-events-none" />
-            </div>
+            <CustomDropdown
+              value={formData.inventoryOwner}
+              onChange={(value) => handleInputChange("inventoryOwner", value)}
+              options={[
+                { value: "Company", label: "Company" },
+                { value: "Individual", label: "Individual" },
+                { value: "Third Party", label: "Third Party" },
+              ]}
+              placeholder="Select"
+            />
           </div>
         </div>
 
@@ -554,13 +546,13 @@ export const SellExcessSection: React.FC = () => {
         {/* Left Column - Info & Image */}
         <div className="w-[58%] flex flex-col gap-6 justify-center pr-10 py-10">
           <p className="text-base text-[#cececf] leading-[1.5]" style={{ fontFamily: "Inter, sans-serif" }}>
-            Sell your excess inventory through Chip 1 Exchange. We connect you with qualified buyers worldwide, helping you recover value from surplus electronic components with full traceability and competitive pricing.
+            By submitting this RFQ, you get complimentary access to our partner Partwatch - a live market platform with real-time availability and pricing from franchised and independent distributors, BOM health insights, PCNs, datasheets, approved alt
           </p>
           
           <div className="w-full h-[473px] rounded-2xl overflow-hidden bg-[#1a1a1b]">
             <img
-              src={warehouseImg}
-              alt="Warehouse facility"
+              src={companyBg}
+              alt="Company building"
               className="w-full h-full object-cover"
             />
           </div>
