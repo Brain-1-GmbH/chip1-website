@@ -1,6 +1,6 @@
 import React, { useState, useRef, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Download, Document, Close, ChevronDown, Checkmark } from "@carbon/icons-react";
+import { ArrowLeft, Download, Document, Close, Checkmark } from "@carbon/icons-react";
 import { DatePicker } from "../../components/UI/DatePicker";
 import { CustomDropdown } from "../../components/UI/CustomDropdown";
 import companyBg from "../../assets/Picture-1.png";
