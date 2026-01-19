@@ -6,12 +6,12 @@ import tailwindcss from '@tailwindcss/vite'
 export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
-    proxy: {
-      '/api': {
-        target: 'https://stage.chip1.info',
-        changeOrigin: true,
-        secure: false,
+      proxy: {
+        '/api': {
+          target: 'https://crm.chip1.com',
+          changeOrigin: true,
+          secure: false,
+        }
       }
-    }
   }
 })
