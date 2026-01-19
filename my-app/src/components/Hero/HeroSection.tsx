@@ -7,27 +7,6 @@ import { CategoryCard } from "./CategoryCard";
 import { ActionButton } from "./ActionButton";
 import { SimpleLoader } from "../UI/SimpleLoader";
 
-// Utility function to save API response to JSON file
-const saveApiResponseToFile = (data: unknown, partId: string, mpn?: string) => {
-  const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-  const filename = mpn 
-    ? `api-response-${mpn.replace(/[^a-z0-9]/gi, '_')}-${partId}-${timestamp}.json`
-    : `api-response-${partId}-${timestamp}.json`;
-  
-  const jsonString = JSON.stringify(data, null, 2);
-  const blob = new Blob([jsonString], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = filename;
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-  
-  URL.revokeObjectURL(url);
-};
-
 interface SearchResult {
   id: string;
   searchDescription?: string;
@@ -183,10 +162,6 @@ export const HeroSection: React.FC = () => {
         // Hide search results dropdown only after data is loaded (but keep results for re-focus)
         setIsDropdownVisible(false);
         abortControllerRef.current = null;
-        
-        // Save API response to JSON file
-        const mpn = part.mpn || (res.data?.data?.globalPart?.mpn);
-        saveApiResponseToFile(res.data, part.id, mpn);
       })
       .catch((error) => {
         // Only handle errors that are not abort errors
