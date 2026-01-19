@@ -66,29 +66,29 @@ export const HeroSection: React.FC = () => {
     setIsLoadingExternal(false);
 
     // Always search LOCAL by default
-    axios
-      .get(
-        `/api/transaction/public/searches/global/parts?query=${value}&scope=LOCAL`
-      )
-      .then((res) => {
-        if (res.data?.data?.length > 0) {
-          setSearchResult(
-            res.data?.data.map((item: SearchResult) => ({
-              ...item,
+      axios
+        .get(
+          `/api/transaction/public/searches/global/parts?query=${value}&size=10&scope=LOCAL`
+        )
+        .then((res) => {
+          if (res.data?.data?.length > 0) {
+            setSearchResult(
+              res.data?.data.map((item: SearchResult) => ({
+                ...item,
               imagePath: "",
-              type: "LOCAL",
-            }))
-          );
+                type: "LOCAL",
+              }))
+            );
         } else {
           setSearchResult([]);
-        }
+          }
 
-        setIsSearching(false);
+          setIsSearching(false);
       })
       .catch(() => {
         setIsSearching(false);
         setSearchResult([]);
-      });
+        });
   };
 
   const handleExternalSearch = (value: string) => {
@@ -96,16 +96,16 @@ export const HeroSection: React.FC = () => {
 
     setIsLoadingExternal(true);
 
-    axios
-      .get(
-        `/api/transaction/public/searches/global/parts?query=${value}&scope=EXTERNAL`
-      )
-      .then((res) => {
-        if (res.data?.data?.length > 0) {
+      axios
+        .get(
+          `/api/transaction/public/searches/global/parts?query=${value}&size=10&scope=EXTERNAL`
+        )
+        .then((res) => {
+          if (res.data?.data?.length > 0) {
           const externalResults = res.data?.data.map((item: SearchResult) => ({
-            ...item,
+                ...item,
             imagePath: "",
-            type: "EXTERNAL",
+                type: "EXTERNAL",
           }));
           
           // Merge external results with existing local results

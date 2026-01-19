@@ -1,8 +1,12 @@
 {
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://crm.chip1.com/api/:path*"
+      "source": "/api/transaction/:path*",
+      "destination": "https://my.chip1.com/api/transaction/:path*"
+    },
+    {
+      "source": "/api/part/:path*",
+      "destination": "https://crm.chip1.com/api/part/:path*"
     }
   ]
 }
