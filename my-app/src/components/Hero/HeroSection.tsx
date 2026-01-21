@@ -175,8 +175,10 @@ export const HeroSection: React.FC = () => {
   const renderPart = () => {
     // @ts-expect-error - TODO: fix this
     const partData = selectedPart?.data?.globalPart;
+    // @ts-expect-error - TODO: fix this
+    const partInfo = selectedPart?.data?.part;
     const hasData = !!partData;
-    const healthScore = partData?.overallRiskPercentage?.replace("%", "") || 0;
+    const healthScore = partInfo?.chip1HealthScore ?? 0;
 
     // Info field component for consistent styling
     const InfoField = ({ label, value }: { label: string; value: string | undefined | null }) => {
