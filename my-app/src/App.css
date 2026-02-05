@@ -52,3 +52,9 @@
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* Header background - solid black */
+header {
+  background-color: #0E0E0F !important;
+  background: #0E0E0F !important;
+}

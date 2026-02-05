@@ -18,7 +18,14 @@ export const Header: React.FC = () => {
   const location = useLocation();
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 flex items-center px-10 py-5">
+    <header 
+      className="fixed top-0 left-0 right-0 z-50 flex items-center px-10 py-5"
+      style={{ 
+        backgroundColor: '#0E0E0F',
+        background: '#0E0E0F',
+        width: '100%'
+      }}
+    >
       {/* Logo */}
       <Link to="/" className="flex items-center gap-1 flex-shrink-0">
         <img

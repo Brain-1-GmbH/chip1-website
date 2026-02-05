@@ -51,33 +51,67 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm outline-none focus:border-[#99c221] transition-colors appearance-none cursor-pointer text-left flex items-center justify-between ${
-          value ? "text-[#f7f7f7]" : "text-[#8e8e8f]"
-        } ${disabled ? "opacity-50 cursor-not-allowed" : ""}`}
-        style={{ fontFamily: "Inter, sans-serif" }}
+        className={`flex w-[252px] px-2 py-2 justify-between items-center rounded-lg border outline-none transition-colors appearance-none cursor-pointer ${
+          disabled ? "opacity-50 cursor-not-allowed" : ""
+        }`}
+        style={{
+          fontFamily: "Inter, sans-serif",
+          borderColor: "#212225",
+          backgroundColor: "#1C1D22",
+          boxShadow: "-2px 4px 12px 0 rgba(17, 18, 21, 0.80)",
+        }}
       >
-        <span>{selectedOption ? selectedOption.label : placeholder}</span>
+        <span 
+          className="text-sm text-left flex-1"
+          style={{
+            color: value ? "#f7f7f7" : "#8e8e8f",
+            fontFamily: "Inter, sans-serif",
+            fontSize: "14px",
+            fontStyle: "normal",
+            fontWeight: 400,
+            lineHeight: "150%",
+          }}
+        >
+          {selectedOption ? selectedOption.label : placeholder}
+        </span>
         <ChevronDown
           size={20}
-          className={`text-[#8e8e8f] transition-transform ${
+          className={`text-[#8e8e8f] transition-transform flex-shrink-0 ${
             isOpen ? "rotate-180" : ""
           }`}
         />
       </button>
 
       {isOpen && (
-        <div className="absolute top-full left-0 right-0 mt-2 bg-[#1c1d22] border border-[#323335] rounded-lg shadow-lg z-50 max-h-[200px] overflow-y-auto">
+        <div 
+          className="absolute top-full left-0 mt-2 rounded-lg z-50 max-h-[200px] overflow-y-auto"
+          style={{
+            width: "252px",
+            backgroundColor: "#1C1D22",
+            border: "1px solid #212225",
+            boxShadow: "-2px 4px 12px 0 rgba(17, 18, 21, 0.80)",
+          }}
+        >
           {options.map((option) => (
             <button
               key={option.value}
               type="button"
               onClick={() => handleSelect(option.value)}
-              className={`w-full px-3 py-2 text-sm text-left hover:bg-[#323335] transition-colors ${
+              className={`w-full flex h-10 px-2 py-2 justify-center items-center rounded transition-colors ${
                 value === option.value
-                  ? "bg-[#323335] text-[#99c221]"
-                  : "text-[#f7f7f7]"
+                  ? "bg-[#323335]"
+                  : "bg-transparent hover:bg-[#212225]"
               }`}
-              style={{ fontFamily: "Inter, sans-serif" }}
+              style={{
+                fontFamily: "Inter, sans-serif",
+                fontSize: "14px",
+                fontStyle: "normal",
+                fontWeight: 400,
+                lineHeight: "150%",
+                color: value === option.value ? "#99C221" : "#f7f7f7",
+                borderRadius: "4px",
+                gap: "8px",
+              }}
             >
               {option.label}
             </button>
@@ -87,4 +121,6 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
     </div>
   );
 };
+
+
 

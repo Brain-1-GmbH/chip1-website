@@ -513,7 +513,7 @@ export const SellExcessSection: React.FC = () => {
         {/* Sign Up Link */}
         <div className="flex items-center gap-4">
           <span className="text-base text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
-            Have an account ?
+            Already a MyChip1 member?
           </span>
           <button 
             onClick={handleSignUp}
@@ -546,7 +546,7 @@ export const SellExcessSection: React.FC = () => {
         {/* Left Column - Info & Image */}
         <div className="w-[58%] flex flex-col gap-6 justify-center pr-10 py-10">
           <p className="text-base text-[#cececf] leading-[1.5]" style={{ fontFamily: "Inter, sans-serif" }}>
-            By submitting this RFQ, you get complimentary access to our partner Partwatch - a live market platform with real-time availability and pricing from franchised and independent distributors, BOM health insights, PCNs, datasheets, approved alt
+            Submit this Excess list to gain complimentary access to MyChip1, our intelligent supply chain platform delivering real-time availability, competitive pricing analysis, automated BOM health checks, lifecycle alerts, and comprehensive technical documentation
           </p>
           
           <div className="w-full h-[473px] rounded-2xl overflow-hidden bg-[#1a1a1b]">

@@ -38,6 +38,9 @@ export const HeroSection: React.FC = () => {
     string | null | number
   >(null);
   const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
+  const [downloadDocumentType, setDownloadDocumentType] = useState<"datasheet" | "pcn" | null>(null);
+  const [downloadDocumentUrl, setDownloadDocumentUrl] = useState<string | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const clearSearch = () => {
@@ -384,6 +387,160 @@ export const HeroSection: React.FC = () => {
     );
   };
 
+  const handleDocumentClick = (e: React.MouseEvent<HTMLAnchorElement>, type: "datasheet" | "pcn", url: string) => {
+    e.preventDefault();
+    setDownloadDocumentType(type);
+    setDownloadDocumentUrl(url);
+    setIsDownloadModalOpen(true);
+  };
+
+  const renderDownloadModal = () => {
+    if (!isDownloadModalOpen || !downloadDocumentType || !downloadDocumentUrl) return null;
+
+    // @ts-expect-error - TODO: fix this
+    const partData = selectedPart?.data?.globalPart;
+    const mpn = partData?.mpn || "N/A";
+    const documentName = downloadDocumentType === "datasheet" ? "Data Sheet" : "PCN Document";
+    const documentInfo = downloadDocumentType === "datasheet" ? "Data Sheet" : "PCN Document • Data Sheet";
+
+    return (
+      <div 
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" 
+        onClick={() => {
+          setIsDownloadModalOpen(false);
+          setDownloadDocumentType(null);
+          setDownloadDocumentUrl(null);
+        }}
+      >
+        <div 
+          className="relative flex flex-col items-center gap-6 w-[680px] p-6 rounded-[24px] border border-[#1C1D22] bg-[#111215]"
+          onClick={(e) => e.stopPropagation()}
+        >
+          {/* Close Button */}
+          <button
+            onClick={() => {
+              setIsDownloadModalOpen(false);
+              setDownloadDocumentType(null);
+              setDownloadDocumentUrl(null);
+            }}
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+              <path d="M19.781 18.7178C19.8507 18.7875 19.906 18.8702 19.9437 18.9613C19.9814 19.0523 20.0008 19.1499 20.0008 19.2485C20.0008 19.347 19.9814 19.4446 19.9437 19.5356C19.906 19.6267 19.8507 19.7094 19.781 19.7791C19.7114 19.8488 19.6286 19.904 19.5376 19.9418C19.4465 19.9795 19.349 19.9989 19.2504 19.9989C19.1519 19.9989 19.0543 19.9795 18.9632 19.9418C18.8722 19.904 18.7895 19.8488 18.7198 19.7791L12.5004 13.5588L6.28104 19.7791C6.14031 19.9198 5.94944 19.9989 5.75042 19.9989C5.55139 19.9989 5.36052 19.9198 5.21979 19.7791C5.07906 19.6384 5 19.4475 5 19.2485C5 19.0494 5.07906 18.8586 5.21979 18.7178L11.4401 12.4985L5.21979 6.27909C5.07906 6.13836 5 5.94749 5 5.74846C5 5.54944 5.07906 5.35857 5.21979 5.21784C5.36052 5.07711 5.55139 4.99805 5.75042 4.99805C5.94944 4.99805 6.14031 5.07711 6.28104 5.21784L12.5004 11.4382L18.7198 5.21784C18.8605 5.07711 19.0514 4.99805 19.2504 4.99805C19.4494 4.99805 19.6403 5.07711 19.781 5.21784C19.9218 5.35857 20.0008 5.54944 20.0008 5.74846C20.0008 5.94749 19.9218 6.13836 19.781 6.27909L13.5607 12.4985L19.781 18.7178Z" fill="#CECECF"/>
+            </svg>
+          </button>
+
+          {/* Header */}
+          <div className="flex flex-col items-start gap-4 self-stretch">
+            <h2 className="text-[16px] font-medium text-[#f7f7f7]">Download Part Documents</h2>
+          </div>
+
+          {/* Document Info Container */}
+          <div className="flex items-center gap-2 self-stretch py-2 px-3 border-b border-[#212225] bg-[#111215]">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" className="shrink-0">
+              <path d="M20.0306 7.71938L14.7806 2.46938C14.7109 2.39975 14.6282 2.34454 14.5371 2.3069C14.4461 2.26926 14.3485 2.24992 14.25 2.25H5.25C4.85218 2.25 4.47064 2.40804 4.18934 2.68934C3.90804 2.97064 3.75 3.35218 3.75 3.75V20.25C3.75 20.6478 3.90804 21.0294 4.18934 21.3107C4.47064 21.592 4.85218 21.75 5.25 21.75H18.75C19.1478 21.75 19.5294 21.592 19.8107 21.3107C20.092 21.0294 20.25 20.6478 20.25 20.25V8.25C20.2501 8.15148 20.2307 8.05391 20.1931 7.96286C20.1555 7.87182 20.1003 7.78908 20.0306 7.71938ZM15 4.81031L17.6897 7.5H15V4.81031ZM18.75 20.25H5.25V3.75H13.5V8.25C13.5 8.44891 13.579 8.63968 13.7197 8.78033C13.8603 8.92098 14.0511 9 14.25 9H18.75V20.25Z" fill="#99C221"/>
+            </svg>
+            <div className="flex-1 flex flex-col gap-1">
+              <p className="text-[14px] font-medium text-[#f7f7f7]">{mpn}</p>
+              <p className="text-[12px] text-[#b6b6b7]">{documentInfo}</p>
+            </div>
+          </div>
+
+          {/* Main Content - Two Cards */}
+          <div className="flex items-center gap-8 self-stretch">
+            {/* Card 1 - Quick Download */}
+            <div className="flex flex-col items-center gap-6 h-[328px] py-6 px-4 flex-1 rounded-[24px] border border-[#323335] shadow-[0_4px_4px_0_rgba(17,18,21,0.35)]">
+              <h3 className="text-[16px] font-medium text-[#f7f7f7]">Quick Download</h3>
+              <div className="flex flex-col gap-2 flex-1 w-full mt-[20px]">
+                <div className="flex items-center gap-2">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+                    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#b6b6b7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">Get this datasheet only</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+                    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#b6b6b7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">No signup required</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+                    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#b6b6b7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">Instant access</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  window.open(downloadDocumentUrl, '_blank');
+                  setIsDownloadModalOpen(false);
+                  setDownloadDocumentType(null);
+                  setDownloadDocumentUrl(null);
+                }}
+                className="w-full h-12 px-4 bg-transparent border border-[#99C221] rounded-2xl text-[14px] font-medium text-[#99C221] hover:bg-[#99C221]/10 transition-colors"
+              >
+                Download Now
+              </button>
+            </div>
+
+            {/* Card 2 - MyChip1 Account */}
+            <div className="relative flex flex-col items-center gap-6 h-[328px] py-6 px-4 flex-1 rounded-[24px] border border-[#323335] shadow-[0_4px_4px_0_rgba(17,18,21,0.35)]">
+              {/* Badge */}
+              <div className="absolute -top-2 -right-2 px-2 py-1 bg-[#99C221] rounded-full">
+                <p className="text-[10px] font-medium text-[#05080d]">100% Free</p>
+              </div>
+              <div className="flex flex-col items-center gap-0">
+                <h3 className="text-[16px] font-medium text-[#f7f7f7]">MyChip1 Account</h3>
+                <p className="text-[12px] text-[#b6b6b7]">30 sec signup</p>
+              </div>
+              <div className="flex flex-col gap-2 flex-1 w-full">
+                <div className="flex items-center gap-2">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+                    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#99C221" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">Unlimited downloads</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+                    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#99C221" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">Access ALL datasheets</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+                    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#99C221" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">Part lifecycle alerts</p>
+                </div>
+                <div className="flex items-center gap-2">
+                  <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
+                    <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#99C221" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">Part health monitoring</p>
+                </div>
+              </div>
+              <button 
+                onClick={() => {
+                  // Navigate to signup or handle signup
+                  navigate("/");
+                }}
+                className="w-full h-12 px-4 bg-[#99C221] border border-[#111215] rounded-2xl text-[14px] font-medium text-[#05080d] hover:bg-[#a8d32f] transition-colors"
+              >
+                Get Free Access
+              </button>
+            </div>
+          </div>
+
+          {/* Bottom Text */}
+          <p className="text-[14px] text-[#b6b6b7] text-center">
+            Already a MyChip1 member? <span className="text-[#99C221] cursor-pointer hover:underline">Sign In</span>
+          </p>
+        </div>
+      </div>
+    );
+  };
+
   const renderPartTable = () => {
     // @ts-expect-error - TODO: fix this
     const partData = selectedPart?.data?.globalPart;
@@ -422,7 +579,7 @@ export const HeroSection: React.FC = () => {
             <p className="text-[14px] text-[#f7f7f7]">Data Sheet</p>
           </div>
           <div className="flex-1 px-4 py-3">
-            <p className="text-[14px] text-[#f7f7f7]">Availability / Prices</p>
+            <p className="text-[14px] text-[#f7f7f7]">Availability</p>
           </div>
         </div>
         
@@ -450,8 +607,15 @@ export const HeroSection: React.FC = () => {
           </div>
           <div className="w-[192px] px-4 py-5 flex flex-col gap-1">
             {pcnSource ? (
-              <a href={pcnSource} target="_blank" rel="noopener noreferrer" className="text-[14px] text-[#5d97ee] underline">
+              <a 
+                href={pcnSource} 
+                onClick={(e) => handleDocumentClick(e, "pcn", pcnSource)}
+                className="text-[14px] text-[#5d97ee] underline flex items-center gap-1.5 cursor-pointer"
+              >
                 PCN Document
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M17.5 11.25V16.25C17.5 16.4158 17.4342 16.5747 17.3169 16.6919C17.1997 16.8092 17.0408 16.875 16.875 16.875H3.125C2.95924 16.875 2.80027 16.8092 2.68306 16.6919C2.56585 16.5747 2.5 16.4158 2.5 16.25V11.25C2.5 11.0842 2.56585 10.9253 2.68306 10.8081C2.80027 10.6908 2.95924 10.625 3.125 10.625C3.29076 10.625 3.44973 10.6908 3.56694 10.8081C3.68415 10.9253 3.75 11.0842 3.75 11.25V15.625H16.25V11.25C16.25 11.0842 16.3158 10.9253 16.4331 10.8081C16.5503 10.6908 16.7092 10.625 16.875 10.625C17.0408 10.625 17.1997 10.6908 17.3169 10.8081C17.4342 10.9253 17.5 11.0842 17.5 11.25ZM9.55781 11.6922C9.61586 11.7503 9.68479 11.7964 9.76066 11.8279C9.83654 11.8593 9.91787 11.8755 10 11.8755C10.0821 11.8755 10.1635 11.8593 10.2393 11.8279C10.3152 11.7964 10.3841 11.7503 10.4422 11.6922L13.5672 8.56719C13.6253 8.50912 13.6713 8.44018 13.7027 8.36431C13.7342 8.28844 13.7503 8.20712 13.7503 8.125C13.7503 8.04288 13.7342 7.96156 13.7027 7.88569C13.6713 7.80982 13.6253 7.74088 13.5672 7.68281C13.5091 7.62474 13.4402 7.57868 13.3643 7.54725C13.2884 7.51583 13.2071 7.49965 13.125 7.49965C13.0429 7.49965 12.9616 7.51583 12.8857 7.54725C12.8098 7.57868 12.7409 7.62474 12.6828 7.68281L10.625 9.74141V2.5C10.625 2.33424 10.5592 2.17527 10.4419 2.05806C10.3247 1.94085 10.1658 1.875 10 1.875C9.83424 1.875 9.67527 1.94085 9.55806 2.05806C9.44085 2.17527 9.375 2.33424 9.375 2.5V9.74141L7.31719 7.68281C7.19991 7.56554 7.04085 7.49965 6.875 7.49965C6.70915 7.49965 6.55009 7.56554 6.43281 7.68281C6.31554 7.80009 6.24965 7.95915 6.24965 8.125C6.24965 8.29085 6.31554 8.44991 6.43281 8.56719L9.55781 11.6922Z" fill="#5D97EE"/>
+                </svg>
               </a>
             ) : (
               <p className="text-[14px] text-[#f7f7f7]">N/A</p>
@@ -462,8 +626,15 @@ export const HeroSection: React.FC = () => {
           </div>
           <div className="w-[116px] px-4 py-5">
             {datasheet ? (
-              <a href={datasheet} target="_blank" rel="noopener noreferrer" className="text-[14px] text-[#5d97ee] underline">
+              <a 
+                href={datasheet} 
+                onClick={(e) => handleDocumentClick(e, "datasheet", datasheet)}
+                className="text-[14px] text-[#5d97ee] underline flex items-center gap-1.5 cursor-pointer"
+              >
                 Data Sheet
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+                  <path d="M17.5 11.25V16.25C17.5 16.4158 17.4342 16.5747 17.3169 16.6919C17.1997 16.8092 17.0408 16.875 16.875 16.875H3.125C2.95924 16.875 2.80027 16.8092 2.68306 16.6919C2.56585 16.5747 2.5 16.4158 2.5 16.25V11.25C2.5 11.0842 2.56585 10.9253 2.68306 10.8081C2.80027 10.6908 2.95924 10.625 3.125 10.625C3.29076 10.625 3.44973 10.6908 3.56694 10.8081C3.68415 10.9253 3.75 11.0842 3.75 11.25V15.625H16.25V11.25C16.25 11.0842 16.3158 10.9253 16.4331 10.8081C16.5503 10.6908 16.7092 10.625 16.875 10.625C17.0408 10.625 17.1997 10.6908 17.3169 10.8081C17.4342 10.9253 17.5 11.0842 17.5 11.25ZM9.55781 11.6922C9.61586 11.7503 9.68479 11.7964 9.76066 11.8279C9.83654 11.8593 9.91787 11.8755 10 11.8755C10.0821 11.8755 10.1635 11.8593 10.2393 11.8279C10.3152 11.7964 10.3841 11.7503 10.4422 11.6922L13.5672 8.56719C13.6253 8.50912 13.6713 8.44018 13.7027 8.36431C13.7342 8.28844 13.7503 8.20712 13.7503 8.125C13.7503 8.04288 13.7342 7.96156 13.7027 7.88569C13.6713 7.80982 13.6253 7.74088 13.5672 7.68281C13.5091 7.62474 13.4402 7.57868 13.3643 7.54725C13.2884 7.51583 13.2071 7.49965 13.125 7.49965C13.0429 7.49965 12.9616 7.51583 12.8857 7.54725C12.8098 7.57868 12.7409 7.62474 12.6828 7.68281L10.625 9.74141V2.5C10.625 2.33424 10.5592 2.17527 10.4419 2.05806C10.3247 1.94085 10.1658 1.875 10 1.875C9.83424 1.875 9.67527 1.94085 9.55806 2.05806C9.44085 2.17527 9.375 2.33424 9.375 2.5V9.74141L7.31719 7.68281C7.19991 7.56554 7.04085 7.49965 6.875 7.49965C6.70915 7.49965 6.55009 7.56554 6.43281 7.68281C6.31554 7.80009 6.24965 7.95915 6.24965 8.125C6.24965 8.29085 6.31554 8.44991 6.43281 8.56719L9.55781 11.6922Z" fill="#5D97EE"/>
+                </svg>
               </a>
             ) : (
               <p className="text-[14px] text-[#f7f7f7]">N/A</p>
@@ -747,6 +918,9 @@ export const HeroSection: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Download Modal */}
+      {renderDownloadModal()}
     </section>
   );
 };
