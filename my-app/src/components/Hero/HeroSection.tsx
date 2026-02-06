@@ -4,7 +4,6 @@ import { Close, Search, Upload, Box } from "@carbon/icons-react";
 import axios from "axios";
 import JSZip from "jszip";
 
-import { CategoryCard } from "./CategoryCard";
 import { ActionButton } from "./ActionButton";
 import { SimpleLoader } from "../UI/SimpleLoader";
 
@@ -21,11 +20,6 @@ interface SearchResult {
   globalPartId?: string;
 }
 
-const categories = [
-  { title: "Hardware", subtitle: "13,118 Products" },
-  { title: "Semiconductors", subtitle: "743,274 Products" },
-  { title: "Manufactures", subtitle: "373 Manufactures" },
-];
 
 export const HeroSection: React.FC = () => {
   const navigate = useNavigate();
@@ -1055,7 +1049,7 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Category Cards OR Selected Part Details */}
-        {selectedPart ? (
+        {selectedPart && (
           <div className="flex flex-col gap-4 w-full max-w-[1000px] px-4 lg:px-0">
             {/* Part Info Section */}
             <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 lg:p-6 overflow-x-auto">
@@ -1067,28 +1061,6 @@ export const HeroSection: React.FC = () => {
             
             {/* Request for Quote Section */}
             {renderRFQSection()}
-          </div>
-        ) : (
-          <div className="flex items-center gap-6">
-            {categories.map((category) => {
-              const handleCategoryClick = () => {
-                if (category.title === "Hardware") {
-                  navigate("/by-category?type=hardware");
-                } else if (category.title === "Semiconductors") {
-                  navigate("/by-category?type=semiconductors");
-                }
-                // Manufactures doesn't have a page yet, so no navigation
-              };
-
-              return (
-                <CategoryCard
-                  key={category.title}
-                  title={category.title}
-                  subtitle={category.subtitle}
-                  onClick={handleCategoryClick}
-                />
-              );
-            })}
           </div>
         )}
       </div>
