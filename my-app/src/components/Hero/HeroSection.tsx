@@ -28,7 +28,8 @@ export const HeroSection: React.FC = () => {
   const [searchResult, setSearchResult] = useState<SearchResult[]>([]);
   const [hasExternalResults, setHasExternalResults] = useState(false);
   const [isLoadingExternal, setIsLoadingExternal] = useState(false);
-  const [selectedPart, setSelectedPart] = useState<unknown | null>(null);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [selectedPart, setSelectedPart] = useState<any | null>(null);
   const [partDataLoading, setPartDataLoading] = useState<
     string | null | number
   >(null);
@@ -178,9 +179,7 @@ export const HeroSection: React.FC = () => {
   };
 
   const renderPart = () => {
-    // @ts-expect-error - TODO: fix this
     const partData = selectedPart?.data?.globalPart;
-    // @ts-expect-error - TODO: fix this
     const partInfo = selectedPart?.data?.part;
     const hasData = !!partData;
     const healthScore = partInfo?.chip1HealthScore ?? 0;
@@ -370,7 +369,6 @@ export const HeroSection: React.FC = () => {
     // #region agent log
     fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:372',message:'downloadFilesAsZip called',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,B,C,D,E'})}).catch(()=>{});
     // #endregion
-    // @ts-expect-error - TODO: fix this
     const partData = selectedPart?.data?.globalPart;
     const mpn = partData?.mpn || "part";
     const pcnUrl = partData?.pcnData?.pcnDto?.lastPcnSource;
@@ -511,7 +509,6 @@ export const HeroSection: React.FC = () => {
   const renderDownloadModal = () => {
     if (!isDownloadModalOpen || !downloadDocumentType || !downloadDocumentUrl) return null;
 
-    // @ts-expect-error - TODO: fix this
     const partData = selectedPart?.data?.globalPart;
     const mpn = partData?.mpn || "N/A";
     const documentInfo = downloadDocumentType === "datasheet" ? "Data Sheet" : "PCN Document • Data Sheet";
@@ -658,9 +655,7 @@ export const HeroSection: React.FC = () => {
   };
 
   const renderPartTable = () => {
-    // @ts-expect-error - TODO: fix this
     const partData = selectedPart?.data?.globalPart;
-    // @ts-expect-error - TODO: fix this
     const prices = selectedPart?.data?.prices;
     
     const countries = partData?.countryOfOrigin?.map((c: { country: string }) => c.country).join(", ") || "N/A";

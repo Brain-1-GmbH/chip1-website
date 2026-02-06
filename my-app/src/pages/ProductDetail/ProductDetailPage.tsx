@@ -56,17 +56,14 @@ export const ProductDetailPage: React.FC = () => {
   const typeDisplay = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
   const categoryDisplay = (category?.replace(/-/g, " ") || "")
     .split(" ")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(" ");
   const subtypeDisplay = (subtype?.replace(/-/g, " ") || "")
     .split(" ")
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
     .join(" ");
   const categoryShort = part.category.split(" - ")[0] || part.category;
 
-  const handleBackToResults = () => {
-    navigate(`/category/${type}/${category}/${subtype}`);
-  };
 
   return (
     <div className="bg-[#0F0F0F] min-h-screen">
