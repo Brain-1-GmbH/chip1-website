@@ -115,7 +115,7 @@ export const CategoryResultsPage: React.FC = () => {
 
   const categoryDisplayName = category?.replace(/-/g, " ") || "";
   const subtypeDisplayName = subtype?.replace(/-/g, " ") || "";
-  const typeDisplayName = type?.charAt(0).toUpperCase() + type?.slice(1) || "";
+  const typeDisplayName = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
 
   return (
     <div className="bg-[#0e0e0f] min-h-screen">
