@@ -2,13 +2,32 @@ import React, { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
+import cpuChipIcon from "../../assets/cpu-chip-icon.png";
+import cardStorage from "../../assets/card-storage.png";
+import cardMemory from "../../assets/card-memory.png";
+import cardPeripherals from "../../assets/card-peripherals.png";
+import cardExpansion from "../../assets/card-expansion.png";
+import cardPower from "../../assets/card-power.png";
+import cardMotherboard from "../../assets/card-motherboard.png";
+import cardGpu from "../../assets/card-gpu.png";
+
+const hardwareCardImages = [
+  cpuChipIcon,
+  cardStorage,
+  cardMemory,
+  cardPeripherals,
+  cardExpansion,
+  cardPower,
+  cardMotherboard,
+  cardGpu,
+];
 
 // Mock data for Hardware categories
 const hardwareCategories = [
   {
     title: "CPUs",
     count: 3643,
-    icon: "🖥️",
+    image: 0,
     subcategories: [
       { name: "Desktop", count: 1222 },
       { name: "Embedded", count: 385 },
@@ -20,7 +39,7 @@ const hardwareCategories = [
   {
     title: "Storage",
     count: 2847,
-    icon: "💾",
+    image: 1,
     subcategories: [
       { name: "Consumer Hard Disk Drives", count: 200 },
       { name: "Consumer Solid State Drives", count: 584 },
@@ -32,7 +51,7 @@ const hardwareCategories = [
   {
     title: "Memory Modules",
     count: 2370,
-    icon: "🧠",
+    image: 2,
     subcategories: [
       { name: "Desktop Memory Modules", count: 466 },
       { name: "Laptop Memory Modules", count: 429 },
@@ -42,7 +61,7 @@ const hardwareCategories = [
   {
     title: "Peripherals & Accessories",
     count: 1018,
-    icon: "🌀",
+    image: 3,
     subcategories: [
       { name: "Cooling Fans - Heatsinks", count: 698 },
       { name: "Single Board Computers", count: 83 },
@@ -52,7 +71,7 @@ const hardwareCategories = [
   {
     title: "Expansion Cards",
     count: 962,
-    icon: "🔌",
+    image: 4,
     subcategories: [
       { name: "Cable Assemblies", count: 395 },
       { name: "Host Bus Adapters", count: 83 },
@@ -61,7 +80,7 @@ const hardwareCategories = [
   {
     title: "Power Supplies",
     count: 582,
-    icon: "⚡",
+    image: 5,
     subcategories: [
       { name: "Consumer Power Supplies", count: 417 },
       { name: "Industrial Power Supplies", count: 51 },
@@ -70,7 +89,7 @@ const hardwareCategories = [
   {
     title: "Motherboards",
     count: 520,
-    icon: "📱",
+    image: 6,
     subcategories: [
       { name: "Desktop Motherboards", count: 26 },
       { name: "Server Motherboards", count: 494 },
@@ -79,7 +98,7 @@ const hardwareCategories = [
   {
     title: "GPUs",
     count: 336,
-    icon: "🎮",
+    image: 7,
     subcategories: [
       { name: "Accelerator Cards", count: 38 },
       { name: "Gaming Cards", count: 244 },
@@ -256,32 +275,72 @@ export const ByCategoryPage: React.FC = () => {
             {categories.map((category) => (
               <div
                 key={category.title}
-                className="bg-[#171819] border border-[#292a2a] rounded-2xl p-6 hover:border-[rgba(184,212,52,0.4)] transition-all hover:shadow-lg hover:shadow-[rgba(184,212,52,0.15)] cursor-pointer group"
+                className="relative overflow-visible transition-all cursor-pointer group/card border border-[#1C1D22] bg-transparent hover:bg-[#111215]"
+                style={{
+                  display: "flex",
+                  padding: "var(--gap-padding-l, 24px)",
+                  flexDirection: "column",
+                  alignItems: "flex-start",
+                  gap: "8px",
+                  flex: "1 0 0",
+                  alignSelf: "stretch",
+                }}
               >
-                {/* Category Icon */}
-                <div className="text-4xl mb-4">{category.icon}</div>
+                {/* Corner circles - on the corners, centered at vertex */}
+                <span className="absolute top-0 left-0 w-1.5 h-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22] group-hover/card:bg-[#1C1D22] transition-colors" aria-hidden />
+                <span className="absolute top-0 right-0 w-1.5 h-1.5 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22] group-hover/card:bg-[#1C1D22] transition-colors" aria-hidden />
+                <span className="absolute bottom-0 left-0 w-1.5 h-1.5 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#1C1D22] group-hover/card:bg-[#1C1D22] transition-colors" aria-hidden />
+                <span className="absolute bottom-0 right-0 w-1.5 h-1.5 translate-x-1/2 translate-y-1/2 rounded-full bg-[#1C1D22] group-hover/card:bg-[#1C1D22] transition-colors" aria-hidden />
+                {/* Category Icon - 152×115px, black & white */}
+                <img
+                  src={
+                    activeTab === "hardware"
+                      ? hardwareCardImages[(category as { image?: number }).image ?? 0]
+                      : cpuChipIcon
+                  }
+                  alt={category.title}
+                  className="object-contain"
+                  style={{ width: 152, height: 115, filter: "grayscale(100%)" }}
+                />
 
                 {/* Category Title */}
                 <h3
-                  className="text-lg font-semibold text-[#fcfdfc] mb-4"
+                  className="text-lg font-semibold text-[#fcfdfc] break-words"
                   style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 >
                   {category.title} ({category.count.toLocaleString()})
                 </h3>
 
                 {/* Subcategories */}
-                <ul className="space-y-3">
+                <ul className="flex flex-col gap-0 w-full overflow-visible">
                   {category.subcategories.map((subcategory) => (
                     <li
                       key={subcategory.name}
                       onClick={() => handleSubcategoryClick(category.title, subcategory.name)}
-                      className="flex items-center justify-between text-sm text-[#b6b6b7] hover:text-[#fcfdfc] cursor-pointer group transition-colors"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                      className="flex items-center gap-2 text-sm text-[#b6b6b7] hover:text-[#E5E5E7] cursor-pointer group/item transition-colors break-words"
+                      style={{
+                        fontFamily: "'Plus Jakarta Sans', sans-serif",
+                        width: "348px",
+                        maxWidth: "100%",
+                        padding: "16px 0",
+                      }}
                     >
-                      <span>
+                      <span className="flex-1 min-w-0">
                         {subcategory.name} ({subcategory.count.toLocaleString()})
                       </span>
-                      <span className="text-[#8e8e8f] group-hover:text-[#99c221] transition-colors">→</span>
+                      <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        width="24"
+                        height="24"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        className="shrink-0"
+                      >
+                        <path
+                          d="M9.03885 3.97286L16.5389 11.4729C16.6086 11.5425 16.6639 11.6252 16.7016 11.7163C16.7394 11.8073 16.7588 11.9049 16.7588 12.0035C16.7588 12.1021 16.7394 12.1996 16.7016 12.2907C16.6639 12.3817 16.6086 12.4645 16.5389 12.5341L9.03885 20.0341C8.89812 20.1748 8.70725 20.2539 8.50823 20.2539C8.30921 20.2539 8.11833 20.1748 7.9776 20.0341C7.83687 19.8934 7.75781 19.7025 7.75781 19.5035C7.75781 19.3045 7.83687 19.1136 7.9776 18.9729L14.9479 12.0035L7.9776 5.03411C7.90792 4.96443 7.85265 4.88171 7.81493 4.79066C7.77722 4.69962 7.75781 4.60204 7.75781 4.50349C7.75781 4.40494 7.77722 4.30736 7.81493 4.21632C7.85265 4.12527 7.90792 4.04255 7.9776 3.97286C8.04729 3.90318 8.13001 3.84791 8.22106 3.81019C8.3121 3.77248 8.40968 3.75307 8.50823 3.75307C8.60678 3.75307 8.70436 3.77248 8.7954 3.81019C8.88645 3.84791 8.96917 3.90318 9.03885 3.97286Z"
+                          className="fill-[#545556] group-hover/item:fill-white transition-colors"
+                        />
+                      </svg>
                     </li>
                   ))}
                 </ul>

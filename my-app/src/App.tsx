@@ -11,6 +11,7 @@ import { UploadBOMPage } from "./pages/UploadBOM/UploadBOMPage";
 import { SellExcessPage } from "./pages/SellExcess/SellExcessPage";
 import { ByCategoryPage } from "./pages/ByCategory/ByCategoryPage";
 import { CategoryResultsPage } from "./pages/CategoryResults/CategoryResultsPage";
+import { ProductDetailPage } from "./pages/ProductDetail/ProductDetailPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 
 import "./App.css";
@@ -32,6 +33,7 @@ function App() {
         <Route path="/sell-excess" element={<SellExcessPage />} />
         <Route path="/by-category" element={<ByCategoryPage />} />
         <Route path="/category/:type/:category/:subtype" element={<CategoryResultsPage />} />
+        <Route path="/product" element={<ProductDetailPage />} />
       </Routes>
     </Router>
   );

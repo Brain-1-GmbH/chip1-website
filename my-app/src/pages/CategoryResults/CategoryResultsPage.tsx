@@ -10,61 +10,66 @@ const mockParts = [
     id: 1,
     mpn: "M378A2G43CB3-CWE",
     manufacturer: "Samsung",
-    category: "Memory Modules",
+    category: "Memory Modules - Laptop Memory Modules",
     description: "Samsung 16GB DDR4 3200 UDIMM 1.2V Mem...",
     lifecycle: "—",
     availability: "—",
     countryOfOrigin: "—",
     riskScore: "—",
     riskLevel: "—",
+    parametric: { capacity: "32GB", ddrType: "DDR5", formFactor: "ECC SODIMM", speed: "4800 MHz", moduleType: "ECC SODIMM" },
   },
   {
     id: 2,
     mpn: "HMA82GS6CJR8N-XN",
     manufacturer: "SK Hynix",
-    category: "Memory Modules",
+    category: "Memory Modules - Desktop Memory Modules",
     description: "SK Hynix 16GB DDR4 3200 SODIMM 1.2V...",
     lifecycle: "—",
     availability: "—",
     countryOfOrigin: "—",
     riskScore: "—",
     riskLevel: "—",
+    parametric: { capacity: "16GB", ddrType: "DDR4", formFactor: "SODIMM", speed: "3200 MHz", moduleType: "SODIMM" },
   },
   {
     id: 3,
     mpn: "CT16G4DFD832A",
     manufacturer: "Crucial",
-    category: "Memory Modules",
+    category: "Memory Modules - Desktop Memory Modules",
     description: "Crucial 16GB DDR4 3200 UDIMM 1.2V...",
     lifecycle: "—",
     availability: "—",
     countryOfOrigin: "—",
     riskScore: "—",
     riskLevel: "—",
+    parametric: { capacity: "16GB", ddrType: "DDR4", formFactor: "UDIMM", speed: "3200 MHz", moduleType: "UDIMM" },
   },
   {
     id: 4,
     mpn: "KVR32N22D8/16",
     manufacturer: "Kingston",
-    category: "Memory Modules",
+    category: "Memory Modules - Server Memory Modules",
     description: "Kingston 16GB DDR4 3200 UDIMM 1.2V...",
     lifecycle: "—",
     availability: "—",
     countryOfOrigin: "—",
     riskScore: "—",
     riskLevel: "—",
+    parametric: { capacity: "16GB", ddrType: "DDR4", formFactor: "UDIMM", speed: "3200 MHz", moduleType: "UDIMM" },
   },
   {
     id: 5,
     mpn: "F4-3200C16D-16GIS",
     manufacturer: "G.Skill",
-    category: "Memory Modules",
+    category: "Memory Modules - Desktop Memory Modules",
     description: "G.Skill 16GB DDR4 3200 UDIMM 1.2V...",
     lifecycle: "—",
     availability: "—",
     countryOfOrigin: "—",
     riskScore: "—",
     riskLevel: "—",
+    parametric: { capacity: "16GB", ddrType: "DDR4", formFactor: "UDIMM", speed: "3200 MHz", moduleType: "UDIMM" },
   },
 ];
 
@@ -113,12 +118,15 @@ export const CategoryResultsPage: React.FC = () => {
   const appliedFiltersCount =
     selectedCapacities.length + selectedDdrTypes.length + selectedFormFactors.length;
 
-  const categoryDisplayName = category?.replace(/-/g, " ") || "";
+  const categoryDisplayName = (category?.replace(/-/g, " ") || "")
+    .split(" ")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase())
+    .join(" ");
   const subtypeDisplayName = subtype?.replace(/-/g, " ") || "";
   const typeDisplayName = type ? type.charAt(0).toUpperCase() + type.slice(1) : "";
 
   return (
-    <div className="bg-[#0e0e0f] min-h-screen">
+    <div className="bg-[#0F0F0F] min-h-screen">
       <Header />
       
       {/* Hero Section */}
@@ -153,13 +161,13 @@ export const CategoryResultsPage: React.FC = () => {
               className="text-2xl text-[#99c221] capitalize leading-[1.1]"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
-              {subtypeDisplayName}
+              {categoryDisplayName}
             </span>
           </div>
 
-          {/* Title */}
+          {/* Title - card name from main page (e.g. CPUs) */}
           <h1
-            className="text-[56px] font-semibold leading-[1.1] mb-4"
+            className="text-[56px] font-semibold leading-[1.3] mb-4 pb-1"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               background:
@@ -169,7 +177,7 @@ export const CategoryResultsPage: React.FC = () => {
               backgroundClip: "text",
             }}
           >
-            {categoryDisplayName} - {subtypeDisplayName}
+            {categoryDisplayName}
           </h1>
         </div>
       </section>
@@ -179,7 +187,12 @@ export const CategoryResultsPage: React.FC = () => {
         <div className="max-w-[1280px] mx-auto px-20">
           <div className="flex gap-6">
             {/* Left Sidebar - Filters */}
-            <div className="w-64 shrink-0 bg-[#171819] border border-[#292a2a] rounded-2xl p-4 h-fit sticky top-24">
+            <div className="relative overflow-visible w-64 shrink-0 bg-[#0F0F0F] border border-[#1C1D22] p-4 h-fit sticky top-24">
+              {/* Corner circles */}
+              <span className="absolute top-0 left-0 w-1.5 h-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+              <span className="absolute top-0 right-0 w-1.5 h-1.5 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+              <span className="absolute bottom-0 left-0 w-1.5 h-1.5 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+              <span className="absolute bottom-0 right-0 w-1.5 h-1.5 translate-x-1/2 translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
               <div className="mb-6">
                 <h2
                   className="text-base font-semibold text-[#fcfdfc] mb-1"
@@ -208,13 +221,21 @@ export const CategoryResultsPage: React.FC = () => {
                         type="checkbox"
                         checked={selectedCapacities.includes(capacity)}
                         onChange={() => handleCapacityToggle(capacity)}
-                        className="w-4 h-4 rounded border-[#494B59] bg-[#17181a] text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                        className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                    style={{
+                      borderRadius: "var(--Radius-xs, 4px)",
+                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
+                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      accentColor: "#99C221",
+                    }}
                       />
                       <span className="text-sm text-[#b6b6b7]">{capacity}</span>
                     </label>
                   ))}
-                  <button className="text-sm text-[#99c221] hover:text-[#b6db40] flex items-center gap-1 transition-colors">
-                    See More <span>↓</span>
+                  <button className="text-sm text-[#99c221] hover:text-[#b6db40] transition-colors">
+                    See More
                   </button>
                 </div>
               </div>
@@ -254,7 +275,15 @@ export const CategoryResultsPage: React.FC = () => {
                         type="checkbox"
                         checked={selectedDdrTypes.includes(ddrType)}
                         onChange={() => handleDdrTypeToggle(ddrType)}
-                        className="w-4 h-4 rounded border-[#494B59] bg-[#17181a] text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                        className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                    style={{
+                      borderRadius: "var(--Radius-xs, 4px)",
+                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
+                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      accentColor: "#99C221",
+                    }}
                       />
                       <span className="text-sm text-[#b6b6b7]">{ddrType}</span>
                     </label>
@@ -280,7 +309,15 @@ export const CategoryResultsPage: React.FC = () => {
                         type="checkbox"
                         checked={selectedFormFactors.includes(formFactor)}
                         onChange={() => handleFormFactorToggle(formFactor)}
-                        className="w-4 h-4 rounded border-[#494B59] bg-[#17181a] text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                        className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                    style={{
+                      borderRadius: "var(--Radius-xs, 4px)",
+                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
+                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      accentColor: "#99C221",
+                    }}
                       />
                       <span className="text-sm text-[#b6b6b7]">{formFactor}</span>
                     </label>
@@ -288,8 +325,8 @@ export const CategoryResultsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center justify-between gap-2 pt-4 border-t border-[#494B59]">
+              {/* Action Buttons - bottom centered */}
+              <div className="flex flex-col items-center gap-2 pt-4 border-t border-[#1C1D22]">
                 <button
                   onClick={clearFilters}
                   className="text-sm text-[#8e8e8f] hover:text-[#b6b6b7] transition-colors"
@@ -298,30 +335,56 @@ export const CategoryResultsPage: React.FC = () => {
                   Clear
                 </button>
                 <button
-                  className="px-4 py-2 bg-[#252833] text-[#fcfdfc] text-sm rounded hover:bg-[#323543] transition-colors border border-[#494B59]"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  onClick={() => {}}
+                  className="flex h-10 w-full max-w-[420px] justify-center items-center gap-2 text-[#0F0F0F] font-medium hover:opacity-90 transition-opacity"
+                  style={{
+                    fontFamily: "'Plus Jakarta Sans', sans-serif",
+                    padding: "16px",
+                    borderRadius: "var(--Radius-l, 24px)",
+                    borderTop: "1px solid var(--Main-Primary-Scale-300, #CEEA6C)",
+                    background: "var(--Main-Primary-Scale-Primary, #99C221)",
+                    boxShadow: "0 4px 4px 0 rgba(17, 18, 21, 0.35)",
+                  }}
                 >
-                  Show Results
+                  Apply
                 </button>
               </div>
             </div>
 
             {/* Right Content - Results */}
-            <div className="flex-1 bg-[#171819] border border-[#292a2a] rounded-2xl overflow-hidden">
-              {/* Search Bar */}
-              <div className="p-4 border-b border-[#494B59] flex items-center justify-end bg-[#17181a]">
+            <div className="relative overflow-visible flex-1 bg-[#0F0F0F] border border-[#1C1D22]">
+              {/* Corner circles */}
+              <span className="absolute top-0 left-0 w-1.5 h-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+              <span className="absolute top-0 right-0 w-1.5 h-1.5 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+              <span className="absolute bottom-0 left-0 w-1.5 h-1.5 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+              <span className="absolute bottom-0 right-0 w-1.5 h-1.5 translate-x-1/2 translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+              {/* Parts count (left) + Search Bar (right) */}
+              <div className="p-4 border-b border-[#1C1D22] flex items-center justify-between bg-[#0F0F0F]">
+                <p
+                  className="text-sm text-[#8e8e8f]"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  {mockParts.length} parts
+                </p>
                 <div className="relative w-64">
                   <Search
                     size={20}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8e8e8f]"
+                    className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none z-10"
+                    style={{ color: "#B6B6B7" }}
                   />
                   <input
                     type="text"
                     placeholder="Search"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-10 pr-4 py-2 bg-[#0e0e0f] border border-[#494B59] rounded-lg text-[#fcfdfc] placeholder-[#8e8e8f] focus:outline-none focus:ring-2 focus:ring-[#99c221] focus:border-transparent transition-colors"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    className="w-full pl-10 pr-4 py-2 text-[#fcfdfc] placeholder-[#8e8e8f] focus:outline-none focus:ring-2 focus:ring-[#99c221] focus:border-transparent transition-colors"
+                    style={{
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      borderRadius: "48px",
+                      border: "1px solid rgba(77, 77, 78, 0.34)",
+                      background: "#161616",
+                      backdropFilter: "blur(4px)",
+                    }}
                   />
                 </div>
               </div>
@@ -329,12 +392,20 @@ export const CategoryResultsPage: React.FC = () => {
               {/* Table */}
               <div className="overflow-x-auto">
                 <table className="w-full">
-                  <thead className="bg-[#17181a] border-b border-[#494B59]">
+                  <thead className="bg-[#0F0F0F] border-b border-[#1C1D22]">
                     <tr>
                       <th className="px-4 py-3 text-left">
                         <input
                           type="checkbox"
-                          className="w-4 h-4 rounded border-[#494B59] bg-[#0e0e0f] text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                          className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                    style={{
+                      borderRadius: "var(--Radius-xs, 4px)",
+                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
+                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      accentColor: "#99C221",
+                    }}
                         />
                       </th>
                       <th
@@ -372,16 +443,29 @@ export const CategoryResultsPage: React.FC = () => {
                       </th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#494B59]">
+                  <tbody className="divide-y divide-[#1C1D22]">
                     {mockParts.map((part) => (
                       <tr
                         key={part.id}
-                        className="hover:bg-[#252833] transition-colors"
+                        className="hover:bg-[#252833] transition-colors cursor-pointer"
+                        onClick={() =>
+                          navigate("/product", {
+                            state: { part, context: { type, category, subtype } },
+                          })
+                        }
                       >
-                        <td className="px-4 py-4">
+                        <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                           <input
                             type="checkbox"
-                            className="w-4 h-4 rounded border-[#494B59] bg-[#0e0e0f] text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                            className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                    style={{
+                      borderRadius: "var(--Radius-xs, 4px)",
+                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
+                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
+                      appearance: "none",
+                      WebkitAppearance: "none",
+                      accentColor: "#99C221",
+                    }}
                           />
                         </td>
                         <td className="px-4 py-4">
@@ -456,7 +540,7 @@ export const CategoryResultsPage: React.FC = () => {
                             </span>
                           </div>
                         </td>
-                        <td className="px-4 py-4">
+                        <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
                           <button className="text-[#8e8e8f] hover:text-[#b6b6b7] transition-colors">
                             ⋯
                           </button>
@@ -467,15 +551,6 @@ export const CategoryResultsPage: React.FC = () => {
                 </table>
               </div>
 
-              {/* Results Count */}
-              <div className="p-4 border-t border-[#494B59] bg-[#17181a]">
-                <p
-                  className="text-sm text-[#8e8e8f]"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                >
-                  {mockParts.length} parts
-                </p>
-              </div>
             </div>
           </div>
         </div>

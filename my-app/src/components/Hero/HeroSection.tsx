@@ -131,6 +131,9 @@ export const HeroSection: React.FC = () => {
 
   const handleSearchUpdate = (newValue: string) => {
     setSearchValue(newValue);
+    if (newValue.length > 0) {
+      setIsDropdownVisible(true);
+    }
     handleSearch(newValue);
   };
 
@@ -918,7 +921,7 @@ export const HeroSection: React.FC = () => {
                   }
                 }}
                 onFocus={() => {
-                  if (searchResult.length > 0) {
+                  if (searchValue.length > 0 || searchResult.length > 0) {
                     setIsDropdownVisible(true);
                   }
                 }}
@@ -933,16 +936,16 @@ export const HeroSection: React.FC = () => {
               )}
             </div>
 
-            {/* Search Results Dropdown - absolute positioned overlay */}
-            {searchResult?.length > 0 && isDropdownVisible && (
+            {/* Search Results Dropdown - show when user has typed and dropdown is open (so category choices always visible) */}
+            {isDropdownVisible && searchValue.length > 0 && (
               <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-[#17181a]/95 backdrop-blur-md rounded-2xl border border-[rgba(77,77,78,0.34)] shadow-2xl z-50">
-                {!hasExternalResults && (
+                {searchResult.length > 0 && !hasExternalResults && (
                   <p className="text-sm text-[#8e8e8f] mb-2">
                     {isLoadingExternal ? "Loading extended results..." : "Press Enter to show extended results"}
                   </p>
                 )}
-                
-                {/* Select a category to search within */}
+
+                {/* Select a category to search within - always shown so user can browse Hardware/Semiconductors even with no part results */}
                 <div className="mb-4">
                   <p className="text-sm text-[#cececf] mb-3 font-medium">Select a category to search within</p>
                   <div className="flex flex-wrap gap-2">
@@ -969,10 +972,12 @@ export const HeroSection: React.FC = () => {
                   </div>
                 </div>
 
-                <p className="text-sm text-[#8e8e8f] mb-2 font-medium">
-                  {searchResult.length} found parts
-                </p>
-                <ul className="flex flex-col gap-2 max-h-[240px] overflow-y-auto">
+                {searchResult.length > 0 ? (
+                  <>
+                    <p className="text-sm text-[#8e8e8f] mb-2 font-medium">
+                      {searchResult.length} found parts
+                    </p>
+                    <ul className="flex flex-col gap-2 max-h-[240px] overflow-y-auto">
                   {searchResult.map((result: SearchResult) => (
                     <div
                       key={result.id}
@@ -1037,6 +1042,12 @@ export const HeroSection: React.FC = () => {
                     </div>
                   ))}
                 </ul>
+                  </>
+                ) : (
+                  <p className="text-sm text-[#8e8e8f]">
+                    No parts found for this query. Browse by category above or try different keywords.
+                  </p>
+                )}
               </div>
             )}
           </div>
