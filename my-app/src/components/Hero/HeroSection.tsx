@@ -191,27 +191,24 @@ export const HeroSection: React.FC = () => {
     // Info field component for consistent styling
     const InfoField = ({ label, value }: { label: string; value: string | undefined | null }) => {
       const displayValue = value ? String(value) : "N/A";
-      const shouldTruncate = displayValue.length > 7;
-      const truncatedValue = shouldTruncate ? displayValue.substring(0, 7) + "..." : displayValue;
       
       return (
-        <div className="flex flex-col gap-0.5">
-          <p className="text-[12px] text-[#cececf] leading-[1.4]">{label}</p>
+        <div className="flex flex-col gap-0.5 min-w-0">
+          <p className="text-[12px] text-[#cececf] leading-[1.4] whitespace-nowrap">{label}</p>
           <p 
-            className="text-[14px] text-[#e5e5e7] font-medium leading-[1.4] truncate"
-            title={shouldTruncate ? displayValue : undefined}
+            className="text-[14px] text-[#e5e5e7] font-medium leading-[1.4] break-words min-w-0"
           >
-            {truncatedValue}
+            {displayValue}
           </p>
         </div>
       );
     };
 
     return (
-      <div className="flex gap-4 items-stretch w-full">
+      <div className="flex flex-col lg:flex-row gap-4 items-stretch w-full">
         {/* Part Health */}
-        <div className="flex flex-col items-center gap-4 shrink-0">
-          <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4] w-full">
+        <div className="flex flex-col items-center gap-4 shrink-0 w-full lg:w-auto">
+          <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4] w-full text-center lg:text-left">
             Part Health
           </p>
 
@@ -270,7 +267,7 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Vertical Divider */}
-        <div className="w-px bg-gradient-to-b from-transparent via-[#494b59] to-transparent self-stretch" />
+        <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-[#494b59] to-transparent self-stretch" />
 
         {/* General Information */}
         <div className="flex-1 flex flex-col gap-4 min-w-0">
@@ -278,30 +275,30 @@ export const HeroSection: React.FC = () => {
             General Information
           </p>
 
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4 lg:gap-6">
             {/* Column 1 */}
-            <div className="flex flex-col gap-2 flex-1 min-w-0">
+            <div className="flex flex-col gap-2 flex-1 min-w-[140px] max-w-[200px]">
               <InfoField label="Manufacturer" value={partData?.manufacturer} />
               <InfoField label="Category" value={partData?.category} />
               <InfoField label="Packaging" value={partData?.packaging || "Tape and Reel"} />
             </div>
 
             {/* Column 2 */}
-            <div className="flex flex-col gap-2 w-[152px] shrink-0">
+            <div className="flex flex-col gap-2 min-w-[140px] max-w-[180px] flex-1 lg:flex-initial lg:w-[152px]">
               <InfoField label="Lifecycle" value={partData?.lifecycleRisk?.lifecycle} />
               <InfoField label="Introduced" value={partData?.introductionDate} />
               <InfoField label="Cage Code" value={partData?.mfrCageCode} />
             </div>
 
             {/* Column 3 */}
-            <div className="flex flex-col gap-2 w-[120px] shrink-0">
+            <div className="flex flex-col gap-2 min-w-[140px] max-w-[180px] flex-1 lg:flex-initial lg:w-[140px]">
               <InfoField label="Lead-Free Status" value={partData?.environmentData?.leadFree || "Compliant"} />
               <InfoField label="RoHS Status" value={partData?.environmentData?.rohsStatus || "Compliant"} />
               <InfoField label="REACH Status" value={partData?.environmentData?.reachStatus || "Unaffected"} />
             </div>
 
             {/* Column 4 */}
-            <div className="flex flex-col gap-2 w-[104px] shrink-0">
+            <div className="flex flex-col gap-2 min-w-[120px] max-w-[160px] flex-1 lg:flex-initial lg:w-[120px]">
               <InfoField label="ECCN" value={partData?.eccn} />
               <InfoField label="HTSUSA" value={partData?.htsusa || partData?.environmentData?.htsus} />
               <InfoField label="UNSPSC" value={partData?.unspsc} />
@@ -310,10 +307,10 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Vertical Divider */}
-        <div className="w-px bg-gradient-to-b from-transparent via-[#494b59] to-transparent self-stretch" />
+        <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-[#494b59] to-transparent self-stretch" />
 
         {/* Alternates */}
-        <div className="flex flex-col gap-4 w-[312px] shrink-0">
+        <div className="flex flex-col gap-4 w-full lg:w-[312px] shrink-0">
           <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">
             Alternates
           </p>
@@ -426,9 +423,9 @@ export const HeroSection: React.FC = () => {
           // Convert crm.chip1.com URLs to use proxy path
           let proxyUrl = url;
           if (url.startsWith('https://crm.chip1.com/')) {
-            proxyUrl = url.replace('https://crm.chip1.com/', '/api/part/');
+            proxyUrl = '/' + url.replace('https://crm.chip1.com/', '');
           } else if (url.startsWith('http://crm.chip1.com/')) {
-            proxyUrl = url.replace('http://crm.chip1.com/', '/api/part/');
+            proxyUrl = '/' + url.replace('http://crm.chip1.com/', '');
           }
           
           // #region agent log
@@ -678,103 +675,118 @@ export const HeroSection: React.FC = () => {
     const datasheet = partData?.document?.latestDatasheet;
     const franchiseStock = prices?.find((p: { origin: { value: string } }) => p.origin?.value === "Franchise")?.quantityInStock;
 
+    const downloadIcon = (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <path d="M17.5 11.25V16.25C17.5 16.4158 17.4342 16.5747 17.3169 16.6919C17.1997 16.8092 17.0408 16.875 16.875 16.875H3.125C2.95924 16.875 2.80027 16.8092 2.68306 16.6919C2.56585 16.5747 2.5 16.4158 2.5 16.25V11.25C2.5 11.0842 2.56585 10.9253 2.68306 10.8081C2.80027 10.6908 2.95924 10.625 3.125 10.625C3.29076 10.625 3.44973 10.6908 3.56694 10.8081C3.68415 10.9253 3.75 11.0842 3.75 11.25V15.625H16.25V11.25C16.25 11.0842 16.3158 10.9253 16.4331 10.8081C16.5503 10.6908 16.7092 10.625 16.875 10.625C17.0408 10.625 17.1997 10.6908 17.3169 10.8081C17.4342 10.9253 17.5 11.0842 17.5 11.25ZM9.55781 11.6922C9.61586 11.7503 9.68479 11.7964 9.76066 11.8279C9.83654 11.8593 9.91787 11.8755 10 11.8755C10.0821 11.8755 10.1635 11.8593 10.2393 11.8279C10.3152 11.7964 10.3841 11.7503 10.4422 11.6922L13.5672 8.56719C13.6253 8.50912 13.6713 8.44018 13.7027 8.36431C13.7342 8.28844 13.7503 8.20712 13.7503 8.125C13.7503 8.04288 13.7342 7.96156 13.7027 7.88569C13.6713 7.80982 13.6253 7.74088 13.5672 7.68281C13.5091 7.62474 13.4402 7.57868 13.3643 7.54725C13.2884 7.51583 13.2071 7.49965 13.125 7.49965C13.0429 7.49965 12.9616 7.51583 12.8857 7.54725C12.8098 7.57868 12.7409 7.62474 12.6828 7.68281L10.625 9.74141V2.5C10.625 2.33424 10.5592 2.17527 10.4419 2.05806C10.3247 1.94085 10.1658 1.875 10 1.875C9.83424 1.875 9.67527 1.94085 9.55806 2.05806C9.44085 2.17527 9.375 2.33424 9.375 2.5V9.74141L7.31719 7.68281C7.19991 7.56554 7.04085 7.49965 6.875 7.49965C6.70915 7.49965 6.55009 7.56554 6.43281 7.68281C6.31554 7.80009 6.24965 7.95915 6.24965 8.125C6.24965 8.29085 6.31554 8.44991 6.43281 8.56719L9.55781 11.6922Z" fill="#5D97EE"/>
+      </svg>
+    );
+
     return (
-      <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg overflow-hidden">
-        {/* Table Header */}
-        <div className="bg-[#323543] border-b border-[#494B59] flex items-center">
-          <div className="w-[192px] px-4 py-3">
-            <p className="text-[14px] text-[#f7f7f7]">Mfr Part #</p>
-          </div>
-          <div className="w-[112px] px-4 py-3">
-            <p className="text-[14px] text-[#f7f7f7]">Lead Time</p>
-          </div>
-          <div className="w-[144px] px-4 py-3">
-            <p className="text-[14px] text-[#f7f7f7]">Lifecycle / Risk</p>
-          </div>
-          <div className="w-[176px] px-4 py-3">
-            <p className="text-[14px] text-[#f7f7f7]">Country of origin</p>
-          </div>
-          <div className="w-[192px] px-4 py-3">
-            <p className="text-[14px] text-[#f7f7f7]">Latest PCN / End of Life</p>
-          </div>
-          <div className="w-[116px] px-4 py-3">
-            <p className="text-[14px] text-[#f7f7f7]">Data Sheet</p>
-          </div>
-          <div className="flex-1 px-4 py-3">
-            <p className="text-[14px] text-[#f7f7f7]">Availability</p>
-          </div>
-        </div>
-        
-        {/* Table Row */}
-        <div className="flex items-start border-b border-[#494B59]">
-          <div className="w-[192px] px-4 py-5">
-            <p className="text-[14px] text-[#f7f7f7]">{partData?.mpn || "N/A"}</p>
-          </div>
-          <div className="w-[112px] px-4 py-5">
-            <p className="text-[14px] text-[#f7f7f7]">{leadTime}</p>
-          </div>
-          <div className="w-[144px] px-4 py-5 flex flex-col gap-1">
-            <div className="flex items-center gap-1">
-              <p className="text-[14px] text-[#f7f7f7]">{lifecycleRisk} Risk</p>
-              {lifecycleRisk === "High" && (
-                <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                  <path d="M8 5V9M8 11V11.5M2 14H14L8 3L2 14Z" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                </svg>
-              )}
-            </div>
-            <p className="text-[14px] text-[#b6b6b7]">{lifecycle}</p>
-          </div>
-          <div className="w-[176px] px-4 py-5">
-            <p className="text-[14px] text-[#f7f7f7]">{countries}</p>
-          </div>
-          <div className="w-[192px] px-4 py-5 flex flex-col gap-1">
-            {pcnSource ? (
-              <a 
-                href={pcnSource} 
-                onClick={(e) => handleDocumentClick(e, "pcn", pcnSource)}
-                className="text-[14px] text-[#5d97ee] underline flex items-center gap-1.5 cursor-pointer"
-              >
-                PCN Document
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M17.5 11.25V16.25C17.5 16.4158 17.4342 16.5747 17.3169 16.6919C17.1997 16.8092 17.0408 16.875 16.875 16.875H3.125C2.95924 16.875 2.80027 16.8092 2.68306 16.6919C2.56585 16.5747 2.5 16.4158 2.5 16.25V11.25C2.5 11.0842 2.56585 10.9253 2.68306 10.8081C2.80027 10.6908 2.95924 10.625 3.125 10.625C3.29076 10.625 3.44973 10.6908 3.56694 10.8081C3.68415 10.9253 3.75 11.0842 3.75 11.25V15.625H16.25V11.25C16.25 11.0842 16.3158 10.9253 16.4331 10.8081C16.5503 10.6908 16.7092 10.625 16.875 10.625C17.0408 10.625 17.1997 10.6908 17.3169 10.8081C17.4342 10.9253 17.5 11.0842 17.5 11.25ZM9.55781 11.6922C9.61586 11.7503 9.68479 11.7964 9.76066 11.8279C9.83654 11.8593 9.91787 11.8755 10 11.8755C10.0821 11.8755 10.1635 11.8593 10.2393 11.8279C10.3152 11.7964 10.3841 11.7503 10.4422 11.6922L13.5672 8.56719C13.6253 8.50912 13.6713 8.44018 13.7027 8.36431C13.7342 8.28844 13.7503 8.20712 13.7503 8.125C13.7503 8.04288 13.7342 7.96156 13.7027 7.88569C13.6713 7.80982 13.6253 7.74088 13.5672 7.68281C13.5091 7.62474 13.4402 7.57868 13.3643 7.54725C13.2884 7.51583 13.2071 7.49965 13.125 7.49965C13.0429 7.49965 12.9616 7.51583 12.8857 7.54725C12.8098 7.57868 12.7409 7.62474 12.6828 7.68281L10.625 9.74141V2.5C10.625 2.33424 10.5592 2.17527 10.4419 2.05806C10.3247 1.94085 10.1658 1.875 10 1.875C9.83424 1.875 9.67527 1.94085 9.55806 2.05806C9.44085 2.17527 9.375 2.33424 9.375 2.5V9.74141L7.31719 7.68281C7.19991 7.56554 7.04085 7.49965 6.875 7.49965C6.70915 7.49965 6.55009 7.56554 6.43281 7.68281C6.31554 7.80009 6.24965 7.95915 6.24965 8.125C6.24965 8.29085 6.31554 8.44991 6.43281 8.56719L9.55781 11.6922Z" fill="#5D97EE"/>
-                </svg>
-              </a>
-            ) : (
-              <p className="text-[14px] text-[#f7f7f7]">N/A</p>
-            )}
-            {eolYears && (
-              <p className="text-[12px] text-[#f7f7f7]">{eolYears} years to end of life</p>
-            )}
-          </div>
-          <div className="w-[116px] px-4 py-5">
-            {datasheet ? (
-              <a 
-                href={datasheet} 
-                onClick={(e) => handleDocumentClick(e, "datasheet", datasheet)}
-                className="text-[14px] text-[#5d97ee] underline flex items-center gap-1.5 cursor-pointer"
-              >
-                Data Sheet
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path d="M17.5 11.25V16.25C17.5 16.4158 17.4342 16.5747 17.3169 16.6919C17.1997 16.8092 17.0408 16.875 16.875 16.875H3.125C2.95924 16.875 2.80027 16.8092 2.68306 16.6919C2.56585 16.5747 2.5 16.4158 2.5 16.25V11.25C2.5 11.0842 2.56585 10.9253 2.68306 10.8081C2.80027 10.6908 2.95924 10.625 3.125 10.625C3.29076 10.625 3.44973 10.6908 3.56694 10.8081C3.68415 10.9253 3.75 11.0842 3.75 11.25V15.625H16.25V11.25C16.25 11.0842 16.3158 10.9253 16.4331 10.8081C16.5503 10.6908 16.7092 10.625 16.875 10.625C17.0408 10.625 17.1997 10.6908 17.3169 10.8081C17.4342 10.9253 17.5 11.0842 17.5 11.25ZM9.55781 11.6922C9.61586 11.7503 9.68479 11.7964 9.76066 11.8279C9.83654 11.8593 9.91787 11.8755 10 11.8755C10.0821 11.8755 10.1635 11.8593 10.2393 11.8279C10.3152 11.7964 10.3841 11.7503 10.4422 11.6922L13.5672 8.56719C13.6253 8.50912 13.6713 8.44018 13.7027 8.36431C13.7342 8.28844 13.7503 8.20712 13.7503 8.125C13.7503 8.04288 13.7342 7.96156 13.7027 7.88569C13.6713 7.80982 13.6253 7.74088 13.5672 7.68281C13.5091 7.62474 13.4402 7.57868 13.3643 7.54725C13.2884 7.51583 13.2071 7.49965 13.125 7.49965C13.0429 7.49965 12.9616 7.51583 12.8857 7.54725C12.8098 7.57868 12.7409 7.62474 12.6828 7.68281L10.625 9.74141V2.5C10.625 2.33424 10.5592 2.17527 10.4419 2.05806C10.3247 1.94085 10.1658 1.875 10 1.875C9.83424 1.875 9.67527 1.94085 9.55806 2.05806C9.44085 2.17527 9.375 2.33424 9.375 2.5V9.74141L7.31719 7.68281C7.19991 7.56554 7.04085 7.49965 6.875 7.49965C6.70915 7.49965 6.55009 7.56554 6.43281 7.68281C6.31554 7.80009 6.24965 7.95915 6.24965 8.125C6.24965 8.29085 6.31554 8.44991 6.43281 8.56719L9.55781 11.6922Z" fill="#5D97EE"/>
-                </svg>
-              </a>
-            ) : (
-              <p className="text-[14px] text-[#f7f7f7]">N/A</p>
-            )}
-          </div>
-          <div className="flex-1 px-4 py-5 flex gap-4">
-            <div className="flex flex-col gap-1 flex-1">
-              <p className="text-[12px] text-[#b6b6b7]">Franchise</p>
-              <p className="text-[14px] text-[#f7f7f7]">
-                {franchiseStock ? `In Stock: ${franchiseStock.toLocaleString()}+` : "N/A"}
-              </p>
-            </div>
-            <div className="flex flex-col gap-1 flex-1">
-              <p className="text-[12px] text-[#b6b6b7]">Open Market</p>
-              <p className="text-[14px] text-[#f7f7f7]">Available</p>
-            </div>
-          </div>
-        </div>
+      <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg overflow-x-auto">
+        <table className="w-full min-w-[700px]">
+          {/* Table Header */}
+          <thead>
+            <tr className="bg-[#323543] border-b border-[#494B59]">
+              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Mfr Part #</th>
+              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Lead Time</th>
+              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Lifecycle / Risk</th>
+              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Country of origin</th>
+              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Latest PCN / End of Life</th>
+              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Data Sheet</th>
+              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Availability</th>
+            </tr>
+          </thead>
+          {/* Table Body */}
+          <tbody>
+            <tr className="border-b border-[#494B59]">
+              <td className="px-3 py-4 align-top">
+                <p className="text-[14px] text-[#f7f7f7] break-words">{partData?.mpn || "N/A"}</p>
+              </td>
+              <td className="px-3 py-4 align-top">
+                <p className="text-[14px] text-[#f7f7f7]">{leadTime}</p>
+              </td>
+              <td className="px-3 py-4 align-top">
+                <div className="flex items-center gap-1">
+                  <p className="text-[14px] text-[#f7f7f7]">{lifecycleRisk} Risk</p>
+                  {lifecycleRisk === "High" && (
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                      <path d="M8 5V9M8 11V11.5M2 14H14L8 3L2 14Z" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </div>
+                <p className="text-[14px] text-[#b6b6b7] mt-1">{lifecycle}</p>
+              </td>
+              <td className="px-3 py-4 align-top">
+                <p className="text-[14px] text-[#f7f7f7] break-words">{countries}</p>
+              </td>
+              <td className="px-3 py-4 align-top">
+                {pcnSource ? (
+                  <>
+                    <div className="flex items-center gap-1">
+                      <a 
+                        href={pcnSource} 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[14px] text-[#5d97ee] underline cursor-pointer"
+                      >
+                        PCN Document
+                      </a>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDocumentClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, "pcn", pcnSource); }}
+                        className="shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors"
+                        title="Download all documents"
+                      >
+                        {downloadIcon}
+                      </button>
+                    </div>
+                    {eolYears && (
+                      <p className="text-[12px] text-[#f7f7f7] mt-1">{eolYears} years to end of life</p>
+                    )}
+                  </>
+                ) : (
+                  <p className="text-[14px] text-[#f7f7f7]">N/A</p>
+                )}
+              </td>
+              <td className="px-3 py-4 align-top">
+                {datasheet ? (
+                  <div className="flex items-center gap-1">
+                    <a 
+                      href={datasheet} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[14px] text-[#5d97ee] underline cursor-pointer"
+                    >
+                      Data Sheet
+                    </a>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDocumentClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, "datasheet", datasheet); }}
+                      className="shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors"
+                      title="Download all documents"
+                    >
+                      {downloadIcon}
+                    </button>
+                  </div>
+                ) : (
+                  <p className="text-[14px] text-[#f7f7f7]">N/A</p>
+                )}
+              </td>
+              <td className="px-3 py-4 align-top">
+                <div className="flex gap-3">
+                  <div className="flex flex-col gap-1 flex-1 min-w-0">
+                    <p className="text-[12px] text-[#b6b6b7]">Franchise</p>
+                    <p className="text-[14px] text-[#f7f7f7] break-words">
+                      {franchiseStock ? `In Stock: ${franchiseStock.toLocaleString()}+` : "N/A"}
+                    </p>
+                  </div>
+                  <div className="flex flex-col gap-1 flex-1 min-w-0">
+                    <p className="text-[12px] text-[#b6b6b7]">Open Market</p>
+                    <p className="text-[14px] text-[#f7f7f7]">Available</p>
+                  </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     );
   };
@@ -980,17 +992,17 @@ export const HeroSection: React.FC = () => {
                             <Box size={20} className="text-[#8e8e8f]" />
                           </div>
                           <div className="flex flex-col flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-[#efeff0] truncate">
+                            <p className="text-sm font-semibold text-[#efeff0] break-words">
                               {result.mpn}
                             </p>
                             <div className="flex items-center flex-wrap">
                               {result.searchDescription && (
-                                <p className="text-xs text-[#8e8e8f] truncate">
+                                <p className="text-xs text-[#8e8e8f]">
                                   {result.searchDescription}
                                 </p>
                               )}
                               {result.additionalSearchDescription && (
-                                <p className="text-xs text-[#8e8e8f] truncate">
+                                <p className="text-xs text-[#8e8e8f]">
                                   &nbsp;•&nbsp;
                                   {result.additionalSearchDescription}
                                 </p>
@@ -1005,17 +1017,17 @@ export const HeroSection: React.FC = () => {
                             <Box size={20} className="text-[#8e8e8f]" />
                           </div>
                           <div className="flex flex-col flex-1 min-w-0">
-                            <p className="text-sm font-semibold text-[#efeff0] truncate">
+                            <p className="text-sm font-semibold text-[#efeff0] break-words">
                               {result.mpn}
                             </p>
                             <div className="flex items-center flex-wrap">
                               {result.manufacturer && (
-                                <p className="text-xs text-[#8e8e8f] truncate">
+                                <p className="text-xs text-[#8e8e8f]">
                                   {result.manufacturer}
                                 </p>
                               )}
                               {result.description && (
-                                <p className="text-xs text-[#8e8e8f] truncate">
+                                <p className="text-xs text-[#8e8e8f]">
                                   &nbsp;•&nbsp;{result.description}
                                 </p>
                               )}
@@ -1044,9 +1056,9 @@ export const HeroSection: React.FC = () => {
 
         {/* Category Cards OR Selected Part Details */}
         {selectedPart ? (
-          <div className="flex flex-col gap-4 w-[1000px]">
+          <div className="flex flex-col gap-4 w-full max-w-[1000px] px-4 lg:px-0">
             {/* Part Info Section */}
-            <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 overflow-hidden">
+            <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 lg:p-6 overflow-x-auto">
               {renderPart()}
             </div>
             
@@ -1058,13 +1070,25 @@ export const HeroSection: React.FC = () => {
           </div>
         ) : (
           <div className="flex items-center gap-6">
-            {categories.map((category) => (
-              <CategoryCard
-                key={category.title}
-                title={category.title}
-                subtitle={category.subtitle}
-              />
-            ))}
+            {categories.map((category) => {
+              const handleCategoryClick = () => {
+                if (category.title === "Hardware") {
+                  navigate("/by-category?type=hardware");
+                } else if (category.title === "Semiconductors") {
+                  navigate("/by-category?type=semiconductors");
+                }
+                // Manufactures doesn't have a page yet, so no navigation
+              };
+
+              return (
+                <CategoryCard
+                  key={category.title}
+                  title={category.title}
+                  subtitle={category.subtitle}
+                  onClick={handleCategoryClick}
+                />
+              );
+            })}
           </div>
         )}
       </div>

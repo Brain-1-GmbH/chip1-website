@@ -217,7 +217,10 @@ export const ByCategoryPage: React.FC = () => {
           <div className="mb-8 border-b border-[#494B59]">
             <div className="flex gap-8">
               <button
-                onClick={() => setActiveTab("hardware")}
+                onClick={() => {
+                  setActiveTab("hardware");
+                  navigate("/by-category?type=hardware", { replace: true });
+                }}
                 className={`pb-4 px-1 text-base font-medium transition-colors ${
                   activeTab === "hardware"
                     ? "text-[#fcfdfc] border-b-2 border-[#99c221]"
@@ -228,7 +231,10 @@ export const ByCategoryPage: React.FC = () => {
                 Hardware
               </button>
               <button
-                onClick={() => setActiveTab("semiconductors")}
+                onClick={() => {
+                  setActiveTab("semiconductors");
+                  navigate("/by-category?type=semiconductors", { replace: true });
+                }}
                 className={`pb-4 px-1 text-base font-medium transition-colors ${
                   activeTab === "semiconductors"
                     ? "text-[#fcfdfc] border-b-2 border-[#99c221]"

@@ -3,14 +3,19 @@ import React from "react";
 interface CategoryCardProps {
   title: string;
   subtitle: string;
+  onClick?: () => void;
 }
 
 export const CategoryCard: React.FC<CategoryCardProps> = ({
   title,
   subtitle,
+  onClick,
 }) => {
   return (
-    <div className="group bg-[#171819] border border-[#292a2a] flex flex-col gap-1 p-4 rounded-2xl w-[240px] cursor-pointer hover:border-[#B8D434]/40 transition-colors">
+    <div 
+      onClick={onClick}
+      className="group bg-[#171819] border border-[#292a2a] flex flex-col gap-1 p-4 rounded-2xl w-[240px] cursor-pointer hover:border-[#B8D434]/40 transition-colors"
+    >
       <div className="flex items-center justify-between w-full">
         <p className="font-semibold text-xl text-[#efeff0] leading-[1.5]">
           {title}

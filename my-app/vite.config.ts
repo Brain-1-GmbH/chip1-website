@@ -42,6 +42,24 @@ export default defineConfig({
               console.error('[DEBUG] Proxy error:', err.message);
             });
           },
+        },
+        // Document link redirects -> crm.chip1.com/link/
+        '/link': {
+          target: 'https://crm.chip1.com',
+          changeOrigin: true,
+          secure: false,
+          configure: (proxy, options) => {
+            proxy.on('proxyReq', (_proxyReq, req) => {
+              const targetUrl = `${options.target}${req.url}`;
+              console.log(`[DEBUG] Proxying link ${req.url} to ${targetUrl}`);
+            });
+            proxy.on('proxyRes', (proxyRes, req) => {
+              console.log(`[DEBUG] Link proxy response for ${req.url}:`, proxyRes.statusCode);
+            });
+            proxy.on('error', (err) => {
+              console.error('[DEBUG] Link proxy error:', err.message);
+            });
+          },
         }
       }
   }
