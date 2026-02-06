@@ -19,24 +19,23 @@ export const Header: React.FC = () => {
 
   return (
     <header 
-      className="fixed top-0 left-0 right-0 z-50 flex items-center px-10 py-5"
+      className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-10 py-4 backdrop-blur-md bg-[#0E0E0F]/95 border-b border-[#292a2a]/50"
       style={{ 
-        backgroundColor: '#0E0E0F',
-        background: '#0E0E0F',
+        backgroundColor: 'rgba(14, 14, 15, 0.95)',
         width: '100%'
       }}
     >
       {/* Logo */}
-      <Link to="/" className="flex items-center gap-1 flex-shrink-0">
+      <Link to="/" className="flex items-center gap-1 flex-shrink-0 z-10">
         <img
           src={logoImg}
           alt="Chip1 Logo"
-          className="h-12 w-auto"
+          className="h-10 w-auto"
         />
       </Link>
 
       {/* Navigation - Centered */}
-      <nav className="flex items-center gap-6 absolute left-1/2 -translate-x-1/2">
+      <nav className="flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
         {navItems.map((item) => {
           const isActive = item.href.startsWith("/") && location.pathname === item.href;
           
@@ -44,20 +43,30 @@ export const Header: React.FC = () => {
             <Link
               key={item.label}
               to={item.href}
-              className={`flex items-center gap-1 text-sm font-medium transition-colors ${
+              className={`flex items-center gap-1.5 text-sm font-medium transition-all duration-200 relative ${
                 isActive 
                   ? "text-[#B8D434]" 
-                  : "text-white hover:text-[#B8D434]"
+                  : "text-[#b6b6b7] hover:text-[#B8D434]"
               }`}
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               {item.label}
-              {item.hasDropdown && <ChevronDown size={14} />}
+              {isActive && (
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#B8D434] rounded-full" />
+              )}
+              {item.hasDropdown && (
+                <ChevronDown 
+                  size={14} 
+                  className={`transition-transform ${isActive ? 'text-[#B8D434]' : ''}`}
+                />
+              )}
             </Link>
           ) : (
             <a
               key={item.label}
               href={item.href}
-              className="flex items-center gap-1 text-white text-sm font-medium hover:text-[#B8D434] transition-colors"
+              className="flex items-center gap-1.5 text-[#b6b6b7] text-sm font-medium hover:text-[#B8D434] transition-colors duration-200"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               {item.label}
               {item.hasDropdown && <ChevronDown size={14} />}
@@ -71,4 +80,3 @@ export const Header: React.FC = () => {
     </header>
   );
 };
-

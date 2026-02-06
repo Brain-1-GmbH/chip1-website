@@ -9,6 +9,8 @@ import { QualityPage } from "./pages/Quality/QualityPage";
 import { InsightsPage } from "./pages/Insights/InsightsPage";
 import { UploadBOMPage } from "./pages/UploadBOM/UploadBOMPage";
 import { SellExcessPage } from "./pages/SellExcess/SellExcessPage";
+import { ByCategoryPage } from "./pages/ByCategory/ByCategoryPage";
+import { CategoryResultsPage } from "./pages/CategoryResults/CategoryResultsPage";
 import { ScrollToTop } from "./components/ScrollToTop";
 
 import "./App.css";
@@ -28,6 +30,8 @@ function App() {
         <Route path="/insights" element={<InsightsPage />} />
         <Route path="/upload-bom" element={<UploadBOMPage />} />
         <Route path="/sell-excess" element={<SellExcessPage />} />
+        <Route path="/by-category" element={<ByCategoryPage />} />
+        <Route path="/category/:type/:category/:subtype" element={<CategoryResultsPage />} />
       </Routes>
     </Router>
   );

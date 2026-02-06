@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { Close, Search, Upload, Box } from "@carbon/icons-react";
 import axios from "axios";
+import JSZip from "jszip";
 
 import { CategoryCard } from "./CategoryCard";
 import { ActionButton } from "./ActionButton";
@@ -41,6 +42,7 @@ export const HeroSection: React.FC = () => {
   const [isDownloadModalOpen, setIsDownloadModalOpen] = useState(false);
   const [downloadDocumentType, setDownloadDocumentType] = useState<"datasheet" | "pcn" | null>(null);
   const [downloadDocumentUrl, setDownloadDocumentUrl] = useState<string | null>(null);
+  const [isDownloadingZip, setIsDownloadingZip] = useState(false);
   const abortControllerRef = useRef<AbortController | null>(null);
 
   const clearSearch = () => {
@@ -160,6 +162,9 @@ export const HeroSection: React.FC = () => {
 
     axios.get(url, { signal: controller.signal })
       .then((res) => {
+        // #region agent log
+        const _gp = res.data?.data?.globalPart; fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:164',message:'Full part response structure',data:{documentKeys:_gp?.document?Object.keys(_gp.document):null,documentData:_gp?.document,pcnDataKeys:_gp?.pcnData?Object.keys(_gp.pcnData):null,pcnDtoKeys:_gp?.pcnData?.pcnDto?Object.keys(_gp.pcnData.pcnDto):null,pcnDto:_gp?.pcnData?.pcnDto,topLevelKeys:_gp?Object.keys(_gp):null},timestamp:Date.now(),sessionId:'debug-session',runId:'run3',hypothesisId:'G1,G2,G3'})}).catch(()=>{});
+        // #endregion
         setSelectedPart(res.data);
         setPartDataLoading(null);
         // Hide search results dropdown only after data is loaded (but keep results for re-focus)
@@ -307,10 +312,10 @@ export const HeroSection: React.FC = () => {
         {/* Vertical Divider */}
         <div className="w-px bg-gradient-to-b from-transparent via-[#494b59] to-transparent self-stretch" />
 
-        {/* Alternatives */}
+        {/* Alternates */}
         <div className="flex flex-col gap-4 w-[312px] shrink-0">
           <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">
-            Alternatives
+            Alternates
           </p>
 
           <div className="flex flex-col gap-6">
@@ -353,34 +358,7 @@ export const HeroSection: React.FC = () => {
                     </div>
                   </div>
                 ))
-            ) : (
-              <>
-                <div className="flex flex-col gap-1">
-                  <p className="text-[14px] font-medium text-[#efeff0] leading-[1.4]">
-                    C2012X7R1E334K
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">TDK</p>
-                    <div className="w-1 h-1 rounded-full bg-[#b6b6b7]" />
-                    <p className="text-[14px] text-[#b6b6b7] leading-[1.4] flex-1">
-                      Pin to Pin Drop in Replacement
-                    </p>
-                  </div>
-                </div>
-                <div className="flex flex-col gap-1">
-                  <p className="text-[14px] font-medium text-[#efeff0] leading-[1.4]">
-                    MCAST21GSB7334KTNA01
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">Taiyo Yuden</p>
-                    <div className="w-1 h-1 rounded-full bg-[#b6b6b7]" />
-                    <p className="text-[14px] text-[#b6b6b7] leading-[1.4] flex-1">
-                      Pin to Pin Compatible
-                    </p>
-                  </div>
-                </div>
-              </>
-            )}
+            ) : null}
           </div>
         </div>
       </div>
@@ -394,13 +372,154 @@ export const HeroSection: React.FC = () => {
     setIsDownloadModalOpen(true);
   };
 
+  const downloadFilesAsZip = async () => {
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:372',message:'downloadFilesAsZip called',data:{timestamp:Date.now()},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'A,B,C,D,E'})}).catch(()=>{});
+    // #endregion
+    // @ts-expect-error - TODO: fix this
+    const partData = selectedPart?.data?.globalPart;
+    const mpn = partData?.mpn || "part";
+    const pcnUrl = partData?.pcnData?.pcnDto?.lastPcnSource;
+    const datasheetUrl = partData?.document?.latestDatasheet;
+
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:377',message:'URLs extracted',data:{pcnUrl,pcnUrlType:typeof pcnUrl,datasheetUrl,datasheetUrlType:typeof datasheetUrl,mpn},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'B,C,E'})}).catch(()=>{});
+    // #endregion
+
+    // Collect URLs that exist
+    const urlsToDownload: Array<{ url: string; filename: string }> = [];
+    
+    if (datasheetUrl) {
+      // Extract filename from URL or use default
+      const datasheetFilename = datasheetUrl.split('/').pop() || `datasheet.pdf`;
+      urlsToDownload.push({ url: datasheetUrl, filename: datasheetFilename });
+    }
+    
+    if (pcnUrl) {
+      const pcnFilename = pcnUrl.split('/').pop() || `pcn.pdf`;
+      urlsToDownload.push({ url: pcnUrl, filename: pcnFilename });
+    }
+
+    // #region agent log
+    fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:393',message:'URLs to download prepared',data:{urlsToDownloadCount:urlsToDownload.length,urlsToDownload:urlsToDownload.map(u=>({url:u.url,filename:u.filename}))},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+    // #endregion
+
+    if (urlsToDownload.length === 0) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:395',message:'No URLs to download - early return',data:{},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      console.error("No documents available to download");
+      return;
+    }
+
+    setIsDownloadingZip(true);
+
+    try {
+      const zip = new JSZip();
+
+      // Download all files in parallel
+      const downloadPromises = urlsToDownload.map(async ({ url, filename }) => {
+        // #region agent log
+        fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:406',message:'Starting download for file',data:{originalUrl:url,filename,isAbsolute:url.startsWith('http'),isRelative:url.startsWith('/')},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A,B,C'})}).catch(()=>{});
+        // #endregion
+        try {
+          // Convert crm.chip1.com URLs to use proxy path
+          let proxyUrl = url;
+          if (url.startsWith('https://crm.chip1.com/')) {
+            proxyUrl = url.replace('https://crm.chip1.com/', '/api/part/');
+          } else if (url.startsWith('http://crm.chip1.com/')) {
+            proxyUrl = url.replace('http://crm.chip1.com/', '/api/part/');
+          }
+          
+          // #region agent log
+          fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:412',message:'Using proxy URL',data:{originalUrl:url,proxyUrl,filename},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A,B,C'})}).catch(()=>{});
+          // #endregion
+          
+          // Use axios with blob response type to handle redirects and cookies
+          const response = await axios.get(proxyUrl, {
+            responseType: 'blob',
+            maxRedirects: 5,
+            withCredentials: true, // Include cookies for authentication
+          });
+          
+          // #region agent log
+          fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:420',message:'Axios response received',data:{filename,status:response.status,statusType:response.data?.type,blobSize:response.data?.size,contentType:response.headers['content-type']},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A,C'})}).catch(()=>{});
+          // #endregion
+          
+          const blob = response.data;
+          // #region agent log
+          fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:424',message:'Blob created successfully',data:{filename,blobSize:blob.size,blobType:blob.type},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'F'})}).catch(()=>{});
+          // #endregion
+          return { filename, blob };
+        } catch (error) {
+          // #region agent log
+          fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:427',message:'Download error caught',data:{filename,error:error instanceof Error?error.message:String(error),errorName:error instanceof Error?error.name:'unknown',isAxiosError:axios.isAxiosError(error),axiosStatus:axios.isAxiosError(error)?error.response?.status:undefined},timestamp:Date.now(),sessionId:'debug-session',runId:'run2',hypothesisId:'A,C'})}).catch(()=>{});
+          // #endregion
+          console.error(`Error downloading ${filename}:`, error);
+          return null;
+        }
+      });
+
+      const downloadedFiles = await Promise.all(downloadPromises);
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:421',message:'All downloads completed',data:{totalFiles:downloadedFiles.length,successfulFiles:downloadedFiles.filter(f=>f!==null).length,failedFiles:downloadedFiles.filter(f=>f===null).length,fileNames:downloadedFiles.filter(f=>f!==null).map(f=>f?.filename)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      
+      // Add successfully downloaded files to zip
+      downloadedFiles.forEach((file) => {
+        if (file) {
+          zip.file(file.filename, file.blob);
+        }
+      });
+
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:428',message:'Generating zip blob',data:{filesInZip:Object.keys(zip.files).length},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      // Generate zip file
+      const zipBlob = await zip.generateAsync({ type: "blob" });
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:431',message:'Zip blob generated',data:{zipBlobSize:zipBlob.size},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      // Create download link
+      const url = window.URL.createObjectURL(zipBlob);
+      const link = document.createElement("a");
+      link.href = url;
+      
+      // Create proper filename: sanitize MPN and add timestamp
+      const sanitizedMpn = mpn.replace(/[^a-zA-Z0-9-_]/g, "_");
+      const timestamp = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+      link.download = `${sanitizedMpn}_documents_${timestamp}.zip`;
+      
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:441',message:'Download link created and clicking',data:{downloadFilename:link.download,linkHref:link.href.substring(0,50)},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'F'})}).catch(()=>{});
+      // #endregion
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      window.URL.revokeObjectURL(url);
+
+      setIsDownloadModalOpen(false);
+      setDownloadDocumentType(null);
+      setDownloadDocumentUrl(null);
+    } catch (error) {
+      // #region agent log
+      fetch('http://127.0.0.1:7243/ingest/61ba81bd-24c6-451f-bbbb-7e7480f7082f',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'HeroSection.tsx:449',message:'Error in zip creation',data:{error:error instanceof Error?error.message:String(error),errorName:error instanceof Error?error.name:'unknown'},timestamp:Date.now(),sessionId:'debug-session',runId:'run1',hypothesisId:'D'})}).catch(()=>{});
+      // #endregion
+      console.error("Error creating zip file:", error);
+      alert("Failed to download documents. Please try again.");
+    } finally {
+      setIsDownloadingZip(false);
+    }
+  };
+
   const renderDownloadModal = () => {
     if (!isDownloadModalOpen || !downloadDocumentType || !downloadDocumentUrl) return null;
 
     // @ts-expect-error - TODO: fix this
     const partData = selectedPart?.data?.globalPart;
     const mpn = partData?.mpn || "N/A";
-    const documentName = downloadDocumentType === "datasheet" ? "Data Sheet" : "PCN Document";
     const documentInfo = downloadDocumentType === "datasheet" ? "Data Sheet" : "PCN Document • Data Sheet";
 
     return (
@@ -456,7 +575,7 @@ export const HeroSection: React.FC = () => {
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
                     <path d="M16.6667 5L7.50004 14.1667L3.33337 10" stroke="#b6b6b7" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
                   </svg>
-                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">Get this datasheet only</p>
+                  <p className="text-[14px] text-[#b6b6b7] leading-[20px]">Get all documents (PCN & Datasheet)</p>
                 </div>
                 <div className="flex items-center gap-2">
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="shrink-0">
@@ -472,15 +591,18 @@ export const HeroSection: React.FC = () => {
                 </div>
               </div>
               <button 
-                onClick={() => {
-                  window.open(downloadDocumentUrl, '_blank');
-                  setIsDownloadModalOpen(false);
-                  setDownloadDocumentType(null);
-                  setDownloadDocumentUrl(null);
-                }}
-                className="w-full h-12 px-4 bg-transparent border border-[#99C221] rounded-2xl text-[14px] font-medium text-[#99C221] hover:bg-[#99C221]/10 transition-colors"
+                onClick={downloadFilesAsZip}
+                disabled={isDownloadingZip}
+                className="w-full h-12 px-4 bg-transparent border border-[#99C221] rounded-2xl text-[14px] font-medium text-[#99C221] hover:bg-[#99C221]/10 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
-                Download Now
+                {isDownloadingZip ? (
+                  <>
+                    <SimpleLoader size="xsmall" containerClassName="p-0" />
+                    <span>Downloading...</span>
+                  </>
+                ) : (
+                  "Download Now"
+                )}
               </button>
             </div>
 
@@ -810,11 +932,39 @@ export const HeroSection: React.FC = () => {
               <div className="absolute top-full left-0 right-0 mt-2 p-4 bg-[#17181a]/95 backdrop-blur-md rounded-2xl border border-[rgba(77,77,78,0.34)] shadow-2xl z-50">
                 {!hasExternalResults && (
                   <p className="text-sm text-[#8e8e8f] mb-2">
-                    {isLoadingExternal ? "Loading extended results..." : "Press enter to view extended results"}
+                    {isLoadingExternal ? "Loading extended results..." : "Press Enter to show extended results"}
                   </p>
                 )}
-                <p className="text-sm text-[#8e8e8f] mb-2">
-                  {searchResult.length} results found
+                
+                {/* Select a category to search within */}
+                <div className="mb-4">
+                  <p className="text-sm text-[#cececf] mb-3 font-medium">Select a category to search within</p>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      onClick={() => {
+                        setIsDropdownVisible(false);
+                        navigate("/by-category?type=hardware");
+                      }}
+                      className="px-4 py-2 rounded-full bg-[#171819] border border-[#292a2a] text-sm text-[#b6b6b7] hover:border-[rgba(184,212,52,0.4)] hover:text-[#B8D434] hover:bg-[#1a1b1c] transition-all duration-200"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      Hardware
+                    </button>
+                    <button
+                      onClick={() => {
+                        setIsDropdownVisible(false);
+                        navigate("/by-category?type=semiconductors");
+                      }}
+                      className="px-4 py-2 rounded-full bg-[#171819] border border-[#292a2a] text-sm text-[#b6b6b7] hover:border-[rgba(184,212,52,0.4)] hover:text-[#B8D434] hover:bg-[#1a1b1c] transition-all duration-200"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      Semiconductors
+                    </button>
+                  </div>
+                </div>
+
+                <p className="text-sm text-[#8e8e8f] mb-2 font-medium">
+                  {searchResult.length} found parts
                 </p>
                 <ul className="flex flex-col gap-2 max-h-[240px] overflow-y-auto">
                   {searchResult.map((result: SearchResult) => (
