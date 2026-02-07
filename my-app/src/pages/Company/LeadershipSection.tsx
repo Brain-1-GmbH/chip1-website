@@ -5,11 +5,14 @@ import imgSasan from "../../assets/1.png";
 import imgDamon from "../../assets/2.png";
 import imgVolkan from "../../assets/3.png";
 
-interface LeaderCardProps {
+interface LeaderData {
   name: string;
   role: string;
   image: string;
   description: string;
+}
+
+interface LeaderCardProps extends LeaderData {
   isExpanded: boolean;
   onToggle: () => void;
 }
@@ -103,7 +106,7 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
   );
 };
 
-const leadersData: LeaderCardProps[] = [
+const leadersData: LeaderData[] = [
   {
     name: "Sasan Tabib",
     role: "CEO",
