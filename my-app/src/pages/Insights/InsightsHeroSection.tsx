@@ -5,7 +5,7 @@ import heroBg from "../../assets/f19cc08cb6e32f981e8f2d194fbcf11a743a58d4.jpg";
 
 export const InsightsHeroSection: React.FC = () => {
   return (
-    <section className="relative h-[776px] overflow-hidden bg-[#080809]">
+    <section className="relative h-[440px] md:h-[776px] overflow-hidden bg-[#080809]">
       {/* Background Image */}
       <div className="absolute inset-0">
         <img
@@ -25,11 +25,11 @@ export const InsightsHeroSection: React.FC = () => {
       />
 
       {/* Content */}
-      <div className="absolute left-20 top-[362px] flex flex-col gap-4">
+      <div className="absolute left-4 top-[160px] md:left-20 md:top-[362px] flex flex-col gap-4">
         {/* Tag */}
         <div className="border-l-2 border-[#99c221] px-4">
           <p
-            className="text-2xl text-[#99c221] capitalize leading-[1.1]"
+            className="text-[14px] md:text-2xl text-[#99c221] capitalize leading-[1.1]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Insights
@@ -38,7 +38,7 @@ export const InsightsHeroSection: React.FC = () => {
 
         {/* Title */}
         <h1
-          className="text-[56px] font-semibold leading-[1.1] w-[625px]"
+          className="text-[32px] md:text-[56px] font-semibold leading-[1.2] md:leading-[1.1] w-[320px] md:w-[625px]"
           style={{
             fontFamily: "'Plus Jakarta Sans', sans-serif",
             background:
@@ -53,7 +53,7 @@ export const InsightsHeroSection: React.FC = () => {
 
         {/* Subtitle */}
         <p
-          className="text-2xl text-[#8e8e8f] leading-[1.4]"
+          className="text-[14px] md:text-2xl text-[#8e8e8f] leading-[1.4]"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           The Latest Semiconductor Trends

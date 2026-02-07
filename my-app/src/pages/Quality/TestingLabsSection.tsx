@@ -93,18 +93,64 @@ export const TestingLabsSection: React.FC = () => {
   const activeMethod = testingMethods[activeIndex];
 
   return (
-    <section className="bg-[#0e0e0f] px-20 py-24">
+    <section className="bg-[#0e0e0f] px-3 pt-2 pb-10 md:px-20 md:py-24 border-t-0">
       <div className="max-w-[1280px] mx-auto">
         {/* Title */}
         <h2
-          className="text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-10"
+          className="hidden md:block text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-10"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Advanced Testing Laboratories
         </h2>
 
-        {/* Content */}
-        <div className="flex gap-[72px] items-start">
+        {/* Mobile Content */}
+        <div className="md:hidden flex flex-col gap-6 items-center">
+          {/* Image */}
+          <div className="w-full h-[280px] rounded-2xl overflow-hidden">
+            <img
+              src={activeMethod.image}
+              alt={activeMethod.title}
+              className="w-full h-full object-cover"
+            />
+          </div>
+
+          {/* Title and Description */}
+          <div className="flex flex-col gap-3 w-full">
+            <h3
+              className="text-[24px] font-semibold text-[#e5e5e7] leading-[1.4]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              {activeMethod.title}
+            </h3>
+            <p
+              className="text-[14px] text-[#cececf] leading-[1.5]"
+              style={{ fontFamily: "'Inter', sans-serif" }}
+            >
+              {activeMethod.description}
+            </p>
+          </div>
+
+          {/* Methods List */}
+          <div className="flex flex-col gap-2 w-full">
+            {testingMethods.map((method, index) => (
+              <button
+                key={method.id}
+                onClick={() => setActiveIndex(index)}
+                className={`text-left text-[16px] leading-[1.4] transition-colors ${
+                  index === activeIndex
+                    ? "text-[#e5e5e7] font-semibold"
+                    : "text-[#858586]"
+                }`}
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                {method.title}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Content */}
+        <div className="hidden md:flex gap-[72px] items-start">
           {/* Left - Method Tabs */}
           <div className="flex flex-col gap-2 w-[512px] flex-shrink-0">
             {testingMethods.map((method, index) => (

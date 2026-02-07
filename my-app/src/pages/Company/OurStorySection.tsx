@@ -102,12 +102,12 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ item }) => {
 
   return (
     <div
-      className={`flex flex-col gap-10 w-[378px] ${
+      className={`flex flex-col gap-6 md:gap-10 w-full max-w-[343px] md:max-w-none md:w-[378px] ${
         isLeft ? "items-start text-left" : "items-end text-right"
       }`}
     >
       {/* Image */}
-      <div className="w-[378px] h-[240px] rounded-lg overflow-hidden">
+      <div className="w-[240px] md:w-[378px] h-[152px] md:h-[240px] rounded-lg overflow-hidden">
         <img
           src={item.image}
           alt={item.title}
@@ -116,22 +116,22 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ item }) => {
       </div>
 
       {/* Text Content */}
-      <div className={`flex flex-col gap-4 ${isLeft ? "items-start" : "items-end"}`}>
+      <div className={`flex flex-col gap-3 md:gap-4 ${isLeft ? "items-start" : "items-end"}`}>
         <div className={`flex flex-col ${isLeft ? "items-start" : "items-end"}`}>
           <span
-            className="text-5xl font-semibold text-[#99c221] leading-[1.3]"
+            className="text-[32px] md:text-5xl font-semibold text-[#99c221] leading-[1.3]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             {item.year}
           </span>
           <span
-            className="text-2xl font-medium text-[#cececf] leading-[1.4]"
+            className="text-[20px] md:text-2xl font-medium text-[#cececf] leading-[1.4]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             {item.title}
           </span>
         </div>
-        <p className="text-base text-[#e5e5e7] leading-[1.5]">
+        <p className="text-[14px] md:text-base text-[#e5e5e7] leading-[1.5]">
           {item.description}
         </p>
       </div>
@@ -185,18 +185,18 @@ const TimelineConnector: React.FC<{
 
 export const OurStorySection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-20 py-24">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-24">
       <div className="max-w-[1280px] mx-auto">
         {/* Header */}
-        <div className="flex flex-col gap-4 mb-24">
+        <div className="flex flex-col gap-4 mb-10 md:mb-24">
           <h2
-            className="text-5xl font-semibold text-[#efeff0] leading-[1.3]"
+            className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Our Story
           </h2>
           <p
-            className="text-2xl text-[#858586] leading-[1.4] max-w-[900px]"
+            className="text-[14px] md:text-2xl text-[#858586] leading-[1.4] max-w-[900px]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Over two decades, our commitment to reliability, speed, and customer
@@ -207,7 +207,7 @@ export const OurStorySection: React.FC = () => {
           </p>
         </div>
 
-        {/* Timeline - full width container */}
+        {/* Timeline */}
         <div className="relative w-full max-w-[1100px] mx-auto">
           {timelineData.map((item, index) => {
             const isFirst = index === 0;

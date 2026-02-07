@@ -35,9 +35,9 @@ export const ContactSection: React.FC = () => {
   };
 
   return (
-    <section className="relative px-20 py-24 bg-[#0e0e0f] overflow-hidden rounded-3xl mx-4">
+    <section className="relative w-full px-4 pt-6 pb-10 md:px-20 md:py-24 bg-[#0e0e0f] overflow-hidden md:rounded-3xl md:mx-4">
       {/* Background Image with Overlay */}
-      <div className="absolute inset-0 pointer-events-none rounded-3xl overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none md:rounded-3xl overflow-hidden">
         <img
           src={contactBg}
           alt=""
@@ -53,17 +53,17 @@ export const ContactSection: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="relative max-w-[1280px] mx-auto px-6">
-        <div className="flex items-center gap-10">
+      <div className="relative max-w-[1280px] mx-auto px-0 md:px-6">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-10">
           {/* Left Side - Title and Description */}
-          <div className="flex-1 flex flex-col gap-4 py-14">
+          <div className="flex-1 flex flex-col gap-4 md:py-14">
             <h2
-              className="text-5xl font-semibold text-[#efeff0] leading-[1.3] uppercase"
+              className="text-[24px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] uppercase"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               Let's connect
             </h2>
-            <p className="text-xl text-[#858586] leading-[1.5]">
+            <p className="text-[14px] md:text-xl text-[#858586] leading-[1.5]">
               Ready to partner with Chip 1 or have questions about our services?
               We're here to help. Getting in touch with us is easy, and we have a
               global team standing by to support you.
@@ -71,10 +71,10 @@ export const ContactSection: React.FC = () => {
           </div>
 
           {/* Right Side - Form */}
-          <div className="flex-1 flex justify-center">
+          <div className="flex-1 flex justify-center md:justify-start w-full">
             <form
               onSubmit={handleSubmit}
-              className="flex flex-col items-center gap-12 w-full max-w-[595px]"
+              className="flex flex-col items-center gap-6 md:gap-12 w-full max-w-none md:max-w-[595px]"
             >
               {/* Form Fields */}
               <div className="flex flex-col gap-4 w-full">
@@ -135,7 +135,7 @@ export const ContactSection: React.FC = () => {
               <button
                 type="submit"
                 className="bg-[#99c221] border-t border-[#ceea6c] flex items-center justify-center gap-2 
-                         h-12 w-[200px] rounded-3xl shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)]
+                         h-12 w-full px-4 py-2 md:w-[200px] rounded-3xl shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)]
                          text-[#05080d] font-semibold text-base
                          hover:bg-[#a8d130] transition-colors"
               >

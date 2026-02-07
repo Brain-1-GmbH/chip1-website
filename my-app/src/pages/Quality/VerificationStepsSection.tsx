@@ -126,23 +126,118 @@ const StepCard: React.FC<StepCardProps> = ({ step, isEven }) => {
   );
 };
 
+const LEFT_OUTER_LINE = "left-0";
+const RIGHT_OUTER_LINE = "right-0";
+
+const MobileConnector: React.FC<{
+  fromLeft: boolean;
+  toLeft: boolean;
+}> = ({ fromLeft, toLeft }) => {
+  const goingLeftToRight = fromLeft && !toLeft;
+  const goingRightToLeft = !fromLeft && toLeft;
+
+  return (
+    <div className="relative h-[80px] w-full">
+      {goingLeftToRight && (
+        <>
+          <div className={`absolute top-0 w-[2px] h-[40px] bg-[#323335] ${LEFT_OUTER_LINE}`} />
+          <div className="absolute top-[40px] left-0 right-0 h-[2px] bg-[#323335]" />
+          <div className={`absolute top-[40px] w-[2px] h-[40px] bg-[#323335] ${RIGHT_OUTER_LINE}`} />
+        </>
+      )}
+      {goingRightToLeft && (
+        <>
+          <div className={`absolute top-0 w-[2px] h-[40px] bg-[#323335] ${RIGHT_OUTER_LINE}`} />
+          <div className="absolute top-[40px] left-0 right-0 h-[2px] bg-[#323335]" />
+          <div className={`absolute top-[40px] w-[2px] h-[40px] bg-[#323335] ${LEFT_OUTER_LINE}`} />
+        </>
+      )}
+    </div>
+  );
+};
+
 export const VerificationStepsSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-20 py-24">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-24">
       <div className="max-w-[1280px] mx-auto">
         {/* Title */}
         <h2
-          className="text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-10 text-center"
+          className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-8 md:mb-10 text-center"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Verification Steps
         </h2>
 
-        {/* Steps */}
-        <div className="relative flex flex-col gap-[60px] items-center">
-          {/* Vertical line */}
-          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-[#323335] -translate-x-1/2" />
+        {/* Mobile Roadmap (Our Story style) */}
+        <div className="md:hidden relative w-full max-w-[1100px] mx-auto">
+          {steps.map((step, index) => {
+            const isFirst = index === 0;
+            const isLast = index === steps.length - 1;
+            const fromLeft = index % 2 === 0;
+            const toLeft = (index + 1) % 2 === 0;
 
+            return (
+              <div key={step.number}>
+                <div className="relative">
+                  <div
+                    className={`absolute w-[2px] bg-[#323335] ${
+                      fromLeft ? LEFT_OUTER_LINE : RIGHT_OUTER_LINE
+                    }`}
+                    style={{
+                      height: isFirst ? "calc(100% - 80px)" : "100%",
+                      top: isFirst ? "80px" : "0",
+                    }}
+                  />
+                  <div
+                    className={`flex ${fromLeft ? "justify-start pl-10" : "justify-end pr-10"}`}
+                  >
+                    <div
+                      className={`flex flex-col gap-4 w-[240px] ${
+                        fromLeft ? "items-start text-left" : "items-end text-right"
+                      }`}
+                    >
+                      <div className="w-[240px] h-[152px] rounded-lg overflow-hidden">
+                        <img
+                          src={step.image}
+                          alt={step.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div
+                        className={`w-12 h-12 rounded-full border border-[#323335] flex items-center justify-center ${
+                          step.number === 1 ? "bg-[#99c221]" : "bg-transparent"
+                        }`}
+                      >
+                        <span
+                          className={`text-[20px] font-semibold ${
+                            step.number === 1 ? "text-black" : "text-white"
+                          }`}
+                          style={{ fontFamily: "'Inter', sans-serif" }}
+                        >
+                          {step.number}
+                        </span>
+                      </div>
+                      <p
+                        className="text-[14px] text-[#e5e5e7] leading-[1.5] w-[240px]"
+                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                      >
+                        {step.title}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
+                {!isLast && (
+                  <MobileConnector fromLeft={fromLeft} toLeft={toLeft} />
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop Steps */}
+        <div className="hidden md:flex relative flex-col gap-[60px] items-center">
+          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-[#323335] -translate-x-1/2" />
           {steps.map((step, index) => (
             <StepCard key={step.number} step={step} isEven={index % 2 === 1} />
           ))}

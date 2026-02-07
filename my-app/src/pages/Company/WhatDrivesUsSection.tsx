@@ -13,7 +13,7 @@ interface ValueCardProps {
 
 const ValueCard: React.FC<ValueCardProps> = ({ title, description, image }) => {
   return (
-    <div className="relative flex-1 h-[363px] rounded-2xl overflow-hidden flex flex-col justify-end p-6">
+    <div className="relative w-full h-[260px] md:w-auto md:h-[363px] rounded-2xl overflow-hidden flex flex-col justify-end p-4 md:p-6">
       {/* Background Image */}
       <div className="absolute inset-0 pointer-events-none">
         <img
@@ -34,13 +34,13 @@ const ValueCard: React.FC<ValueCardProps> = ({ title, description, image }) => {
       {/* Content */}
       <div className="relative z-10 flex flex-col gap-2">
         <h3
-          className="text-2xl font-semibold text-[#efeff0] leading-[1.4]"
+          className="text-[20px] md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {title}
         </h3>
         <p
-          className="text-base text-[#cececf] leading-[1.5]"
+          className="text-[14px] md:text-base text-[#cececf] leading-[1.5]"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           {description}
@@ -73,18 +73,18 @@ const valuesData: ValueCardProps[] = [
 
 export const WhatDrivesUsSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-20 py-10">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-10">
       <div className="max-w-[1280px] mx-auto">
         {/* Header */}
-        <div className="flex flex-col gap-4 mb-20">
+        <div className="flex flex-col gap-4 mb-8 md:mb-20">
           <h2
-            className="text-5xl font-semibold text-[#efeff0] leading-[1.3]"
+            className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             What Drives Us
           </h2>
           <p
-            className="text-2xl text-[#858586] leading-[1.4]"
+            className="text-[14px] md:text-2xl text-[#858586] leading-[1.4]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             We exist to keep production lines running — no matter the market condition.
@@ -92,7 +92,7 @@ export const WhatDrivesUsSection: React.FC = () => {
         </div>
 
         {/* Value Cards */}
-        <div className="flex gap-6">
+        <div className="flex flex-col items-stretch md:flex-row gap-4 md:gap-6">
           {valuesData.map((value) => (
             <ValueCard
               key={value.title}

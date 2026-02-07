@@ -264,6 +264,13 @@ const ComponentCard: React.FC<ComponentCardProps> = ({ component }) => {
 export const ComponentsWeOfferSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
+    () =>
+      categoriesData.reduce((acc, category, index) => {
+        acc[category.id] = index === 0;
+        return acc;
+      }, {} as Record<string, boolean>)
+  );
 
   const handleTabClick = (index: number) => {
     if (isAnimating || index === activeIndex) return;
@@ -273,18 +280,65 @@ export const ComponentsWeOfferSection: React.FC = () => {
   };
 
   return (
-    <section className="bg-[#0e0e0f] px-20 py-24 pb-32">
+    <section className="bg-[#0e0e0f] px-3 py-10 md:px-20 md:py-24 md:pb-32">
       <div className="max-w-[1280px] mx-auto">
         {/* Title */}
         <h2
-          className="text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-20"
+          className="hidden md:block text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-20"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Components We Offer
         </h2>
 
-        {/* Content */}
-        <div className="flex gap-12 items-start">
+        {/* Mobile - Accordion */}
+        <div className="md:hidden flex flex-col gap-2">
+          {categoriesData.map((category) => {
+            const isOpen = !!openCategories[category.id];
+            return (
+              <div key={category.id}>
+                <button
+                  type="button"
+                  className="w-full flex items-center justify-between py-4 text-left"
+                  onClick={() =>
+                    setOpenCategories((prev) => ({
+                      ...prev,
+                      [category.id]: !prev[category.id],
+                    }))
+                  }
+                >
+                  <span
+                    className={`text-2xl leading-[1.4] transition-colors duration-300 ${
+                      isOpen
+                        ? "font-semibold text-[#e5e5e7]"
+                        : "font-normal text-[#545556]"
+                    }`}
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    {category.title}
+                  </span>
+                  <ChevronRight
+                    size={24}
+                    className={`transition-transform duration-200 ${
+                      isOpen
+                        ? "rotate-90 text-[#e5e5e7]"
+                        : "-rotate-90 text-[#545556]"
+                    }`}
+                  />
+                </button>
+                {isOpen && (
+                  <div className="flex flex-col">
+                    {category.components.map((component) => (
+                      <ComponentCard key={component.id} component={component} />
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Desktop Content */}
+        <div className="hidden md:flex gap-12 items-start">
           {/* Left - Category Tabs */}
           <div className="flex flex-col gap-2 w-[576px] flex-shrink-0">
             {categoriesData.map((category, index) => (

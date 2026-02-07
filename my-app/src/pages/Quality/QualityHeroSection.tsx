@@ -3,7 +3,7 @@ import imgBackground from "../../assets/f0d7bd6a48bf189b34b28bb837e803bf5765a994
 
 export const QualityHeroSection: React.FC = () => {
   return (
-    <div className="relative w-full h-[700px] flex items-center overflow-hidden">
+    <div className="relative w-full h-[440px] md:h-[700px] flex items-center overflow-hidden">
       {/* Background Image */}
       <div className="absolute inset-0 pointer-events-none">
         <img
@@ -22,11 +22,11 @@ export const QualityHeroSection: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col gap-4 items-start w-full max-w-[1280px] mx-auto px-20 pt-[200px]">
+      <div className="relative z-10 flex flex-col gap-4 items-start w-full max-w-[1280px] mx-auto px-4 pt-[160px] md:px-20 md:pt-[200px]">
         {/* Tag */}
         <div className="border-l-2 border-[#99c221] pl-4">
           <p
-            className="text-2xl text-[#99c221] capitalize leading-[1.1]"
+            className="text-[14px] md:text-2xl text-[#99c221] capitalize leading-[1.1]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Quality
@@ -35,7 +35,7 @@ export const QualityHeroSection: React.FC = () => {
 
         {/* Title with gradient text */}
         <h1
-          className="text-[56px] font-semibold leading-[1.1] max-w-[863px]"
+          className="text-[32px] md:text-[56px] font-semibold leading-[1.2] md:leading-[1.1] max-w-[863px]"
           style={{
             fontFamily: "'Plus Jakarta Sans', sans-serif",
             background:
@@ -50,7 +50,7 @@ export const QualityHeroSection: React.FC = () => {
 
         {/* Subtitle */}
         <p
-          className="text-2xl text-[#8e8e8f] leading-[1.4]"
+          className="text-[14px] md:text-2xl text-[#8e8e8f] leading-[1.4]"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Comprehensive inspections, certified quality, uncompromised supply safety

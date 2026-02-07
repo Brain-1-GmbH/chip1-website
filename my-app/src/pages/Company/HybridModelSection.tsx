@@ -2,18 +2,18 @@ import React from "react";
 
 export const HybridModelSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-20 py-10">
-      <div className="max-w-[1280px] mx-auto px-6">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-10">
+      <div className="max-w-[1280px] mx-auto px-0 md:px-6">
         {/* Header */}
-        <div className="flex flex-col gap-4 mb-10">
+        <div className="flex flex-col gap-4 mb-8 md:mb-10">
           <h2
-            className="text-5xl font-semibold text-[#efeff0] leading-[1.3]"
+            className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             The Hybrid Distribution Model
           </h2>
           <p
-            className="text-xl text-[#b6b6b7] leading-[1.5] max-w-[706px]"
+            className="text-[14px] md:text-xl text-[#b6b6b7] leading-[1.5] max-w-[706px]"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             Our hybrid model connects the stability of franchised sourcing with
@@ -25,30 +25,38 @@ export const HybridModelSection: React.FC = () => {
         </div>
 
         {/* Hybrid Model Diagram */}
-        <div className="relative flex items-center justify-between py-10">
+        <div className="relative flex flex-col md:flex-row items-center justify-between gap-8 md:gap-0 py-6 md:py-10">
           {/* Left Side - Franchised Sourcing */}
-          <div className="flex flex-col gap-9 items-start">
+          <div className="order-2 md:order-none flex flex-col gap-4 md:gap-9 items-start w-full md:w-auto">
             <h3
-              className="text-[32px] font-medium text-[#cececf] leading-[1.4]"
+              className="text-[20px] md:text-[32px] font-medium text-[#cececf] leading-[1.4]"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               Franchised sourcing
             </h3>
-            <div
-              className="flex flex-col gap-4 text-2xl text-[#cececf] leading-[1.4]"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
+            <div className="hidden md:flex flex-col gap-4 text-2xl text-[#cececf] leading-[1.4]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               <p>Franchised sourcing</p>
               <p>Compliance</p>
               <p>Traceability</p>
             </div>
+            <div className="flex md:hidden flex-wrap gap-2">
+              {["Stability", "Compliance", "Traceability"].map((item) => (
+                <span
+                  key={item}
+                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-[40px] border border-[#323335] bg-[#0E0E0F] text-[14px] text-[#cececf]"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  {item}
+                </span>
+              ))}
+            </div>
           </div>
 
           {/* Center - Chip Illustration */}
-          <div className="relative flex items-center justify-center">
+          <div className="order-1 md:order-none relative flex items-center justify-center">
             {/* Left curved arrow */}
             <svg
-              className="absolute -left-[120px] top-1/2 -translate-y-1/2"
+              className="hidden md:block absolute -left-[120px] top-1/2 -translate-y-1/2"
               width="140"
               height="300"
               viewBox="0 0 140 300"
@@ -72,7 +80,7 @@ export const HybridModelSection: React.FC = () => {
 
             {/* Right curved arrow */}
             <svg
-              className="absolute -right-[120px] top-1/2 -translate-y-1/2"
+              className="hidden md:block absolute -right-[120px] top-1/2 -translate-y-1/2"
               width="140"
               height="300"
               viewBox="0 0 140 300"
@@ -95,13 +103,14 @@ export const HybridModelSection: React.FC = () => {
             </svg>
 
             {/* Chip SVG */}
-            <svg
-              width="320"
-              height="280"
-              viewBox="0 0 320 280"
-              fill="none"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <div className="scale-75 md:scale-100">
+              <svg
+                width="320"
+                height="280"
+                viewBox="0 0 320 280"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
               {/* Chip body - isometric view */}
               <g transform="translate(40, 60)">
                 {/* Top face of chip */}
@@ -212,24 +221,33 @@ export const HybridModelSection: React.FC = () => {
                   </g>
                 ))}
               </g>
-            </svg>
+              </svg>
+            </div>
           </div>
 
           {/* Right Side - Open-market Sourcing */}
-          <div className="flex flex-col gap-9 items-start">
+          <div className="order-3 md:order-none flex flex-col gap-4 md:gap-9 items-start w-full md:w-auto">
             <h3
-              className="text-[32px] font-medium text-[#cececf] leading-[1.4]"
+              className="text-[20px] md:text-[32px] font-medium text-[#cececf] leading-[1.4]"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               Open-market sourcing
             </h3>
-            <div
-              className="flex flex-col gap-4 text-2xl text-[#cececf] leading-[1.4]"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
+            <div className="hidden md:flex flex-col gap-4 text-2xl text-[#cececf] leading-[1.4]" style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
               <p>Speed</p>
               <p>Flexibility</p>
               <p>Availability</p>
+            </div>
+            <div className="flex md:hidden flex-wrap gap-2">
+              {["Speed", "Flexibility", "Availability"].map((item) => (
+                <span
+                  key={item}
+                  className="flex items-center justify-center gap-2 px-4 py-2 rounded-[40px] border border-[#323335] bg-[#0E0E0F] text-[14px] text-[#cececf]"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  {item}
+                </span>
+              ))}
             </div>
           </div>
         </div>

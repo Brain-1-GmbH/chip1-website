@@ -15,7 +15,7 @@ export const CompanyHeroSection: React.FC<CompanyHeroSectionProps> = ({
   subtitle,
 }) => {
   return (
-    <section className="relative min-h-[600px]">
+    <section className="relative min-h-[520px] md:min-h-[600px]">
       {/* Background Image with Gradient Overlay */}
       <div className="absolute inset-0 top-[66px]">
         <img
@@ -33,12 +33,12 @@ export const CompanyHeroSection: React.FC<CompanyHeroSectionProps> = ({
       </div>
 
       {/* Content */}
-      <div className="relative max-w-[1280px] mx-auto px-20 pt-[360px] pb-20">
+      <div className="relative max-w-[1280px] mx-auto px-4 pt-[220px] pb-10 md:px-20 md:pt-[360px] md:pb-20">
         <div className="flex flex-col gap-4 max-w-[736px]">
           {/* Tag */}
           <div className="flex items-center border-l-2 border-[#99c221] px-4">
             <span
-              className="text-2xl text-[#99c221] capitalize leading-[1.1]"
+              className="text-[14px] md:text-2xl text-[#99c221] capitalize leading-[1.1]"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               {tag}
@@ -47,7 +47,7 @@ export const CompanyHeroSection: React.FC<CompanyHeroSectionProps> = ({
 
           {/* Title with Gradient */}
           <h1
-            className="text-[56px] font-semibold leading-[1.1]"
+            className="text-[32px] md:text-[56px] font-normal md:font-semibold leading-[1.1]"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               background:
@@ -62,7 +62,7 @@ export const CompanyHeroSection: React.FC<CompanyHeroSectionProps> = ({
 
           {/* Subtitle */}
           <p
-            className="text-2xl text-[#8e8e8f] leading-[1.4]"
+            className="text-[14px] md:text-2xl text-[#8e8e8f] leading-[1.4]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             {subtitle}

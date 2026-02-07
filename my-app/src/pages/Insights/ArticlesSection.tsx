@@ -63,18 +63,41 @@ const articlesData: ArticleCard[] = [
 
 export const ArticlesSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-20 py-10">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-10">
       <div className="max-w-[1280px] mx-auto">
         {/* Section Title */}
         <h2
-          className="text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-16"
+          className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-6 md:mb-16"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Articles
         </h2>
 
-        {/* Articles Grid */}
-        <div className="flex flex-col gap-6 items-center">
+        {/* Mobile list (Warehouse-style) */}
+        <div className="md:hidden flex flex-col gap-6">
+          {articlesData.map((article) => (
+            <div
+              key={article.id}
+              className="flex flex-col gap-4"
+            >
+              <div className="w-full h-[200px] rounded-2xl overflow-hidden">
+                <img
+                  src={article.image}
+                  alt={article.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+              <div className="flex flex-col gap-2 items-start text-left">
+                <p className="text-[14px] text-[#cececf] leading-[1.5]">
+                  {article.description}
+                </p>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop grid */}
+        <div className="hidden md:flex flex-col gap-6 items-center">
           {/* Row 1 */}
           <div className="flex gap-6 w-full">
             {articlesData.slice(0, 2).map((article) => (

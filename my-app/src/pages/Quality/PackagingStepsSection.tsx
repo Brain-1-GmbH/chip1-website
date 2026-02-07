@@ -99,18 +99,46 @@ export const PackagingStepsSection: React.FC = () => {
   const bottomSteps = packagingSteps.filter((s) => s.position === "bottom");
 
   return (
-    <section className="bg-[#0e0e0f] px-20 py-24">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-24">
       <div className="max-w-[1280px] mx-auto">
         {/* Title */}
         <h2
-          className="text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-10"
+          className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-8 md:mb-10"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Packaging Steps
         </h2>
 
-        {/* Steps Layout */}
-        <div className="relative">
+        {/* Mobile Layout */}
+        <div className="md:hidden flex flex-col gap-8 items-center">
+          {packagingSteps.map((step) => (
+            <div key={step.number} className="flex flex-col items-center gap-4 w-[300px]">
+              <div className="w-[300px] h-[152px] rounded-lg overflow-hidden">
+                <img src={step.image} alt={step.title} className="w-full h-full object-cover" />
+              </div>
+              <div className="w-12 h-12 rounded-full border border-[#323335] bg-[#0e0e0f] flex items-center justify-center">
+                <span className="text-[20px] text-white" style={{ fontFamily: "'Inter', sans-serif" }}>
+                  {step.number}
+                </span>
+              </div>
+              <h4
+                className="text-[16px] font-semibold text-[#99c221] leading-[1.4] text-center"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                {step.title}
+              </h4>
+              <p
+                className="text-[14px] text-[#e5e5e7] leading-[1.5] text-center"
+                style={{ fontFamily: "'Inter', sans-serif" }}
+              >
+                {step.description}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop Layout */}
+        <div className="hidden md:block relative">
           {/* Top Row */}
           <div className="flex justify-between px-2">
             {topSteps.map((step) => (

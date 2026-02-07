@@ -8,7 +8,7 @@ import { NewsletterSection } from "./NewsletterSection";
 
 export const InsightsPage: React.FC = () => {
   return (
-    <div className="bg-[#0e0e0f] min-h-screen">
+    <div className="bg-[#0e0e0f] min-h-screen overflow-x-hidden">
       <Header />
       <InsightsHeroSection />
       <LatestArticlesSection />

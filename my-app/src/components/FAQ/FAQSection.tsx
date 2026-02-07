@@ -138,43 +138,54 @@ export const FAQSection: React.FC = () => {
   };
 
   return (
-    <section className="relative px-20 py-10 bg-[#0e0e0f] overflow-hidden">
-      {/* Background Image with Overlay */}
-      <div className="absolute inset-0 pointer-events-none">
-        <img
-          src={faqBg}
-          alt=""
-          className="absolute inset-0 w-full h-full object-cover opacity-[0.08]"
-        />
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgb(14, 14, 15) 0%, rgba(14, 14, 15, 0) 20%, rgba(14, 14, 15, 0) 80%, rgb(14, 14, 15) 100%)",
-          }}
-        />
-      </div>
+    <section className="relative bg-[#0e0e0f] overflow-hidden">
+      {/* Mobile: container 375px, padding 24px 16px, flex column, align end, gap 40px, gradient bg */}
+      <div
+        className="relative w-full max-w-[375px] md:max-w-[1280px] mx-auto
+                   flex flex-col items-end
+                   py-6 px-4 md:py-10 md:px-6"
+        style={{
+          gap: "var(--gap-padding-2-xl, 40px)",
+          background: "linear-gradient(180deg, #0E0E0F 0.01%, rgba(14, 14, 15, 0) 20.01%, rgba(14, 14, 15, 0) 80%, #0E0E0F 100%)",
+        }}
+      >
+        {/* Background Image with Overlay - desktop / when image is used */}
+        <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
+          <img
+            src={faqBg}
+            alt=""
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.08]"
+            style={{ objectPosition: "-602.101px -837px" }}
+          />
+          <div
+            className="absolute inset-0"
+            style={{
+              background: "linear-gradient(180deg, #0E0E0F 0%, rgba(14, 14, 15, 0) 20%, rgba(14, 14, 15, 0) 80%, #0E0E0F 100%)",
+            }}
+          />
+        </div>
 
-      {/* Content */}
-      <div className="relative max-w-[1280px] mx-auto px-6">
-        {/* Title */}
-        <h2
-          className="text-[32px] font-bold text-[#efeff0] leading-[1.4] uppercase mb-10"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        >
-          FAQ
-        </h2>
+        {/* Content - full width on mobile for alignment */}
+        <div className="relative w-full flex flex-col items-end gap-10">
+          {/* Title */}
+          <h2
+            className="text-2xl md:text-[32px] font-bold text-[#efeff0] leading-[1.4] uppercase w-full md:mb-10"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            FAQ
+          </h2>
 
-        {/* FAQ Items */}
-        <div className="flex flex-col">
-          {faqData.map((item, index) => (
-            <FAQItemComponent
-              key={index}
-              item={item}
-              isOpen={openIndex === index}
-              onToggle={() => handleToggle(index)}
-            />
-          ))}
+          {/* FAQ Items */}
+          <div className="flex flex-col w-full">
+            {faqData.map((item, index) => (
+              <FAQItemComponent
+                key={index}
+                item={item}
+                isOpen={openIndex === index}
+                onToggle={() => handleToggle(index)}
+              />
+            ))}
+          </div>
         </div>
       </div>
     </section>

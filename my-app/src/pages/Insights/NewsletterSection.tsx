@@ -33,8 +33,8 @@ export const NewsletterSection: React.FC = () => {
   };
 
   return (
-    <section className="bg-[#0e0e0f] px-20 py-16">
-      <div className="max-w-[1280px] mx-auto relative rounded-3xl overflow-hidden">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-16">
+      <div className="max-w-[1280px] mx-auto relative md:rounded-3xl overflow-hidden">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 opacity-[0.12]">
           <img
@@ -52,31 +52,31 @@ export const NewsletterSection: React.FC = () => {
         />
 
         {/* Content Container */}
-        <div className="relative flex gap-10 items-center px-6 py-0">
+        <div className="relative flex flex-col md:flex-row gap-10 items-start md:items-center px-0 md:px-6 py-0">
           {/* Left Side - Title and Benefits */}
-          <div className="flex-1 flex flex-col gap-4 py-14">
+          <div className="flex-1 flex flex-col gap-4 md:py-14">
             <h2
-              className="text-[40px] font-semibold text-[#efeff0] leading-[1.3]"
+              className="text-[24px] md:text-[40px] font-semibold text-[#efeff0] leading-[1.3]"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               "The Chipline": monthly updates for supply chain leaders
             </h2>
 
             <p
-              className="text-2xl text-[#cececf] leading-[1.4]"
+              className="text-[14px] md:text-2xl text-[#cececf] leading-[1.4]"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               What you'll get in under 3 minutes:
             </p>
 
             {/* Benefits List */}
-            <div className="flex flex-col gap-2 w-[534px]">
+            <div className="flex flex-col gap-2 w-full md:w-[534px]">
               {benefits.map((benefit, index) => (
                 <div key={index} className="flex items-center gap-4">
                   <div className="w-8 h-8 flex items-center justify-center">
                     <Checkmark size={24} className="text-[#99c221]" />
                   </div>
-                  <p className="text-base text-[#cececf] leading-[1.5]">
+                  <p className="text-[14px] md:text-base text-[#cececf] leading-[1.5]">
                     {benefit}
                   </p>
                 </div>
@@ -85,10 +85,10 @@ export const NewsletterSection: React.FC = () => {
           </div>
 
           {/* Right Side - Form */}
-          <div className="flex-1 flex flex-col gap-12 items-center">
+          <div className="flex-1 flex flex-col gap-6 md:gap-12 items-center w-full">
             <form
               onSubmit={handleSubmit}
-              className="flex flex-col gap-4 w-full max-w-[595px]"
+              className="flex flex-col gap-4 w-full max-w-none md:max-w-[595px]"
             >
               {/* Company Email */}
               <div className="flex flex-col gap-1">
@@ -161,7 +161,7 @@ export const NewsletterSection: React.FC = () => {
             {/* Subscribe Button */}
             <button
               type="submit"
-              className="bg-[#99c221] text-[#05080d] text-base font-semibold px-4 py-3 rounded-3xl w-[200px] h-12 flex items-center justify-center hover:bg-[#aad435] transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] border-t border-[#ceea6c]"
+              className="bg-[#99c221] text-[#05080d] text-base font-semibold px-4 py-3 rounded-3xl w-full md:w-[200px] h-12 flex items-center justify-center hover:bg-[#aad435] transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] border-t border-[#ceea6c]"
             >
               Subscribe
             </button>

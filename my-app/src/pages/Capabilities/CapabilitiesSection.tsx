@@ -129,18 +129,69 @@ export const CapabilitiesSection: React.FC = () => {
   };
 
   return (
-    <section className="bg-[#0e0e0f] px-20 py-20">
+    <section className="bg-[#0e0e0f] px-3 pt-2 pb-10 md:px-20 md:py-20 border-t-0">
       <div className="max-w-[1280px] mx-auto">
         {/* Title */}
         <h2
-          className="text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-10"
+          className="hidden md:block text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-10"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Our Capabilities
         </h2>
 
-        {/* Content */}
-        <div className="flex gap-[72px] items-start">
+        {/* Mobile Content */}
+        <div className="md:hidden flex flex-col gap-6 items-center">
+          {/* Image */}
+          <div className="w-full h-[280px] rounded-2xl overflow-hidden relative">
+            {capabilitiesData.map((capability, index) => (
+              <img
+                key={capability.id}
+                src={capability.image}
+                alt={capability.title}
+                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
+                style={{
+                  opacity: index === activeIndex ? 1 : 0,
+                  pointerEvents: index === activeIndex ? "auto" : "none",
+                }}
+              />
+            ))}
+          </div>
+
+          {/* Active Title */}
+          <h3
+            className="text-[24px] font-semibold text-[#e5e5e7] leading-[1.4] text-left w-full"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            {capabilitiesData[activeIndex].title}
+          </h3>
+          <p
+            className="text-[14px] text-[#cececf] leading-[1.5] text-left w-full"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {capabilitiesData[activeIndex].description}
+          </p>
+
+          {/* Offer List */}
+          <div className="flex flex-col gap-3 w-full">
+            {capabilitiesData.map((capability, index) => (
+              <button
+                key={capability.id}
+                onClick={() => handleTabClick(index)}
+                className={`text-left text-[16px] leading-[1.4] transition-colors ${
+                  index === activeIndex
+                    ? "text-[#e5e5e7] font-semibold"
+                    : "text-[#858586]"
+                }`}
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                {capability.title}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Desktop Content */}
+        <div className="hidden md:flex gap-[72px] items-start">
           {/* Left - Tabs */}
           <div className="flex flex-col gap-2 w-[512px]">
             {capabilitiesData.map((capability, index) => (
@@ -165,7 +216,7 @@ export const CapabilitiesSection: React.FC = () => {
                   className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
                   style={{
                     opacity: index === activeIndex ? 1 : 0,
-                    pointerEvents: index === activeIndex ? 'auto' : 'none',
+                    pointerEvents: index === activeIndex ? "auto" : "none",
                   }}
                 />
               ))}
@@ -179,7 +230,7 @@ export const CapabilitiesSection: React.FC = () => {
                   className="absolute inset-0 flex flex-col gap-4 transition-opacity duration-500 ease-in-out"
                   style={{
                     opacity: index === activeIndex ? 1 : 0,
-                    pointerEvents: index === activeIndex ? 'auto' : 'none',
+                    pointerEvents: index === activeIndex ? "auto" : "none",
                   }}
                 >
                   <h3

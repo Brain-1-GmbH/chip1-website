@@ -40,18 +40,18 @@ const bottomRowImages = [
 
 export const LabGallerySection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] py-24 overflow-hidden">
-      <div className="max-w-[1280px] mx-auto px-20">
+    <section className="bg-[#0e0e0f] py-10 md:py-24 overflow-hidden">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-20">
         {/* Header */}
-        <div className="flex flex-col gap-10 items-center mb-12">
+        <div className="flex flex-col gap-6 md:gap-10 items-center mb-8 md:mb-12">
           <h2
-            className="text-5xl font-semibold text-[#efeff0] leading-[1.3] text-center"
+            className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] text-center"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Advanced Testing Laboratories
           </h2>
           <p
-            className="text-2xl text-[#858586] leading-[1.4] text-center max-w-[1000px]"
+            className="text-[14px] md:text-2xl text-[#858586] leading-[1.4] text-center max-w-[1000px]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             We operate in-house testing laboratories (Lab 1) in strategic locations worldwide,
@@ -64,8 +64,8 @@ export const LabGallerySection: React.FC = () => {
       {/* Gallery - Two rows with opposite scrolling animations */}
       <div className="relative">
         {/* Fade edges */}
-        <div className="absolute left-0 top-0 bottom-0 w-32 bg-gradient-to-r from-[#0e0e0f] to-transparent z-10 pointer-events-none" />
-        <div className="absolute right-0 top-0 bottom-0 w-32 bg-gradient-to-l from-[#0e0e0f] to-transparent z-10 pointer-events-none" />
+        <div className="absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-[#0e0e0f] to-transparent z-10 pointer-events-none" />
+        <div className="absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-[#0e0e0f] to-transparent z-10 pointer-events-none" />
 
         {/* Top Row - Scrolls Right */}
         <div className="mb-4 overflow-hidden">
@@ -79,8 +79,8 @@ export const LabGallerySection: React.FC = () => {
             {[...topRowImages, ...topRowImages, ...topRowImages].map((img, index) => (
               <div
                 key={`top-${index}`}
-                className="flex-shrink-0 h-[200px] rounded-3xl overflow-hidden"
-                style={{ width: img.width }}
+                className="flex-shrink-0 h-[59px] md:h-[200px] overflow-hidden w-[122px] md:w-[var(--gallery-width)] rounded-lg border border-[#323335]"
+                style={{ ["--gallery-width" as never]: `${img.width}px` } as React.CSSProperties}
               >
                 <img
                   src={img.src}
@@ -92,8 +92,8 @@ export const LabGallerySection: React.FC = () => {
           </div>
         </div>
 
-        {/* Bottom Row - Scrolls Left */}
-        <div className="overflow-hidden">
+        {/* Middle Row - Scrolls Left */}
+        <div className="mb-4 overflow-hidden">
           <div
             className="flex gap-4 animate-scroll-left"
             style={{
@@ -103,15 +103,38 @@ export const LabGallerySection: React.FC = () => {
             {/* Duplicate images for seamless loop */}
             {[...bottomRowImages, ...bottomRowImages, ...bottomRowImages].map((img, index) => (
               <div
-                key={`bottom-${index}`}
-                className="flex-shrink-0 h-[200px] rounded-3xl overflow-hidden"
-                style={{ width: img.width }}
+                key={`middle-${index}`}
+                className="flex-shrink-0 h-[59px] md:h-[200px] overflow-hidden w-[122px] md:w-[var(--gallery-width)] rounded-lg border border-[#323335]"
+                style={{ ["--gallery-width" as never]: `${img.width}px` } as React.CSSProperties}
               >
                 <img
                   src={img.src}
                   alt={`Lab equipment ${index + 1}`}
                   className="w-full h-full object-cover"
                 />
+        {/* Bottom Row - Scrolls Right */}
+        <div className="overflow-hidden">
+          <div
+            className="flex gap-4 animate-scroll-right"
+            style={{
+              width: "fit-content",
+            }}
+          >
+            {[...topRowImages, ...topRowImages, ...topRowImages].map((img, index) => (
+              <div
+                key={`bottom-${index}`}
+                className="flex-shrink-0 h-[59px] md:h-[200px] overflow-hidden w-[122px] md:w-[var(--gallery-width)] rounded-lg border border-[#323335]"
+                style={{ ["--gallery-width" as never]: `${img.width}px` } as React.CSSProperties}
+              >
+                <img
+                  src={img.src}
+                  alt={`Lab equipment ${index + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            ))}
+          </div>
+        </div>
               </div>
             ))}
           </div>

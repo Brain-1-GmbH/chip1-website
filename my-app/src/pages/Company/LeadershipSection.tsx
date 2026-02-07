@@ -10,11 +10,30 @@ interface LeaderCardProps {
   role: string;
   image: string;
   description: string;
+  isExpanded: boolean;
+  onToggle: () => void;
 }
 
-const LeaderCard: React.FC<LeaderCardProps> = ({ name, role, image, description }) => {
+const LeaderCard: React.FC<LeaderCardProps> = ({
+  name,
+  role,
+  image,
+  description,
+  isExpanded,
+  onToggle,
+}) => {
   return (
-    <div className="relative flex-1 h-[466px] rounded-2xl overflow-hidden border border-[#333] flex flex-col justify-end p-4 group cursor-pointer">
+    <div
+      className="relative w-full h-[400px] md:flex-1 md:h-[466px] rounded-2xl overflow-hidden border border-[#333] flex flex-col justify-end p-4 group cursor-pointer md:cursor-default"
+      onClick={onToggle}
+      role="button"
+      tabIndex={0}
+      onKeyDown={(event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          onToggle();
+        }
+      }}
+    >
       {/* Background Image */}
       <div 
         className="absolute inset-0 pointer-events-none"
@@ -45,21 +64,33 @@ const LeaderCard: React.FC<LeaderCardProps> = ({ name, role, image, description 
         }}
       >
         <h3
-          className="text-2xl font-semibold text-[#e5e5e7] leading-[1.4] transition-all duration-500 group-hover:text-white"
+          className="text-[20px] md:text-2xl font-semibold text-[#e5e5e7] leading-[1.4] transition-all duration-500 md:group-hover:text-white"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {name}
         </h3>
         <p
-          className="text-xl text-[#cececf] leading-[1.5] transition-all duration-500 group-hover:text-[#e5e5e7]"
+          className="text-[16px] md:text-xl text-[#cececf] leading-[1.5] transition-all duration-500 md:group-hover:text-[#e5e5e7]"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           {role}
         </p>
+
+        {!isExpanded && (
+          <button
+            type="button"
+            className="md:hidden self-center text-[#99c221] text-sm font-medium"
+            onClick={onToggle}
+          >
+            Read More
+          </button>
+        )}
         
         {/* Description - appears on hover */}
         <p
-          className="text-base text-[#cececf] leading-[1.5] mt-2 max-h-0 overflow-hidden opacity-0 group-hover:max-h-[500px] group-hover:mt-4 group-hover:opacity-100"
+          className={`text-[14px] md:text-base text-[#cececf] leading-[1.5] overflow-hidden transition-all duration-500 ${
+            isExpanded ? "mt-4 max-h-[500px] opacity-100" : "mt-0 max-h-0 opacity-0"
+          } md:mt-2 md:max-h-0 md:opacity-0 md:group-hover:max-h-[500px] md:group-hover:mt-4 md:group-hover:opacity-100`}
           style={{
             fontFamily: "'Inter', sans-serif",
             transition: "max-height 0.8s ease-out, margin-top 0.8s ease-out, opacity 0.6s ease-out 0.2s",
@@ -97,19 +128,21 @@ const leadersData: LeaderCardProps[] = [
 ];
 
 export const LeadershipSection: React.FC = () => {
+  const [expandedIndex, setExpandedIndex] = React.useState<number | null>(null);
+
   return (
-    <section className="bg-[#0e0e0f] px-20 py-10">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-10">
       <div className="max-w-[1280px] mx-auto">
         {/* Header */}
-        <div className="flex flex-col gap-4 mb-20">
+        <div className="flex flex-col gap-4 mb-8 md:mb-20">
           <h2
-            className="text-5xl font-semibold text-[#efeff0] leading-[1.3]"
+            className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Leadership Team
           </h2>
           <p
-            className="text-2xl text-[#858586] leading-[1.4]"
+            className="text-[14px] md:text-2xl text-[#858586] leading-[1.4]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Meet the leaders powering Chip 1 – seasoned professionals guiding
@@ -119,14 +152,18 @@ export const LeadershipSection: React.FC = () => {
         </div>
 
         {/* Leader Cards */}
-        <div className="flex gap-6">
-          {leadersData.map((leader) => (
+        <div className="flex flex-col items-center md:flex-row gap-4 md:gap-6">
+          {leadersData.map((leader, index) => (
             <LeaderCard
               key={leader.name}
               name={leader.name}
               role={leader.role}
               image={leader.image}
               description={leader.description}
+              isExpanded={expandedIndex === index}
+              onToggle={() =>
+                setExpandedIndex((prev) => (prev === index ? null : index))
+              }
             />
           ))}
         </div>

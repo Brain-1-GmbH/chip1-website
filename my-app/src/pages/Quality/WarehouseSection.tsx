@@ -66,9 +66,9 @@ interface FeatureCardProps {
 
 const FeatureCard: React.FC<FeatureCardProps> = ({ feature }) => {
   return (
-    <div className="flex flex-col gap-6 items-center rounded-2xl">
+    <div className="flex flex-col gap-4 items-center rounded-2xl w-full">
       {/* Image */}
-      <div className="w-full h-[304px] rounded-2xl overflow-hidden">
+      <div className="w-full h-[200px] md:h-[304px] rounded-2xl overflow-hidden">
         <img
           src={feature.image}
           alt={feature.title}
@@ -79,13 +79,13 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ feature }) => {
       {/* Text */}
       <div className="flex flex-col gap-2 items-center text-center">
         <h4
-          className="text-2xl font-medium text-[#e5e5e7] leading-[1.4]"
+          className="text-[20px] md:text-2xl font-medium text-[#e5e5e7] leading-[1.4]"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {feature.title}
         </h4>
         <p
-          className="text-base text-[#b6b6b7] leading-[1.5]"
+          className="text-[14px] md:text-base text-[#b6b6b7] leading-[1.5]"
           style={{ fontFamily: "'Inter', sans-serif" }}
         >
           {feature.description}
@@ -97,32 +97,32 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ feature }) => {
 
 export const WarehouseSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-20 py-24">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-24">
       <div className="max-w-[1280px] mx-auto">
         {/* Title */}
         <h2
-          className="text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-10"
+          className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-8 md:mb-10"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Warehouse
         </h2>
 
         {/* Features Grid */}
-        <div className="flex flex-col gap-10">
+        <div className="flex flex-col gap-6 md:gap-10">
           {/* Row 1 */}
-          <div className="grid grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <FeatureCard feature={warehouseFeatures[0]} />
             <FeatureCard feature={warehouseFeatures[1]} />
           </div>
 
           {/* Row 2 */}
-          <div className="grid grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <FeatureCard feature={warehouseFeatures[2]} />
             <FeatureCard feature={warehouseFeatures[3]} />
           </div>
 
           {/* Row 3 */}
-          <div className="grid grid-cols-2 gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
             <FeatureCard feature={warehouseFeatures[4]} />
             <FeatureCard feature={warehouseFeatures[5]} />
           </div>

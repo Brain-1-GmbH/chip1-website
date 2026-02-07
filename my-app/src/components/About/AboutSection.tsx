@@ -115,137 +115,203 @@ export const AboutSection: React.FC = () => {
   const insightsContainerRef = useRef<HTMLDivElement>(null);
 
   return (
-    <section className="flex flex-col items-center gap-[72px] px-4 py-20 bg-[#0e0e0f]">
-      <div className="max-w-[1280px] w-full flex flex-col gap-[72px]">
-        {/* Stats Row */}
-        <div className="flex items-start justify-between px-10 relative">
-          {stats.map((stat, index) => (
-            <div
-              key={index}
-              className="flex flex-col items-center gap-2 text-center w-[307px]"
-              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-            >
-              <p className="text-[60px] font-normal text-[#e5e5e7] leading-[1.3]">
-                {stat.value}
-              </p>
-              <p className="text-2xl text-[#cececf] leading-[1.4]">{stat.label}</p>
-            </div>
-          ))}
-          {/* Gradient overlay on left */}
-          <div className="absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#0e0e0f] to-transparent pointer-events-none" />
-        </div>
+    <section className="flex flex-col items-center w-full bg-[#0e0e0f] md:px-4 md:py-10 md:py-20">
+      <div className="max-w-[1280px] w-full flex flex-col md:gap-[72px]">
 
-        {/* Company Card */}
-        <div className="relative h-[400px] rounded-2xl overflow-hidden">
-          <img
-            src={companyBg}
-            alt="Company"
-            className="absolute inset-0 w-full h-full object-cover opacity-90"
-          />
-          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(8,8,9,0.8)] to-[rgba(8,8,9,0.54)]" />
-          <div className="relative h-full flex items-end p-10">
-            <div className="flex items-end justify-between w-full gap-10">
-              <div className="flex flex-col gap-6 flex-1">
+        {/* Second container (mobile): padding 16px, flex wrap, gap 24px — stats + all cards */}
+        <div
+          className="flex flex-wrap justify-center items-start content-start gap-6 self-stretch py-4 px-4 md:py-0 md:px-0 md:gap-[72px] md:flex-col"
+          style={{
+            padding: "var(--gap-padding-m, 16px)",
+            gap: "var(--gap-padding-l, 24px)",
+          }}
+        >
+          {/* Stats - mobile layout */}
+          <div className="flex flex-col items-center gap-4 w-full md:hidden">
+            <div className="flex items-start justify-between w-full gap-4">
+              {stats.slice(0, 2).map((stat, index) => (
+                <div
+                  key={index}
+                  className="flex flex-col items-center gap-1 text-center flex-1"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  <p className="text-3xl font-normal text-[#949496] leading-[1.3]">{stat.value}</p>
+                  <p className="text-[14px] text-[#A9A9AA] leading-[1.4]">{stat.label}</p>
+                </div>
+              ))}
+            </div>
+            <div className="flex justify-center w-full">
+              <div
+                className="flex flex-col items-center gap-1 text-center"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                <p className="text-3xl font-normal text-[#949496] leading-[1.3]">{stats[2].value}</p>
+                <p className="text-[14px] text-[#A9A9AA] leading-[1.4]">{stats[2].label}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* Stats - desktop layout */}
+          <div className="hidden md:flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-4 w-full md:justify-between md:px-10 md:relative">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="flex flex-col items-center gap-1 sm:gap-2 text-center w-full sm:w-auto md:w-[307px]"
+                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              >
+                <p className="text-4xl sm:text-5xl md:text-[60px] font-normal text-[#e5e5e7] leading-[1.3]">
+                  {stat.value}
+                </p>
+                <p className="text-base sm:text-xl md:text-2xl text-[#cececf] leading-[1.4]">{stat.label}</p>
+              </div>
+            ))}
+            <div className="hidden md:block absolute inset-y-0 left-0 w-20 bg-gradient-to-r from-[#0e0e0f] to-transparent pointer-events-none" />
+          </div>
+
+          {/* Company Card - full width, stacked on mobile */}
+          <div className="md:hidden w-full">
+            <div className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-4 flex flex-col items-center text-center gap-4">
+              <div className="w-full h-[200px] rounded-2xl overflow-hidden">
+                <img
+                  src={companyBg}
+                  alt="Company"
+                  className="w-full h-full object-cover opacity-70"
+                />
+              </div>
+              <div className="flex flex-col gap-3 items-center">
                 <h2
-                  className="text-2xl font-semibold text-[#efeff0] leading-[1.4]"
+                  className="text-[20px] font-semibold text-[#efeff0] leading-[1.4]"
                   style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 >
                   Company
                 </h2>
-                <p className="text-base text-[#cececf] leading-[1.5] max-w-[800px]">
+                <p className="text-[14px] text-[#cececf] leading-[1.5]">
                   For over 20 years, Chip 1 has been a trusted partner in the electronics
                   industry. With $100M+ in stock and a worldwide network, we deliver
                   factory-original and hard-to-find components fast — keeping your
                   production lines running without interruption.
                 </p>
               </div>
-              <PrimaryButton className="h-12 w-[145px]">Explore</PrimaryButton>
+              <PrimaryButton className="h-12 w-[110px] mx-auto">Explore</PrimaryButton>
             </div>
           </div>
-        </div>
 
-        {/* Feature Cards Grid */}
-        <div className="flex flex-col gap-6">
+          <div className="hidden md:block relative min-h-[280px] md:h-[400px] rounded-2xl overflow-hidden w-full">
+          <img
+            src={companyBg}
+            alt="Company"
+            className="absolute inset-0 w-full h-full object-cover object-center opacity-90"
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-[rgba(8,8,9,0.8)] to-[rgba(8,8,9,0.54)]" />
+          <div className="relative h-full flex items-end p-4 sm:p-6 md:p-10 min-h-[280px] md:min-h-0">
+            <div className="flex flex-col items-center text-center gap-4 sm:gap-6 w-full md:flex-row md:items-end md:text-left md:gap-10">
+              <div className="flex flex-col gap-3 sm:gap-6 flex-1">
+                <h2
+                  className="text-[20px] md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  Company
+                </h2>
+                <p className="text-[14px] md:text-base text-[#cececf] leading-[1.5] max-w-[800px]">
+                  For over 20 years, Chip 1 has been a trusted partner in the electronics
+                  industry. With $100M+ in stock and a worldwide network, we deliver
+                  factory-original and hard-to-find components fast — keeping your
+                  production lines running without interruption.
+                </p>
+              </div>
+              <PrimaryButton className="h-12 w-[110px] mx-auto md:mx-0 md:w-[145px] flex-shrink-0">
+                Explore
+              </PrimaryButton>
+            </div>
+          </div>
+          </div>
+
+          {/* Feature Cards - single column on mobile, 2x2 on desktop */}
+          <div className="flex flex-col gap-4 md:gap-6 w-full">
           {/* Row 1 */}
-          <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6">
             {featureCards.slice(0, 2).map((card, index) => (
               <div
                 key={index}
-                className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-6 h-[378px] flex gap-4"
+                className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-4 min-h-0 md:h-[378px] flex flex-col items-center text-center gap-4 md:flex-row md:items-stretch md:text-left md:p-6"
               >
-                <div className="w-[336px] h-[330px] rounded-2xl overflow-hidden flex-shrink-0">
+                <div className="w-full md:w-[336px] h-[200px] sm:h-[260px] md:h-[330px] rounded-2xl overflow-hidden flex-shrink-0">
                   <img
                     src={card.image}
                     alt={card.title}
                     className="w-full h-full object-cover opacity-70"
                   />
                 </div>
-                <div className="flex flex-col justify-between flex-1">
-                  <div className="flex flex-col gap-6">
+                <div className="flex flex-col justify-between flex-1 min-h-0 w-full items-center md:items-start">
+                  <div className="flex flex-col gap-3 sm:gap-6 items-center md:items-start">
                     <h3
-                      className="text-2xl font-semibold text-[#efeff0] leading-[1.4]"
+                      className="text-[20px] md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
                       style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                     >
                       {card.title}
                     </h3>
-                    <p className="text-base text-[#cececf] leading-[1.5]">
+                    <p className="text-[14px] md:text-base text-[#cececf] leading-[1.5]">
                       {card.description}
                     </p>
                   </div>
-                  <PrimaryButton className="h-10 w-[152px]">Explore</PrimaryButton>
+                  <PrimaryButton className="h-12 w-[110px] mx-auto md:mx-0 md:w-[152px] mt-2 md:mt-0">
+                    Explore
+                  </PrimaryButton>
                 </div>
               </div>
             ))}
           </div>
 
           {/* Row 2 */}
-          <div className="flex gap-6">
+          <div className="flex flex-col md:flex-row gap-4 md:gap-6">
             {featureCards.slice(2, 4).map((card, index) => (
               <div
                 key={index}
-                className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-6 h-[378px] flex gap-4"
+                className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-4 min-h-0 md:h-[378px] flex flex-col items-center text-center gap-4 md:flex-row md:items-stretch md:text-left md:p-6"
               >
-                <div className="w-[336px] h-[330px] rounded-2xl overflow-hidden flex-shrink-0">
+                <div className="w-full md:w-[336px] h-[200px] sm:h-[260px] md:h-[330px] rounded-2xl overflow-hidden flex-shrink-0">
                   <img
                     src={card.image}
                     alt={card.title}
                     className="w-full h-full object-cover opacity-70"
                   />
                 </div>
-                <div className="flex flex-col justify-between flex-1">
-                  <div className="flex flex-col gap-6">
+                <div className="flex flex-col justify-between flex-1 min-h-0 w-full items-center md:items-start">
+                  <div className="flex flex-col gap-3 sm:gap-6 items-center md:items-start">
                     <h3
-                      className="text-2xl font-semibold text-[#efeff0] leading-[1.4]"
+                      className="text-[20px] md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
                       style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                     >
                       {card.title}
                     </h3>
-                    <p className="text-base text-[#cececf] leading-[1.5]">
+                    <p className="text-[14px] md:text-base text-[#cececf] leading-[1.5]">
                       {card.description}
                     </p>
                   </div>
-                  <PrimaryButton className="h-10 w-[152px]">Explore</PrimaryButton>
+                  <PrimaryButton className="h-12 w-[110px] mx-auto md:mx-0 md:w-[152px] mt-2 md:mt-0">
+                    Explore
+                  </PrimaryButton>
                 </div>
               </div>
             ))}
           </div>
-        </div>
+          </div>
 
-        {/* Certificates Section */}
-        <div className="bg-[#0e0e0f] border border-[#212225] rounded-3xl p-6 flex flex-col items-center gap-10 overflow-hidden">
+          {/* Certificates Section - horizontal scroll on mobile */}
+          <div className="bg-[rgba(19,21,26,0.05)] md:bg-[#0e0e0f] border border-[#212225] rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center gap-6 md:gap-10 overflow-hidden w-full">
           <h2
-            className="text-[32px] font-semibold text-[#efeff0] leading-[1.4]"
+            className="text-2xl md:text-[32px] font-semibold text-[#efeff0] leading-[1.4]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Certificates
           </h2>
-          <div className="flex items-center justify-between w-full px-4">
+          <div className="flex flex-wrap justify-center items-start content-start gap-2 w-full px-4 md:px-4 md:gap-0 md:justify-between md:content-start">
             {certificates.map((cert, index) => (
               <div
                 key={index}
-                className="bg-[#0e0e0f] flex flex-col items-center justify-center p-2 rounded-lg w-[156px]"
+                className="bg-[#0e0e0f] flex flex-col items-center justify-center p-2 rounded-lg w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[156px] md:h-auto flex-shrink-0"
               >
-                <div className="w-[107px] h-[107px] flex items-center justify-center">
+                <div className="w-[70px] h-[70px] sm:w-[90px] sm:h-[90px] md:w-[107px] md:h-[107px] flex items-center justify-center">
                   <img
                     src={cert}
                     alt={`Certificate ${index + 1}`}
@@ -255,33 +321,33 @@ export const AboutSection: React.FC = () => {
               </div>
             ))}
           </div>
-        </div>
+          </div>
 
-        {/* Insights Section */}
-        <div className="border border-[#212225] rounded-3xl p-6 flex flex-col gap-[72px] overflow-hidden relative">
+          {/* Insights Section - narrower cards on mobile */}
+          <div className="border border-[#212225] rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col gap-8 md:gap-[72px] overflow-hidden relative w-full">
           {/* Header */}
-          <div className="flex items-center justify-between w-full">
+          <div className="flex items-center justify-between w-full gap-4">
             <h2
-              className="text-[32px] font-bold text-[#efeff0] leading-[1.4] uppercase"
+              className="text-2xl md:text-[32px] font-bold text-[#efeff0] leading-[1.4] uppercase"
               style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             >
               Insights
             </h2>
-            <PrimaryButton className="h-12 w-[120px]">Explore</PrimaryButton>
+            <PrimaryButton className="hidden md:flex h-12 w-[120px] flex-shrink-0">Explore</PrimaryButton>
           </div>
 
           {/* Scrollable Cards Container */}
-          <div className="relative">
-            {/* Left fade gradient */}
-            <div className="absolute left-0 top-0 bottom-0 w-[120px] bg-gradient-to-r from-[#0e0e0f] to-transparent z-10 pointer-events-none" />
+          <div className="relative -mx-4 md:mx-0">
+            {/* Left fade gradient - hide on very small screens to maximize card width */}
+            <div className="absolute left-0 top-0 bottom-0 w-8 sm:w-[80px] md:w-[120px] bg-gradient-to-r from-[#0e0e0f] to-transparent z-10 pointer-events-none" />
 
             {/* Right fade gradient */}
-            <div className="absolute right-0 top-0 bottom-0 w-[120px] bg-gradient-to-l from-[#0e0e0f] to-transparent z-10 pointer-events-none" />
+            <div className="absolute right-0 top-0 bottom-0 w-8 sm:w-[80px] md:w-[120px] bg-gradient-to-l from-[#0e0e0f] to-transparent z-10 pointer-events-none" />
 
-            {/* Scrollable container */}
+            {/* Scrollable container - card width fits mobile viewport */}
             <div
               ref={insightsContainerRef}
-              className="flex gap-6 overflow-x-auto pb-4 scrollbar-hide"
+              className="flex gap-4 md:gap-6 overflow-x-auto pb-4 px-4 md:px-0 scrollbar-hide"
               style={{
                 scrollbarWidth: "none",
                 msOverflowStyle: "none",
@@ -290,12 +356,12 @@ export const AboutSection: React.FC = () => {
               {insights.map((insight, index) => (
                 <div
                   key={index}
-                  className="bg-[#0b0b0b] border-t border-[#2a2c36] rounded-2xl p-6 
-                           flex flex-col gap-4 w-[552px] flex-shrink-0
+                  className="bg-[#0E0E0F] border-t border-[#2A2C36] rounded-2xl p-4 md:p-6 
+                           flex flex-col items-start gap-4 w-[311px] sm:w-[311px] md:w-[552px] flex-shrink-0
                            shadow-[-4px_4px_28px_0px_rgba(0,0,0,0.25)]"
                 >
                   {/* Image */}
-                  <div className="h-[216px] rounded-lg overflow-hidden">
+                  <div className="h-[160px] sm:h-[196px] md:h-[216px] rounded-lg overflow-hidden">
                     <img
                       src={insight.image}
                       alt={insight.title}
@@ -304,14 +370,14 @@ export const AboutSection: React.FC = () => {
                   </div>
 
                   {/* Content */}
-                  <div className="flex flex-col gap-4">
+                  <div className="flex flex-col gap-3 md:gap-4">
                     <h3
-                      className="text-2xl font-semibold text-[#efeff0] leading-[1.4]"
+                      className="text-lg sm:text-xl md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
                       style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                     >
                       {insight.title}
                     </h3>
-                    <p className="text-xl text-[#cececf] leading-[1.5] line-clamp-4">
+                    <p className="text-sm sm:text-base md:text-xl text-[#cececf] leading-[1.5] line-clamp-4">
                       {insight.description}
                     </p>
                   </div>
@@ -321,6 +387,10 @@ export const AboutSection: React.FC = () => {
                 </div>
               ))}
             </div>
+          </div>
+          <div className="flex md:hidden justify-center w-full">
+            <PrimaryButton className="h-12 w-[110px]">Explore</PrimaryButton>
+          </div>
           </div>
         </div>
       </div>

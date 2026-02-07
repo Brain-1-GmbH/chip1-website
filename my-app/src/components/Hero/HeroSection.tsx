@@ -860,11 +860,18 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col items-center gap-14 z-10">
+      <div className="flex flex-col items-center gap-8 md:gap-14 z-10">
         {/* Title Section */}
         <div className="flex flex-col items-center gap-4 text-center max-w-[898px]">
           <h1
-            className="text-[60px] font-semibold leading-[1.1] capitalize"
+            className="md:hidden text-[32px] font-normal leading-[1.1] text-[#efeff0]"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            <span className="block">Powering your</span>
+            <span className="block">components needs</span>
+          </h1>
+          <h1
+            className="hidden md:block text-[60px] font-semibold leading-[1.1] capitalize"
             style={{
               fontFamily: "'Plus Jakarta Sans', sans-serif",
               background:
@@ -879,7 +886,7 @@ export const HeroSection: React.FC = () => {
             component needs
           </h1>
           <p
-            className="text-xl text-[#b6b6b7] leading-[1.4]"
+            className="text-sm md:text-xl text-[#b6b6b7] leading-[1.4]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             Which parts are you searching for today?
@@ -887,7 +894,7 @@ export const HeroSection: React.FC = () => {
         </div>
 
         {/* Search Section */}
-        <div className="flex flex-col items-center gap-6">
+        <div className="flex flex-col items-center gap-4 md:gap-6 px-4 md:px-0">
           {/* Search Input Container - positioned relative for dropdown */}
           <div className="relative">
             {/* Search Input */}
@@ -896,17 +903,21 @@ export const HeroSection: React.FC = () => {
                 {isSearching ? (
                   <SimpleLoader size="xsmall" containerClassName="p-0" />
                 ) : (
-                  <Search size={24} className="text-[#8e8e8f]" />
+                  <>
+                    <Search size={16} className="text-[#8e8e8f] md:hidden" />
+                    <Search size={24} className="text-[#8e8e8f] hidden md:block" />
+                  </>
                 )}
               </div>
               <input
                 value={searchValue}
                 type="text"
                 placeholder="Search"
-                className="w-[495px] h-12 pl-14 pr-12 rounded-full 
+                className="w-[268px] h-[32px] pl-10 pr-4 py-2 rounded-full text-sm
+                         md:w-[495px] md:h-12 md:pl-14 md:pr-12 md:text-base
                          bg-[#17181a] backdrop-blur-sm
                          border border-[rgba(77,77,78,0.34)]
-                         text-base text-white placeholder-[#8e8e8f]
+                         text-white placeholder-[#8e8e8f]
                          outline-none focus:border-[rgba(184,212,52,0.4)] transition-colors"
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 onChange={(e) => handleSearchUpdate(e.target.value)}

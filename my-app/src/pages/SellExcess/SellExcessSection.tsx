@@ -143,7 +143,7 @@ export const SellExcessSection: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-2">
         {/* Stepper */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between w-full md:justify-start md:gap-2">
           <button 
             onClick={handleBack}
             className="p-[5px] hover:bg-[#1a1a1b] rounded-full transition-colors"
@@ -157,23 +157,18 @@ export const SellExcessSection: React.FC = () => {
 
         {/* Title */}
         <h1
-          className="text-[32px] font-medium text-[#efeff0] leading-[1.4]"
+          className="text-[32px] font-medium text-[#efeff0] leading-[1.4] text-center md:text-left w-full"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Upload Excess
         </h1>
-
-        {/* Description */}
-        <p className="text-sm text-[#b6b6b7] leading-[1.5]" style={{ fontFamily: "Inter, sans-serif" }}>
-          You may skip this step. Once the project is created, additional parts can be added at any time.
-        </p>
       </div>
 
       {/* File Drop Zone / Selected File */}
       <div className="h-[304px]">
         {selectedFile ? (
           /* Selected File Chip */
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#111215] border border-[#212225] rounded-lg w-[280px]">
+          <div className="flex items-center gap-2 px-3 py-2 bg-[#111215] border border-[#212225] rounded-lg w-full">
             <Document size={24} className="text-[#99c221] flex-shrink-0" />
             <span 
               className="text-base text-[#e5e5e7] flex-1 truncate"
@@ -200,15 +195,15 @@ export const SellExcessSection: React.FC = () => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
           >
-            <p className="text-sm text-[#e5e5e7]" style={{ fontFamily: "Inter, sans-serif" }}>
+            <p className="hidden md:block text-sm text-[#e5e5e7]" style={{ fontFamily: "Inter, sans-serif" }}>
               Drop a file here
             </p>
-            <p className="text-sm text-[#8e8e8f]" style={{ fontFamily: "Inter, sans-serif" }}>
+            <p className="hidden md:block text-sm text-[#8e8e8f]" style={{ fontFamily: "Inter, sans-serif" }}>
               or
             </p>
             <button
               onClick={handleChooseFile}
-              className="h-10 px-4 rounded-3xl text-sm font-medium text-[#99c221] hover:bg-[#99c221]/10 transition-colors"
+              className="h-auto px-0 md:h-10 md:px-4 rounded-3xl text-sm font-medium text-[#99c221] hover:bg-[#99c221]/10 transition-colors"
               style={{ fontFamily: "Inter, sans-serif" }}
             >
               Choose file
@@ -225,8 +220,13 @@ export const SellExcessSection: React.FC = () => {
         />
       </div>
 
+      {/* Description */}
+      <p className="text-sm text-[#b6b6b7] leading-[1.5] text-left" style={{ fontFamily: "Inter, sans-serif" }}>
+        You may skip this step. Once the project is created, additional parts can be added at any time.
+      </p>
+
       {/* Bottom Actions */}
-      <div className="flex items-center justify-between mt-auto pb-10">
+      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-auto pb-8">
         {/* Download Template Button - Disabled */}
         <button 
           disabled
@@ -240,7 +240,7 @@ export const SellExcessSection: React.FC = () => {
         <button 
           onClick={handleContinue}
           disabled={!selectedFile}
-          className={`flex items-center justify-center w-[200px] h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
+          className={`flex items-center justify-center w-full md:w-[200px] h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
             selectedFile
               ? "bg-[#99c221] hover:bg-[#a8d32f] border-t border-[#ceea6c] text-[#05080d]"
               : "bg-[#99c221]/40 text-[#05080d]/60 cursor-not-allowed"
@@ -258,7 +258,7 @@ export const SellExcessSection: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-2">
         {/* Stepper */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between w-full md:justify-start md:gap-2">
           <button 
             onClick={handleBack}
             className="p-[5px] hover:bg-[#1a1a1b] rounded-full transition-colors"
@@ -272,7 +272,7 @@ export const SellExcessSection: React.FC = () => {
 
         {/* Title */}
         <h1
-          className="text-[32px] font-medium text-[#efeff0] leading-[1.4]"
+          className="text-[32px] font-medium text-[#efeff0] leading-[1.4] text-center md:text-left w-full"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Create a Project
@@ -297,7 +297,7 @@ export const SellExcessSection: React.FC = () => {
         </div>
 
         {/* Project Type & Sell by */}
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 flex flex-col gap-1">
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
               Project Type
@@ -323,7 +323,7 @@ export const SellExcessSection: React.FC = () => {
         </div>
 
         {/* Inventory Location & Inventory Owner */}
-        <div className="flex gap-4">
+        <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 flex flex-col gap-1">
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
               Inventory Location
@@ -416,12 +416,12 @@ export const SellExcessSection: React.FC = () => {
       </div>
 
       {/* Bottom Actions */}
-      <div className="flex items-center justify-end mt-auto pb-10">
+      <div className="flex items-center justify-end mt-auto pb-8">
         {/* Continue Button */}
         <button 
           onClick={handleContinue}
           disabled={!isStep2Valid}
-          className={`flex items-center justify-center w-[200px] h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
+          className={`flex items-center justify-center w-full md:w-[200px] h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
             isStep2Valid
               ? "bg-[#99c221] hover:bg-[#a8d32f] border-t border-[#ceea6c] text-[#05080d]"
               : "bg-[#99c221]/40 text-[#05080d]/60 cursor-not-allowed"
@@ -439,7 +439,7 @@ export const SellExcessSection: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col gap-2">
         {/* Stepper */}
-        <div className="flex items-center gap-2">
+        <div className="flex items-center justify-between w-full md:justify-start md:gap-2">
           <button 
             onClick={handleBack}
             className="p-[5px] hover:bg-[#1a1a1b] rounded-full transition-colors"
@@ -453,10 +453,10 @@ export const SellExcessSection: React.FC = () => {
 
         {/* Title */}
         <h1
-          className="text-[32px] font-medium text-[#efeff0] leading-[1.4]"
+          className="text-[32px] font-medium text-[#efeff0] leading-[1.4] text-center md:text-left w-full"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
-          Sign In
+          Sign Up
         </h1>
       </div>
 
@@ -509,7 +509,7 @@ export const SellExcessSection: React.FC = () => {
       </div>
 
       {/* Bottom Actions */}
-      <div className="flex items-center justify-between mt-auto pb-10">
+      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-auto pb-8">
         {/* Sign Up Link */}
         <div className="flex items-center gap-4">
           <span className="text-base text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
@@ -520,7 +520,7 @@ export const SellExcessSection: React.FC = () => {
             className="text-base font-medium text-[#99c221] hover:underline"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
-            Sign Up
+            Sign In
           </button>
         </div>
 
@@ -528,7 +528,7 @@ export const SellExcessSection: React.FC = () => {
         <button 
           onClick={handleContinue}
           disabled={!isStep3Valid}
-          className={`flex items-center justify-center w-[200px] h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
+          className={`flex items-center justify-center w-full md:w-[200px] h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
             isStep3Valid
               ? "bg-[#99c221] hover:bg-[#a8d32f] border-t border-[#ceea6c] text-[#05080d]"
               : "bg-[#99c221]/40 text-[#05080d]/60 cursor-not-allowed"
@@ -541,10 +541,10 @@ export const SellExcessSection: React.FC = () => {
   );
 
   return (
-    <section className="pt-[90px] px-20 pb-0">
-      <div className="max-w-[1440px] mx-auto flex items-start min-h-[720px]">
+    <section className="pt-[64px] md:pt-[90px] px-4 md:px-20 pb-0">
+      <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-start min-h-[calc(100vh-64px)] md:min-h-[720px]">
         {/* Left Column - Info & Image */}
-        <div className="w-[58%] flex flex-col gap-6 justify-center pr-10 py-10">
+        <div className="hidden md:flex w-[58%] flex-col gap-6 justify-center pr-10 py-10">
           <p className="text-base text-[#cececf] leading-[1.5]" style={{ fontFamily: "Inter, sans-serif" }}>
             Submit this Excess list to gain complimentary access to MyChip1, our intelligent supply chain platform delivering real-time availability, competitive pricing analysis, automated BOM health checks, lifecycle alerts, and comprehensive technical documentation
           </p>
@@ -559,7 +559,7 @@ export const SellExcessSection: React.FC = () => {
         </div>
 
         {/* Right Column - Form */}
-        <div className="w-[42%] bg-[#0e0e0f] pt-10 px-10 h-full flex flex-col">
+        <div className="w-full md:w-[42%] bg-[#0e0e0f] pt-6 md:pt-10 px-0 md:px-10 h-full flex flex-col">
           <div className="flex flex-col gap-10 h-full">
             {currentStep === 1 && renderStep1()}
             {currentStep === 2 && renderStep2()}
