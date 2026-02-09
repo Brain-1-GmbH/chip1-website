@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { ChevronDown } from "@carbon/icons-react";
 import logoImg from "../../assets/24180caded4b7abaf5ca507476795b2d150a3994.png";
@@ -18,6 +18,9 @@ export const Header: React.FC = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isContactDropdownOpen, setIsContactDropdownOpen] = useState(false);
+  const contactDropdownRef = useRef<HTMLDivElement | null>(null);
+  const contactButtonRef = useRef<HTMLButtonElement | null>(null);
+  const [dropdownPosition, setDropdownPosition] = useState({ top: 0, left: 0 });
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -56,10 +59,74 @@ export const Header: React.FC = () => {
     };
   }, [isMobileMenuOpen]);
 
+  useEffect(() => {
+    if (!isContactDropdownOpen) {
+      return;
+    }
+
+    // Calculate dropdown position when it opens (fixed positioning uses viewport coordinates)
+    if (contactButtonRef.current) {
+      const rect = contactButtonRef.current.getBoundingClientRect();
+      setDropdownPosition({
+        top: rect.bottom + 8, // 8px = mt-2 equivalent
+        left: rect.left,
+      });
+    }
+
+    const handleClickOutside = (event: MouseEvent) => {
+      if (
+        contactDropdownRef.current &&
+        !contactDropdownRef.current.contains(event.target as Node) &&
+        contactButtonRef.current &&
+        !contactButtonRef.current.contains(event.target as Node)
+      ) {
+        setIsContactDropdownOpen(false);
+      }
+    };
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setIsContactDropdownOpen(false);
+      }
+    };
+
+    const handleResize = () => {
+      if (contactButtonRef.current) {
+        const rect = contactButtonRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          top: rect.bottom + 8,
+          left: rect.left,
+        });
+      }
+    };
+
+    const handleScroll = () => {
+      if (contactButtonRef.current) {
+        const rect = contactButtonRef.current.getBoundingClientRect();
+        setDropdownPosition({
+          top: rect.bottom + 8,
+          left: rect.left,
+        });
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener("keydown", handleKeyDown);
+    window.addEventListener("resize", handleResize);
+    window.addEventListener("scroll", handleScroll, true);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("resize", handleResize);
+      window.removeEventListener("scroll", handleScroll, true);
+    };
+  }, [isContactDropdownOpen]);
+
   return (
     <>
       <header 
-        className={`absolute md:fixed top-0 left-0 right-0 flex items-start justify-between px-4 pt-4 pb-2 md:items-center md:px-10 md:py-4 backdrop-blur-md bg-[linear-gradient(180deg,#0E0E0F_39.81%,rgba(14,14,15,0)_100%)] md:bg-[#0E0E0F]/95 md:border-b md:border-[#292a2a]/50 ${isMobileMenuOpen ? 'z-[102]' : 'z-50'}`}
+        className={`absolute md:fixed top-0 left-0 right-0 flex items-start justify-between px-4 pt-4 pb-2 md:items-center md:px-10 md:py-4 backdrop-blur-md bg-[linear-gradient(180deg,#0E0E0F_39.81%,rgba(14,14,15,0)_100%)] md:bg-[#0E0E0F]/95 md:border-b md:border-[#292a2a]/50 ${isMobileMenuOpen ? 'z-[302]' : 'z-[200]'}`}
         style={{ width: "100%", maxWidth: "100vw", overflowX: "hidden" }}
       >
         {/* Logo */}
@@ -96,15 +163,15 @@ export const Header: React.FC = () => {
                 )}
               </Link>
             ) : (
-              <div
-                key={item.label}
-                className="relative"
-                onMouseEnter={() => setIsContactDropdownOpen(true)}
-                onMouseLeave={() => setIsContactDropdownOpen(false)}
-              >
+              <div key={item.label} className="relative">
                 <button
+                  ref={contactButtonRef}
+                  type="button"
                   className="flex items-center gap-1.5 text-[#b6b6b7] text-sm font-medium hover:text-[#B8D434] transition-colors duration-200 cursor-pointer"
                   style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  onClick={() => setIsContactDropdownOpen((prev) => !prev)}
+                  aria-expanded={isContactDropdownOpen}
+                  aria-haspopup="menu"
                 >
                   {item.label}
                   {item.hasDropdown && (
@@ -114,24 +181,6 @@ export const Header: React.FC = () => {
                     />
                   )}
                 </button>
-                {item.hasDropdown && isContactDropdownOpen && (
-                  <div className="absolute top-full left-0 mt-2 w-[160px] bg-[#1c1d22] border border-[#323335] rounded-lg shadow-lg overflow-hidden z-50">
-                    <a
-                      href="#"
-                      className="block px-4 py-3 text-sm text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833] transition-colors duration-200"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                    >
-                      S
-                    </a>
-                    <a
-                      href="/careers"
-                      className="block px-4 py-3 text-sm text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833] transition-colors duration-200"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                    >
-                      Careers
-                    </a>
-                  </div>
-                )}
               </div>
             );
           })}
@@ -159,10 +208,31 @@ export const Header: React.FC = () => {
         <div className="hidden md:block flex-shrink-0 w-[130px]" />
       </header>
 
+      {/* Contact Us Dropdown - Fixed positioning to escape stacking context */}
+      {isContactDropdownOpen && (
+        <div
+          ref={contactDropdownRef}
+          className="fixed w-[160px] bg-[#1c1d22] border border-[#323335] rounded-lg shadow-lg overflow-hidden z-[9999]"
+          style={{
+            top: `${dropdownPosition.top}px`,
+            left: `${dropdownPosition.left}px`,
+          }}
+        >
+          <Link
+            to="/careers"
+            className="block px-4 py-3 text-sm text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833] transition-colors duration-200"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            onClick={() => setIsContactDropdownOpen(false)}
+          >
+            Careers
+          </Link>
+        </div>
+      )}
+
       {/* Mobile menu overlay - outside header for proper positioning */}
       {isMobileMenuOpen && (
         <div 
-          className="fixed inset-0 z-[100] bg-[#0E0E0F] overflow-y-auto overflow-x-hidden"
+          className="fixed inset-0 z-[300] bg-[#0E0E0F] overflow-y-auto overflow-x-hidden"
           style={{ 
             position: 'fixed',
             top: 0,

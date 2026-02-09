@@ -7,6 +7,7 @@ import { ProductsPage } from "./pages/Products/ProductsPage";
 import { IndustriesPage } from "./pages/Industries/IndustriesPage";
 import { QualityPage } from "./pages/Quality/QualityPage";
 import { InsightsPage } from "./pages/Insights/InsightsPage";
+import { CareersPage } from "./pages/Careers/CareersPage";
 import { UploadBOMPage } from "./pages/UploadBOM/UploadBOMPage";
 import { SellExcessPage } from "./pages/SellExcess/SellExcessPage";
 import { ByCategoryPage } from "./pages/ByCategory/ByCategoryPage";
@@ -29,6 +30,7 @@ function App() {
         <Route path="/industries" element={<IndustriesPage />} />
         <Route path="/quality" element={<QualityPage />} />
         <Route path="/insights" element={<InsightsPage />} />
+        <Route path="/careers" element={<CareersPage />} />
         <Route path="/upload-bom" element={<UploadBOMPage />} />
         <Route path="/sell-excess" element={<SellExcessPage />} />
         <Route path="/by-category" element={<ByCategoryPage />} />

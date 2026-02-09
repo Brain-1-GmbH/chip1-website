@@ -9,9 +9,9 @@ import {
 import logoImg from "../../assets/alpha_logo.png";
 
 const quickLinks = [
-  { label: "Company", href: "#" },
+  { label: "Company", href: "/company" },
   { label: "Contact Us", href: "#" },
-  { label: "Careers", href: "#" },
+  { label: "Careers", href: "/careers" },
 ];
 
 const socialLinks = [

@@ -1,4 +1,5 @@
 import React from "react";
+import hybridModelChip from "../../assets/hybrid-model-chip.png";
 
 export const HybridModelSection: React.FC = () => {
   return (
@@ -102,126 +103,13 @@ export const HybridModelSection: React.FC = () => {
               />
             </svg>
 
-            {/* Chip SVG */}
-            <div className="scale-75 md:scale-100">
-              <svg
-                width="320"
-                height="280"
-                viewBox="0 0 320 280"
-                fill="none"
-                xmlns="http://www.w3.org/2000/svg"
-              >
-              {/* Chip body - isometric view */}
-              <g transform="translate(40, 60)">
-                {/* Top face of chip */}
-                <path
-                  d="M120 0 L240 60 L120 120 L0 60 Z"
-                  fill="#1a1a1b"
-                  stroke="#99c221"
-                  strokeWidth="1.5"
-                />
-                {/* Left face */}
-                <path
-                  d="M0 60 L0 100 L120 160 L120 120 Z"
-                  fill="#0e0e0f"
-                  stroke="#99c221"
-                  strokeWidth="1.5"
-                />
-                {/* Right face */}
-                <path
-                  d="M240 60 L240 100 L120 160 L120 120 Z"
-                  fill="#141415"
-                  stroke="#99c221"
-                  strokeWidth="1.5"
-                />
-
-                {/* Text on chip */}
-                <text
-                  x="120"
-                  y="55"
-                  textAnchor="middle"
-                  fill="#99c221"
-                  fontSize="16"
-                  fontFamily="Plus Jakarta Sans, sans-serif"
-                  fontWeight="500"
-                  transform="rotate(-30, 120, 55)"
-                >
-                  Hybrid model
-                </text>
-
-                {/* Left pins */}
-                {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                  <g key={`left-${i}`}>
-                    <line
-                      x1={15 + i * 12}
-                      y1={30 + i * 6}
-                      x2={15 + i * 12 - 20}
-                      y2={30 + i * 6 - 30}
-                      stroke="#99c221"
-                      strokeWidth="1"
-                    />
-                    <rect
-                      x={15 + i * 12 - 22}
-                      y={30 + i * 6 - 35}
-                      width="4"
-                      height="8"
-                      fill="#99c221"
-                      transform={`rotate(-60, ${15 + i * 12 - 20}, ${30 + i * 6 - 31})`}
-                    />
-                  </g>
-                ))}
-
-                {/* Right pins */}
-                {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                  <g key={`right-${i}`}>
-                    <line
-                      x1={135 + i * 12}
-                      y1={78 - i * 6}
-                      x2={135 + i * 12 + 20}
-                      y2={78 - i * 6 - 30}
-                      stroke="#99c221"
-                      strokeWidth="1"
-                    />
-                    <rect
-                      x={135 + i * 12 + 18}
-                      y={78 - i * 6 - 35}
-                      width="4"
-                      height="8"
-                      fill="#99c221"
-                      transform={`rotate(60, ${135 + i * 12 + 20}, ${78 - i * 6 - 31})`}
-                    />
-                  </g>
-                ))}
-
-                {/* Bottom left pins */}
-                {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                  <g key={`bottom-left-${i}`}>
-                    <line
-                      x1={15 + i * 12}
-                      y1={90 + i * 6}
-                      x2={15 + i * 12 - 15}
-                      y2={90 + i * 6 + 25}
-                      stroke="#99c221"
-                      strokeWidth="1"
-                    />
-                  </g>
-                ))}
-
-                {/* Bottom right pins */}
-                {[0, 1, 2, 3, 4, 5, 6, 7].map((i) => (
-                  <g key={`bottom-right-${i}`}>
-                    <line
-                      x1={135 + i * 12}
-                      y1={138 - i * 6}
-                      x2={135 + i * 12 + 15}
-                      y2={138 - i * 6 + 25}
-                      stroke="#99c221"
-                      strokeWidth="1"
-                    />
-                  </g>
-                ))}
-              </g>
-              </svg>
+            {/* Chip Image */}
+            <div className="scale-75 md:scale-100 flex items-center justify-center">
+              <img
+                src={hybridModelChip}
+                alt="Hybrid model chip"
+                className="w-auto h-auto max-w-[320px] max-h-[280px]"
+              />
             </div>
           </div>
 
