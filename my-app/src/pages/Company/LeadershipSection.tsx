@@ -81,20 +81,10 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
           </p>
         </div>
 
-        {!isExpanded && (
-          <button
-            type="button"
-            className="md:hidden self-center mt-2 text-[#99c221] text-sm font-medium"
-            onClick={onToggle}
-          >
-            Read More
-          </button>
-        )}
-        
         {/* Description - appears on hover */}
         <p
           className={`text-[14px] md:text-base text-[#cececf] leading-[1.5] overflow-hidden min-h-0 transition-all duration-500 ${
-            isExpanded ? "mt-4 max-h-[500px] opacity-100 pb-4" : "mt-0 max-h-0 opacity-0"
+            isExpanded ? "mt-4 max-h-[500px] opacity-100 pb-2" : "mt-0 max-h-0 opacity-0"
           } md:mt-2 md:max-h-0 md:opacity-0 md:group-hover:max-h-[500px] md:group-hover:mt-4 md:group-hover:opacity-100 md:group-hover:pb-4`}
           style={{
             fontFamily: "'Inter', sans-serif",
@@ -103,6 +93,18 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
         >
           {description}
         </p>
+
+        {/* Read More / Show Less Button - Mobile Only */}
+        <button
+          type="button"
+          className="md:hidden self-center mt-2 text-[#99c221] text-sm font-medium z-20 relative"
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggle();
+          }}
+        >
+          {isExpanded ? "Show Less" : "Read More"}
+        </button>
       </div>
     </div>
   );
@@ -136,7 +138,7 @@ export const LeadershipSection: React.FC = () => {
   const [expandedIndex, setExpandedIndex] = React.useState<number | null>(null);
 
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-10 mb-[120px] md:mb-[120px]">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-10 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-8 md:mb-20">

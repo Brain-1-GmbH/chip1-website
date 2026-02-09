@@ -95,9 +95,10 @@ const timelineData: TimelineItem[] = [
 
 interface TimelineCardProps {
   item: TimelineItem;
+  isFirst?: boolean;
 }
 
-const TimelineCard: React.FC<TimelineCardProps> = ({ item }) => {
+const TimelineCard: React.FC<TimelineCardProps> = ({ item, isFirst = false }) => {
   const isLeft = item.position === "left";
 
   return (
@@ -107,11 +108,12 @@ const TimelineCard: React.FC<TimelineCardProps> = ({ item }) => {
       }`}
     >
       {/* Image */}
-      <div className="w-[240px] md:w-[378px] h-[152px] md:h-[240px] rounded-lg overflow-hidden">
+      <div className={`w-[240px] md:w-[378px] h-[152px] md:h-[240px] rounded-lg overflow-hidden ${isLeft && isFirst ? 'md:ml-0 -ml-4' : ''}`}>
         <img
           src={item.image}
           alt={item.title}
           className="w-full h-full object-cover"
+          style={isLeft && isFirst ? { objectPosition: "left center" } : undefined}
         />
       </div>
 
@@ -185,10 +187,10 @@ const TimelineConnector: React.FC<{
 
 export const OurStorySection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 mb-[120px] md:mb-[120px]">
+    <section className="bg-[#0e0e0f] px-4 py-4 md:px-[60px] md:py-24 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Header */}
-        <div className="flex flex-col gap-4 mb-10 md:mb-24">
+        <div className="flex flex-col gap-2 md:gap-4 mb-10 md:mb-24">
           <h2
             className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
@@ -235,7 +237,7 @@ export const OurStorySection: React.FC = () => {
                       item.position === "left" ? "justify-start pl-10" : "justify-end pr-10"
                     }`}
                   >
-                    <TimelineCard item={item} />
+                    <TimelineCard item={item} isFirst={isFirst} />
                   </div>
                 </div>
 

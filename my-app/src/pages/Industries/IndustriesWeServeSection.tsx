@@ -135,7 +135,7 @@ export const IndustriesWeServeSection: React.FC = () => {
   };
 
   return (
-    <section className="bg-[#0e0e0f] px-4 pt-2 pb-10 md:px-[60px] md:py-24 border-t-0 mb-[120px] md:mb-[120px]">
+    <section className="bg-[#0e0e0f] px-4 pt-2 pb-10 md:px-[60px] md:py-24 border-t-0 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Mobile Content */}
         <div className="md:hidden flex flex-col gap-6 items-center">

@@ -154,7 +154,7 @@ const TimelineConnector: React.FC<{
 
 export const VerificationStepsSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 mb-[120px] md:mb-[120px]">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Title */}
         <h2

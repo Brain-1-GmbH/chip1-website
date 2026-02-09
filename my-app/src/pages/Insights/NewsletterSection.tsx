@@ -33,7 +33,7 @@ export const NewsletterSection: React.FC = () => {
   };
 
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-16 mb-[120px] md:mb-[120px]">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-16 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px] relative md:rounded-3xl overflow-hidden">
         {/* Background Image with Overlay */}
         <div className="absolute inset-0 opacity-[0.12]">

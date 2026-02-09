@@ -117,7 +117,7 @@ const FAQItemComponent: React.FC<FAQItemComponentProps> = ({
         className="w-full flex items-center justify-between py-8 text-left group"
       >
         <span
-          className="text-2xl font-medium text-[#efeff0] leading-[1.4] pr-4 group-hover:text-[#99c221] transition-colors"
+          className="text-base md:text-2xl font-medium text-[#efeff0] leading-[1.4] pr-4 group-hover:text-[#99c221] transition-colors"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {item.question}
@@ -135,7 +135,7 @@ const FAQItemComponent: React.FC<FAQItemComponentProps> = ({
         }}
       >
         <div ref={contentRef} className="pb-8">
-          <p className="text-xl text-[#cececf] leading-[1.5] max-w-[900px]">
+          <p className="text-sm md:text-xl text-[#cececf] leading-[1.5] max-w-[900px]">
             {item.answer}
           </p>
         </div>

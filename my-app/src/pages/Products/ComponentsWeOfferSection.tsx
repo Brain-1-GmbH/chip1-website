@@ -257,7 +257,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({ component }) => {
 
       {/* Name */}
       <h4
-        className="text-2xl font-medium text-[#e5e5e7] leading-[1.4]"
+        className="text-2xl font-medium text-[#e5e5e7] leading-[1.4] truncate"
         style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
       >
         {component.name}
@@ -269,13 +269,7 @@ const ComponentCard: React.FC<ComponentCardProps> = ({ component }) => {
 export const ComponentsWeOfferSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [openCategories, setOpenCategories] = useState<Record<string, boolean>>(
-    () =>
-      categoriesData.reduce((acc, category, index) => {
-        acc[category.id] = index === 0;
-        return acc;
-      }, {} as Record<string, boolean>)
-  );
+  const [openCategoryId, setOpenCategoryId] = useState<string | null>(categoriesData[0]?.id || null);
 
   const handleTabClick = (index: number) => {
     if (isAnimating || index === activeIndex) return;
@@ -284,12 +278,16 @@ export const ComponentsWeOfferSection: React.FC = () => {
     setTimeout(() => setIsAnimating(false), 400);
   };
 
+  const handleMobileCategoryClick = (categoryId: string) => {
+    setOpenCategoryId((prev) => (prev === categoryId ? null : categoryId));
+  };
+
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 md:pb-32 mb-[120px] md:mb-[120px]">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 md:pb-32 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Title */}
         <h2
-          className="hidden md:block text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-20"
+          className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-8 md:mb-20"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Components We Offer
@@ -298,18 +296,13 @@ export const ComponentsWeOfferSection: React.FC = () => {
         {/* Mobile - Accordion */}
         <div className="md:hidden flex flex-col gap-2">
           {categoriesData.map((category) => {
-            const isOpen = !!openCategories[category.id];
+            const isOpen = openCategoryId === category.id;
             return (
               <div key={category.id}>
                 <button
                   type="button"
                   className="w-full flex items-center justify-between py-4 text-left"
-                  onClick={() =>
-                    setOpenCategories((prev) => ({
-                      ...prev,
-                      [category.id]: !prev[category.id],
-                    }))
-                  }
+                  onClick={() => handleMobileCategoryClick(category.id)}
                 >
                   <span
                     className={`text-2xl leading-[1.4] transition-colors duration-300 ${
@@ -323,20 +316,24 @@ export const ComponentsWeOfferSection: React.FC = () => {
                   </span>
                   <ChevronRight
                     size={24}
-                    className={`transition-transform duration-200 ${
+                    className={`transition-transform duration-300 ease-in-out ${
                       isOpen
-                        ? "rotate-90 text-[#e5e5e7]"
-                        : "-rotate-90 text-[#545556]"
+                        ? "-rotate-90 text-[#e5e5e7]"
+                        : "rotate-90 text-[#545556]"
                     }`}
                   />
                 </button>
-                {isOpen && (
-                  <div className="flex flex-col">
+                <div
+                  className={`overflow-hidden transition-all duration-300 ease-in-out ${
+                    isOpen ? "max-h-[5000px] opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="flex flex-col pt-2">
                     {category.components.map((component) => (
                       <ComponentCard key={component.id} component={component} />
                     ))}
                   </div>
-                )}
+                </div>
               </div>
             );
           })}

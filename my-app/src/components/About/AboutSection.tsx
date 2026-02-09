@@ -182,34 +182,37 @@ export const AboutSection: React.FC = () => {
 
           {/* Company Card - full width, stacked on mobile */}
           <div className="md:hidden w-full mt-4">
-            <div className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-4 flex flex-col items-center text-center gap-4">
+            <div className="flex-1 bg-[#0e0e0f] border border-[#323335] rounded-2xl overflow-hidden flex flex-col items-center text-center">
               <div className="w-full h-[200px] rounded-2xl overflow-hidden">
                 <img
                   src={companyBg}
                   alt="Company"
-                  className="w-full h-full object-cover opacity-70"
+                  className="w-full h-full object-cover opacity-70 rounded-2xl"
+                  style={{ objectPosition: "left center" }}
                 />
               </div>
-              <div className="flex flex-col gap-3 items-center">
-                <h2
-                  className="text-[20px] font-semibold text-[#efeff0] leading-[1.4]"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+              <div className="p-4 flex flex-col gap-4 w-full">
+                <div className="flex flex-col gap-3 items-center">
+                  <h2
+                    className="text-[20px] font-semibold text-[#efeff0] leading-[1.4]"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    Company
+                  </h2>
+                  <p className="text-[14px] text-[#cececf] leading-[1.5]">
+                    For over 20 years, Chip 1 has been a trusted partner in the electronics
+                    industry. With $100M+ in stock and a worldwide network, we deliver
+                    factory-original and hard-to-find components fast — keeping your
+                    production lines running without interruption.
+                  </p>
+                </div>
+                <PrimaryButton
+                  className="h-12 w-[110px] mx-auto"
+                  onClick={() => navigate(featureRoutes.Company)}
                 >
-                  Company
-                </h2>
-                <p className="text-[14px] text-[#cececf] leading-[1.5]">
-                  For over 20 years, Chip 1 has been a trusted partner in the electronics
-                  industry. With $100M+ in stock and a worldwide network, we deliver
-                  factory-original and hard-to-find components fast — keeping your
-                  production lines running without interruption.
-                </p>
+                  Explore
+                </PrimaryButton>
               </div>
-              <PrimaryButton
-                className="h-12 w-[110px] mx-auto"
-                onClick={() => navigate(featureRoutes.Company)}
-              >
-                Explore
-              </PrimaryButton>
             </div>
           </div>
 

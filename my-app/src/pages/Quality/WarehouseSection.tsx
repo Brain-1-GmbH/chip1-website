@@ -97,7 +97,7 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ feature }) => {
 
 export const WarehouseSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 mb-[120px] md:mb-[120px]">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Title */}
         <h2
@@ -108,21 +108,21 @@ export const WarehouseSection: React.FC = () => {
         </h2>
 
         {/* Features Grid */}
-        <div className="flex flex-col gap-6 md:gap-10">
+        <div className="flex flex-col gap-8 md:gap-10">
           {/* Row 1 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
             <FeatureCard feature={warehouseFeatures[0]} />
             <FeatureCard feature={warehouseFeatures[1]} />
           </div>
 
           {/* Row 2 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
             <FeatureCard feature={warehouseFeatures[2]} />
             <FeatureCard feature={warehouseFeatures[3]} />
           </div>
 
           {/* Row 3 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-10">
             <FeatureCard feature={warehouseFeatures[4]} />
             <FeatureCard feature={warehouseFeatures[5]} />
           </div>

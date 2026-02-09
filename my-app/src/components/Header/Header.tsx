@@ -126,7 +126,7 @@ export const Header: React.FC = () => {
   return (
     <>
       <header 
-        className={`absolute md:fixed top-0 left-0 right-0 flex items-start justify-between px-4 pt-4 pb-2 md:items-center md:px-10 md:py-4 backdrop-blur-md bg-[linear-gradient(180deg,#0E0E0F_39.81%,rgba(14,14,15,0)_100%)] md:bg-[#0E0E0F]/95 md:border-b md:border-[#292a2a]/50 ${isMobileMenuOpen ? 'z-[302]' : 'z-[200]'}`}
+        className={`fixed top-0 left-0 right-0 flex items-start justify-between px-4 pt-4 pb-2 md:items-center md:px-10 md:py-4 backdrop-blur-md bg-[linear-gradient(180deg,#0E0E0F_39.81%,rgba(14,14,15,0)_100%)] md:bg-[#0E0E0F]/95 border-b border-[#292a2a]/50 ${isMobileMenuOpen ? 'z-[302]' : 'z-[200]'}`}
         style={{ width: "100%", maxWidth: "100vw", overflowX: "hidden" }}
       >
         {/* Logo */}
@@ -255,13 +255,16 @@ export const Header: React.FC = () => {
 
             {/* Navigation menu - scrollable */}
             <nav className="flex-1 w-full px-6 py-8 flex flex-col gap-6">
-              {[...navItems, { label: "Careers", href: "/careers" }].map((item) =>
-                item.href.startsWith("/") ? (
+              {[...navItems, { label: "Careers", href: "/careers" }].map((item) => {
+                const isActive = item.href.startsWith("/") && location.pathname === item.href;
+                return item.href.startsWith("/") ? (
                   <Link
                     key={item.label}
                     to={item.href}
                     onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xl text-[#e5e5e7]"
+                    className={`text-xl transition-colors duration-200 ${
+                      isActive ? "text-[#B8D434]" : "text-[#e5e5e7]"
+                    }`}
                     style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                   >
                     {item.label}
@@ -276,8 +279,8 @@ export const Header: React.FC = () => {
                   >
                     {item.label}
                   </a>
-                )
-              )}
+                );
+              })}
             </nav>
           </div>
         </div>
