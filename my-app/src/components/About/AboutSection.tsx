@@ -1,4 +1,5 @@
 import React, { useRef } from "react";
+import { useNavigate } from "react-router-dom";
 import { ArrowUpRight } from "@carbon/icons-react";
 
 // Placeholder images - replace with actual assets
@@ -91,14 +92,16 @@ const insights = [
   },
 ];
 
-const PrimaryButton: React.FC<{ children: React.ReactNode; className?: string }> = ({
-  children,
-  className = "",
-}) => (
+const PrimaryButton: React.FC<{
+  children: React.ReactNode;
+  className?: string;
+  onClick?: () => void;
+}> = ({ children, className = "", onClick }) => (
   <button
     className={`bg-[#99c221] border-t border-[#ceea6c] flex items-center justify-center gap-2 px-4 py-3 rounded-3xl 
-               shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] text-[#05080d] font-semibold text-sm
+               shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] text-[#05080d] font-semibold text-sm cursor-pointer
                hover:bg-[#a8d130] transition-colors ${className}`}
+    onClick={onClick}
   >
     {children}
   </button>
@@ -113,6 +116,15 @@ const ReadMoreButton: React.FC = () => (
 
 export const AboutSection: React.FC = () => {
   const insightsContainerRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+
+  const featureRoutes: Record<string, string> = {
+    Products: "/products",
+    Services: "/services",
+    Quality: "/quality",
+    Capabilities: "/capabilities",
+    Company: "/company",
+  };
 
   return (
     <section className="flex flex-col items-center w-full bg-[#0e0e0f] md:px-4 md:py-10 md:py-20">
@@ -152,7 +164,7 @@ export const AboutSection: React.FC = () => {
           </div>
 
           {/* Stats - desktop layout */}
-          <div className="hidden md:flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-4 w-full md:justify-between md:px-10 md:relative">
+          <div className="hidden md:flex flex-col sm:flex-row items-center justify-center gap-6 sm:gap-4 w-full md:justify-between md:px-10 md:relative mb-4 md:mb-6">
             {stats.map((stat, index) => (
               <div
                 key={index}
@@ -169,7 +181,7 @@ export const AboutSection: React.FC = () => {
           </div>
 
           {/* Company Card - full width, stacked on mobile */}
-          <div className="md:hidden w-full">
+          <div className="md:hidden w-full mt-4">
             <div className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-4 flex flex-col items-center text-center gap-4">
               <div className="w-full h-[200px] rounded-2xl overflow-hidden">
                 <img
@@ -192,11 +204,16 @@ export const AboutSection: React.FC = () => {
                   production lines running without interruption.
                 </p>
               </div>
-              <PrimaryButton className="h-12 w-[110px] mx-auto">Explore</PrimaryButton>
+              <PrimaryButton
+                className="h-12 w-[110px] mx-auto"
+                onClick={() => navigate(featureRoutes.Company)}
+              >
+                Explore
+              </PrimaryButton>
             </div>
           </div>
 
-          <div className="hidden md:block relative min-h-[280px] md:h-[400px] rounded-2xl overflow-hidden w-full">
+          <div className="hidden md:block relative min-h-[280px] md:h-[400px] rounded-2xl overflow-hidden w-full mt-3 md:mt-6">
           <img
             src={companyBg}
             alt="Company"
@@ -219,7 +236,10 @@ export const AboutSection: React.FC = () => {
                   production lines running without interruption.
                 </p>
               </div>
-              <PrimaryButton className="h-12 w-[110px] mx-auto md:mx-0 md:w-[145px] flex-shrink-0">
+              <PrimaryButton
+                className="h-12 w-[110px] mx-auto md:mx-0 md:w-[145px] flex-shrink-0"
+                onClick={() => navigate(featureRoutes.Company)}
+              >
                 Explore
               </PrimaryButton>
             </div>
@@ -227,36 +247,41 @@ export const AboutSection: React.FC = () => {
           </div>
 
           {/* Feature Cards - single column on mobile, 2x2 on desktop */}
-          <div className="flex flex-col gap-4 md:gap-6 w-full">
+          <div className="flex flex-col gap-4 md:gap-6 w-full mt-4 md:mt-6">
           {/* Row 1 */}
           <div className="flex flex-col md:flex-row gap-4 md:gap-6">
             {featureCards.slice(0, 2).map((card, index) => (
               <div
                 key={index}
-                className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-4 min-h-0 md:h-[378px] flex flex-col items-center text-center gap-4 md:flex-row md:items-stretch md:text-left md:p-6"
+                className="flex-1 rounded-2xl p-[1px] bg-gradient-to-r from-[#333333] to-[#0E0E0F]"
               >
-                <div className="w-full md:w-[336px] h-[200px] sm:h-[260px] md:h-[330px] rounded-2xl overflow-hidden flex-shrink-0">
-                  <img
-                    src={card.image}
-                    alt={card.title}
-                    className="w-full h-full object-cover opacity-70"
-                  />
-                </div>
-                <div className="flex flex-col justify-between flex-1 min-h-0 w-full items-center md:items-start">
-                  <div className="flex flex-col gap-3 sm:gap-6 items-center md:items-start">
-                    <h3
-                      className="text-[20px] md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                    >
-                      {card.title}
-                    </h3>
-                    <p className="text-[14px] md:text-base text-[#cececf] leading-[1.5]">
-                      {card.description}
-                    </p>
+                <div className="bg-[#0e0e0f] rounded-2xl p-4 min-h-0 md:h-[378px] flex flex-col items-center text-center gap-4 md:flex-row md:items-stretch md:text-left md:p-6">
+                  <div className="w-full md:w-[336px] h-[200px] sm:h-[260px] md:h-[330px] rounded-2xl overflow-hidden flex-shrink-0">
+                    <img
+                      src={card.image}
+                      alt={card.title}
+                      className="w-full h-full object-cover opacity-70"
+                    />
                   </div>
-                  <PrimaryButton className="h-12 w-[110px] mx-auto md:mx-0 md:w-[152px] mt-2 md:mt-0">
-                    Explore
-                  </PrimaryButton>
+                  <div className="flex flex-col justify-between flex-1 min-h-0 w-full items-center md:items-start">
+                    <div className="flex flex-col gap-3 sm:gap-6 items-center md:items-start">
+                      <h3
+                        className="text-[20px] md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
+                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                      >
+                        {card.title}
+                      </h3>
+                      <p className="text-[14px] md:text-base text-[#cececf] leading-[1.5]">
+                        {card.description}
+                      </p>
+                    </div>
+                    <PrimaryButton
+                      className="h-12 w-[110px] mx-auto md:mx-0 md:w-[152px] mt-2 md:mt-0"
+                      onClick={() => navigate(featureRoutes[card.title] ?? "/")}
+                    >
+                      Explore
+                    </PrimaryButton>
+                  </div>
                 </div>
               </div>
             ))}
@@ -267,30 +292,35 @@ export const AboutSection: React.FC = () => {
             {featureCards.slice(2, 4).map((card, index) => (
               <div
                 key={index}
-                className="flex-1 bg-[#0e0e0f] border border-[#0e0e0f] rounded-2xl p-4 min-h-0 md:h-[378px] flex flex-col items-center text-center gap-4 md:flex-row md:items-stretch md:text-left md:p-6"
+                className="flex-1 rounded-2xl p-[1px] bg-gradient-to-r from-[#333333] to-[#0E0E0F]"
               >
-                <div className="w-full md:w-[336px] h-[200px] sm:h-[260px] md:h-[330px] rounded-2xl overflow-hidden flex-shrink-0">
-                  <img
-                    src={card.image}
-                    alt={card.title}
-                    className="w-full h-full object-cover opacity-70"
-                  />
-                </div>
-                <div className="flex flex-col justify-between flex-1 min-h-0 w-full items-center md:items-start">
-                  <div className="flex flex-col gap-3 sm:gap-6 items-center md:items-start">
-                    <h3
-                      className="text-[20px] md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
-                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                    >
-                      {card.title}
-                    </h3>
-                    <p className="text-[14px] md:text-base text-[#cececf] leading-[1.5]">
-                      {card.description}
-                    </p>
+                <div className="bg-[#0e0e0f] rounded-2xl p-4 min-h-0 md:h-[378px] flex flex-col items-center text-center gap-4 md:flex-row md:items-stretch md:text-left md:p-6">
+                  <div className="w-full md:w-[336px] h-[200px] sm:h-[260px] md:h-[330px] rounded-2xl overflow-hidden flex-shrink-0">
+                    <img
+                      src={card.image}
+                      alt={card.title}
+                      className="w-full h-full object-cover opacity-70"
+                    />
                   </div>
-                  <PrimaryButton className="h-12 w-[110px] mx-auto md:mx-0 md:w-[152px] mt-2 md:mt-0">
-                    Explore
-                  </PrimaryButton>
+                  <div className="flex flex-col justify-between flex-1 min-h-0 w-full items-center md:items-start">
+                    <div className="flex flex-col gap-3 sm:gap-6 items-center md:items-start">
+                      <h3
+                        className="text-[20px] md:text-2xl font-semibold text-[#efeff0] leading-[1.4]"
+                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                      >
+                        {card.title}
+                      </h3>
+                      <p className="text-[14px] md:text-base text-[#cececf] leading-[1.5]">
+                        {card.description}
+                      </p>
+                    </div>
+                    <PrimaryButton
+                      className="h-12 w-[110px] mx-auto md:mx-0 md:w-[152px] mt-2 md:mt-0"
+                      onClick={() => navigate(featureRoutes[card.title] ?? "/")}
+                    >
+                      Explore
+                    </PrimaryButton>
+                  </div>
                 </div>
               </div>
             ))}
@@ -309,14 +339,16 @@ export const AboutSection: React.FC = () => {
             {certificates.map((cert, index) => (
               <div
                 key={index}
-                className="bg-[#0e0e0f] flex flex-col items-center justify-center p-2 rounded-lg w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[156px] md:h-auto flex-shrink-0"
+                className="rounded-lg p-[1px] bg-transparent hover:bg-gradient-to-r hover:from-[#333333] hover:to-[#0E0E0F] transition-colors"
               >
-                <div className="w-[70px] h-[70px] sm:w-[90px] sm:h-[90px] md:w-[107px] md:h-[107px] flex items-center justify-center">
-                  <img
-                    src={cert}
-                    alt={`Certificate ${index + 1}`}
-                    className="max-w-full max-h-full object-contain"
-                  />
+                <div className="bg-[#0e0e0f] flex flex-col items-center justify-center p-2 rounded-lg w-[100px] h-[100px] sm:w-[120px] sm:h-[120px] md:w-[156px] md:h-auto flex-shrink-0">
+                  <div className="w-[70px] h-[70px] sm:w-[90px] sm:h-[90px] md:w-[107px] md:h-[107px] flex items-center justify-center">
+                    <img
+                      src={cert}
+                      alt={`Certificate ${index + 1}`}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
                 </div>
               </div>
             ))}

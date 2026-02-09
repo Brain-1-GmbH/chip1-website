@@ -1,5 +1,4 @@
 import React, { useState, useRef, useEffect } from "react";
-import { Add, Subtract } from "@carbon/icons-react";
 
 // Background image for FAQ section
 import faqBg from "../../assets/Picture-17.png";
@@ -68,6 +67,28 @@ interface FAQItemComponentProps {
   onToggle: () => void;
 }
 
+const PlusIcon: React.FC = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 26 26" fill="none">
+    <path
+      d="M12.9941 1V25M25 12.994L1 12.994"
+      stroke="#B6B6B7"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
+const MinusIcon: React.FC = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 26 24" fill="none">
+    <path
+      d="M25 11.9922L1 11.9922"
+      stroke="#B6B6B7"
+      strokeWidth="2"
+      strokeLinecap="round"
+    />
+  </svg>
+);
+
 const FAQItemComponent: React.FC<FAQItemComponentProps> = ({
   item,
   isOpen,
@@ -102,7 +123,7 @@ const FAQItemComponent: React.FC<FAQItemComponentProps> = ({
           {item.question}
         </span>
         <span className="flex-shrink-0 text-[#efeff0] group-hover:text-[#99c221] transition-colors">
-          {isOpen ? <Subtract size={24} /> : <Add size={24} />}
+          {isOpen ? <MinusIcon /> : <PlusIcon />}
         </span>
       </button>
       <div

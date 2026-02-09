@@ -46,25 +46,22 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
   };
 
   return (
-    <div className="relative" ref={containerRef}>
+    <div className="relative w-full" ref={containerRef}>
       <button
         type="button"
         onClick={() => !disabled && setIsOpen(!isOpen)}
         disabled={disabled}
-        className={`flex w-[252px] px-2 py-2 justify-between items-center rounded-lg border outline-none transition-colors appearance-none cursor-pointer ${
-          disabled ? "opacity-50 cursor-not-allowed" : ""
+        className={`flex w-full h-10 px-3 justify-between items-center rounded border outline-none transition-colors appearance-none cursor-pointer ${
+          disabled ? "opacity-50 cursor-not-allowed" : "border-[#323335] bg-[#1c1d22] hover:border-[#99c221]/60"
         }`}
         style={{
           fontFamily: "Inter, sans-serif",
-          borderColor: "#212225",
-          backgroundColor: "#1C1D22",
-          boxShadow: "-2px 4px 12px 0 rgba(17, 18, 21, 0.80)",
         }}
       >
         <span 
           className="text-sm text-left flex-1"
           style={{
-            color: value ? "#f7f7f7" : "#8e8e8f",
+            color: value ? "#f7f7f7" : "#323335",
             fontFamily: "Inter, sans-serif",
             fontSize: "14px",
             fontStyle: "normal",
@@ -84,9 +81,8 @@ export const CustomDropdown: React.FC<CustomDropdownProps> = ({
 
       {isOpen && (
         <div 
-          className="absolute top-full left-0 mt-2 rounded-lg z-50 max-h-[200px] overflow-y-auto"
+          className="absolute top-full left-0 mt-2 rounded-lg z-50 max-h-[200px] overflow-y-auto w-full px-2 py-1.5"
           style={{
-            width: "252px",
             backgroundColor: "#1C1D22",
             border: "1px solid #212225",
             boxShadow: "-2px 4px 12px 0 rgba(17, 18, 21, 0.80)",

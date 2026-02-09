@@ -71,22 +71,23 @@ const steps: VerificationStep[] = [
   },
 ];
 
-interface StepCardProps {
+interface StepTimelineCardProps {
   step: VerificationStep;
-  isEven: boolean;
+  position: "left" | "right";
 }
 
-const StepCard: React.FC<StepCardProps> = ({ step, isEven }) => {
+const StepTimelineCard: React.FC<StepTimelineCardProps> = ({ step, position }) => {
+  const isLeft = position === "left";
   const isFirst = step.number === 1;
 
   return (
     <div
-      className={`bg-[#0e0e0f] flex gap-6 items-center rounded-2xl w-[784px] h-[267px] ${
-        isEven ? "flex-row-reverse" : "flex-row"
+      className={`relative z-10 flex w-[784px] h-[267px] items-center gap-6 ${
+        isLeft ? "flex-row" : "flex-row-reverse"
       }`}
     >
       {/* Image */}
-      <div className="w-[380px] h-[267px] rounded-lg overflow-hidden flex-shrink-0">
+      <div className="w-[380px] h-[267px] rounded-lg overflow-hidden flex-shrink-0 mt-3">
         <img
           src={step.image}
           alt={step.title}
@@ -94,29 +95,22 @@ const StepCard: React.FC<StepCardProps> = ({ step, isEven }) => {
         />
       </div>
 
-      {/* Content */}
-      <div className="flex-1 flex flex-col gap-6 items-center">
-        {/* Number Circle */}
+      {/* Number + Title */}
+      <div className="flex flex-col gap-4 items-center text-center">
         <div
           className={`w-20 h-20 rounded-full border-2 flex items-center justify-center ${
-            isFirst
-              ? "border-[#323335] bg-[#99c221]"
-              : "border-[#323335] bg-transparent"
+            isFirst ? "border-[#323335] bg-[#99c221]" : "border-[#323335] bg-transparent"
           }`}
         >
           <span
-            className={`text-[30px] font-normal ${
-              isFirst ? "text-black" : "text-white"
-            }`}
+            className={`text-[30px] font-normal ${isFirst ? "text-black" : "text-white"}`}
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
             {step.number}
           </span>
         </div>
-
-        {/* Title */}
         <p
-          className="text-2xl font-medium text-[#e5e5e7] leading-[1.4] text-center"
+          className="text-2xl font-medium text-[#e5e5e7] leading-[1.4] max-w-[360px]"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {step.title}
@@ -126,30 +120,32 @@ const StepCard: React.FC<StepCardProps> = ({ step, isEven }) => {
   );
 };
 
+// OUTER line positions - lines are on the OUTSIDE of cards (near screen edges)
 const LEFT_OUTER_LINE = "left-0";
 const RIGHT_OUTER_LINE = "right-0";
 
-const MobileConnector: React.FC<{
-  fromLeft: boolean;
-  toLeft: boolean;
-}> = ({ fromLeft, toLeft }) => {
-  const goingLeftToRight = fromLeft && !toLeft;
-  const goingRightToLeft = !fromLeft && toLeft;
+// Connector between timeline items (Our Story style)
+const TimelineConnector: React.FC<{
+  fromPosition: "left" | "right";
+  toPosition: "left" | "right";
+}> = ({ fromPosition, toPosition }) => {
+  const goingLeftToRight = fromPosition === "left" && toPosition === "right";
+  const goingRightToLeft = fromPosition === "right" && toPosition === "left";
 
   return (
-    <div className="relative h-[80px] w-full">
+    <div className="relative h-[100px] w-full">
       {goingLeftToRight && (
         <>
-          <div className={`absolute top-0 w-[2px] h-[40px] bg-[#323335] ${LEFT_OUTER_LINE}`} />
-          <div className="absolute top-[40px] left-0 right-0 h-[2px] bg-[#323335]" />
-          <div className={`absolute top-[40px] w-[2px] h-[40px] bg-[#323335] ${RIGHT_OUTER_LINE}`} />
+          <div className={`absolute top-0 w-[2px] h-[50px] bg-[#323335] ${LEFT_OUTER_LINE}`} />
+          <div className="absolute top-[50px] left-0 right-0 h-[2px] bg-[#323335]" />
+          <div className={`absolute top-[50px] w-[2px] h-[50px] bg-[#323335] ${RIGHT_OUTER_LINE}`} />
         </>
       )}
       {goingRightToLeft && (
         <>
-          <div className={`absolute top-0 w-[2px] h-[40px] bg-[#323335] ${RIGHT_OUTER_LINE}`} />
-          <div className="absolute top-[40px] left-0 right-0 h-[2px] bg-[#323335]" />
-          <div className={`absolute top-[40px] w-[2px] h-[40px] bg-[#323335] ${LEFT_OUTER_LINE}`} />
+          <div className={`absolute top-0 w-[2px] h-[50px] bg-[#323335] ${RIGHT_OUTER_LINE}`} />
+          <div className="absolute top-[50px] left-0 right-0 h-[2px] bg-[#323335]" />
+          <div className={`absolute top-[50px] w-[2px] h-[50px] bg-[#323335] ${LEFT_OUTER_LINE}`} />
         </>
       )}
     </div>
@@ -158,8 +154,8 @@ const MobileConnector: React.FC<{
 
 export const VerificationStepsSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-24">
-      <div className="max-w-[1280px] mx-auto">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 mb-[120px] md:mb-[120px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Title */}
         <h2
           className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-8 md:mb-10 text-center"
@@ -168,79 +164,57 @@ export const VerificationStepsSection: React.FC = () => {
           Verification Steps
         </h2>
 
-        {/* Mobile Roadmap (Our Story style) */}
-        <div className="md:hidden relative w-full max-w-[1100px] mx-auto">
+        {/* Roadmap - same layout as Our Story */}
+        <div className="relative flex flex-col items-start gap-[60px] w-[784px] mx-auto pt-6 overflow-visible">
+          {/* Desktop dashed line */}
+          <svg
+            className="hidden md:block absolute left-1/2 top-0 -translate-x-1/2 mt-2 z-0"
+            width="816"
+            height="3264.545"
+            viewBox="0 0 816 3264.545"
+            fill="none"
+            aria-hidden="true"
+          >
+            <path
+              d="M2 2V328.455H817.402M2.59809 3266.55H818V2940.09H2.59809V2613.64H818V2287.18H2.59809V1960.73H818V1634.27H2.59809V1307.82H818V981.364H2.59809V654.909H818V328.455L2.59809 328.455"
+              stroke="#323335"
+              strokeWidth="4"
+              strokeLinecap="round"
+              strokeDasharray="16 16"
+            />
+          </svg>
           {steps.map((step, index) => {
             const isFirst = index === 0;
             const isLast = index === steps.length - 1;
-            const fromLeft = index % 2 === 0;
-            const toLeft = (index + 1) % 2 === 0;
+            const position = index % 2 === 0 ? "left" : "right";
+            const nextPosition = (index + 1) % 2 === 0 ? "left" : "right";
 
             return (
               <div key={step.number}>
                 <div className="relative">
                   <div
-                    className={`absolute w-[2px] bg-[#323335] ${
-                      fromLeft ? LEFT_OUTER_LINE : RIGHT_OUTER_LINE
+                    className={`absolute w-[2px] bg-[#323335] md:hidden ${
+                      position === "left" ? LEFT_OUTER_LINE : RIGHT_OUTER_LINE
                     }`}
                     style={{
-                      height: isFirst ? "calc(100% - 80px)" : "100%",
-                      top: isFirst ? "80px" : "0",
+                      height: isFirst ? "calc(100% - 120px)" : "100%",
+                      top: isFirst ? "120px" : "0",
                     }}
                   />
-                  <div
-                    className={`flex ${fromLeft ? "justify-start pl-10" : "justify-end pr-10"}`}
-                  >
-                    <div
-                      className={`flex flex-col gap-4 w-[240px] ${
-                        fromLeft ? "items-start text-left" : "items-end text-right"
-                      }`}
-                    >
-                      <div className="w-[240px] h-[152px] rounded-lg overflow-hidden">
-                        <img
-                          src={step.image}
-                          alt={step.title}
-                          className="w-full h-full object-cover"
-                        />
-                      </div>
-                      <div
-                        className={`w-12 h-12 rounded-full border border-[#323335] flex items-center justify-center ${
-                          step.number === 1 ? "bg-[#99c221]" : "bg-transparent"
-                        }`}
-                      >
-                        <span
-                          className={`text-[20px] font-semibold ${
-                            step.number === 1 ? "text-black" : "text-white"
-                          }`}
-                          style={{ fontFamily: "'Inter', sans-serif" }}
-                        >
-                          {step.number}
-                        </span>
-                      </div>
-                      <p
-                        className="text-[14px] text-[#e5e5e7] leading-[1.5] w-[240px]"
-                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                      >
-                        {step.title}
-                      </p>
-                    </div>
-                  </div>
+                  <StepTimelineCard step={step} position={position} />
                 </div>
 
                 {!isLast && (
-                  <MobileConnector fromLeft={fromLeft} toLeft={toLeft} />
+                  <div className="md:hidden">
+                    <TimelineConnector
+                      fromPosition={position}
+                      toPosition={nextPosition}
+                    />
+                  </div>
                 )}
               </div>
             );
           })}
-        </div>
-
-        {/* Desktop Steps */}
-        <div className="hidden md:flex relative flex-col gap-[60px] items-center">
-          <div className="absolute left-1/2 top-0 bottom-0 w-[2px] bg-[#323335] -translate-x-1/2" />
-          {steps.map((step, index) => (
-            <StepCard key={step.number} step={step} isEven={index % 2 === 1} />
-          ))}
         </div>
       </div>
     </section>

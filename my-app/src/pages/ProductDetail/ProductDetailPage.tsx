@@ -71,7 +71,7 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* Breadcrumbs */}
       <section className="pt-24 pb-6">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-20">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
           <nav className="text-sm text-[#8e8e8f]">
             <span
               className="hover:text-[#b6b6b7] cursor-pointer"
@@ -101,7 +101,7 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* Product Title Section */}
       <section className="pb-8">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-20">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
           <div className="flex justify-between items-start gap-8">
             <div className="flex-1">
               <div className="flex items-center border-l-2 border-[#99c221] px-4 mb-4">
@@ -142,7 +142,7 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* Tabs */}
       <section className="border-b border-[#1C1D22]">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-20">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
           <div className="flex gap-8 overflow-x-auto">
             {tabs.map((tab) => (
               <button
@@ -164,7 +164,7 @@ export const ProductDetailPage: React.FC = () => {
 
       {/* Content - Details tab plates */}
       <section className="pb-24 pt-8">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-20">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
           {activeTab === "Details" && (
             <div className="relative overflow-visible bg-[#0F0F0F] border border-[#1C1D22]">
               {/* Corner circles */}

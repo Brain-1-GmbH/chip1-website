@@ -59,30 +59,32 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
 
       {/* Name Card with transparent hover effect */}
       <div
-        className="relative z-10 rounded-lg p-4 flex flex-col gap-2 transition-all duration-500 leader-card"
+        className="relative z-10 rounded-lg pt-4 px-4 pb-2 flex flex-col transition-all duration-500 leader-card"
         style={{
           background: "rgba(3, 3, 3, 0.8)",
           backdropFilter: "blur(10px)",
           WebkitBackdropFilter: "blur(10px)",
         }}
       >
-        <h3
-          className="text-[20px] md:text-2xl font-semibold text-[#e5e5e7] leading-[1.4] transition-all duration-500 md:group-hover:text-white"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        >
-          {name}
-        </h3>
-        <p
-          className="text-[16px] md:text-xl text-[#cececf] leading-[1.5] transition-all duration-500 md:group-hover:text-[#e5e5e7]"
-          style={{ fontFamily: "'Inter', sans-serif" }}
-        >
-          {role}
-        </p>
+        <div className="flex flex-col gap-2">
+          <h3
+            className="text-[20px] md:text-2xl font-semibold text-[#e5e5e7] leading-[1.4] transition-all duration-500 md:group-hover:text-white"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            {name}
+          </h3>
+          <p
+            className="text-[16px] md:text-xl text-[#cececf] leading-[1.5] transition-all duration-500 md:group-hover:text-[#e5e5e7]"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            {role}
+          </p>
+        </div>
 
         {!isExpanded && (
           <button
             type="button"
-            className="md:hidden self-center text-[#99c221] text-sm font-medium"
+            className="md:hidden self-center mt-2 text-[#99c221] text-sm font-medium"
             onClick={onToggle}
           >
             Read More
@@ -91,9 +93,9 @@ const LeaderCard: React.FC<LeaderCardProps> = ({
         
         {/* Description - appears on hover */}
         <p
-          className={`text-[14px] md:text-base text-[#cececf] leading-[1.5] overflow-hidden transition-all duration-500 ${
-            isExpanded ? "mt-4 max-h-[500px] opacity-100" : "mt-0 max-h-0 opacity-0"
-          } md:mt-2 md:max-h-0 md:opacity-0 md:group-hover:max-h-[500px] md:group-hover:mt-4 md:group-hover:opacity-100`}
+          className={`text-[14px] md:text-base text-[#cececf] leading-[1.5] overflow-hidden min-h-0 transition-all duration-500 ${
+            isExpanded ? "mt-4 max-h-[500px] opacity-100 pb-4" : "mt-0 max-h-0 opacity-0"
+          } md:mt-2 md:max-h-0 md:opacity-0 md:group-hover:max-h-[500px] md:group-hover:mt-4 md:group-hover:opacity-100 md:group-hover:pb-4`}
           style={{
             fontFamily: "'Inter', sans-serif",
             transition: "max-height 0.8s ease-out, margin-top 0.8s ease-out, opacity 0.6s ease-out 0.2s",
@@ -134,8 +136,8 @@ export const LeadershipSection: React.FC = () => {
   const [expandedIndex, setExpandedIndex] = React.useState<number | null>(null);
 
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-10">
-      <div className="max-w-[1280px] mx-auto">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-10 mb-[120px] md:mb-[120px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-8 md:mb-20">
           <h2

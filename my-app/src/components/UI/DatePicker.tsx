@@ -117,6 +117,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
     }
 
     const today = new Date();
+    const todayStart = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const monthNames = [
       "January",
       "February",
@@ -188,16 +189,20 @@ export const DatePicker: React.FC<DatePickerProps> = ({
             const isSelected =
               selectedDate &&
               date.toDateString() === selectedDate.toDateString();
+            const isPast = date < todayStart;
 
             return (
               <button
                 key={index}
-                onClick={() => handleDateSelect(date)}
+                onClick={() => !isPast && handleDateSelect(date)}
+                disabled={isPast}
                 className={`aspect-square rounded text-sm transition-colors ${
                   isSelected
                     ? "bg-[#99c221] text-[#05080d] font-medium"
                     : isToday
                     ? "bg-[#323335] text-[#e5e5e7] font-medium"
+                    : isPast
+                    ? "text-[#8e8e8f] opacity-70 cursor-not-allowed"
                     : "text-[#e5e5e7] hover:bg-[#323335]"
                 }`}
                 style={{ fontFamily: "Inter, sans-serif" }}
@@ -220,7 +225,7 @@ export const DatePicker: React.FC<DatePickerProps> = ({
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setIsOpen(true)}
           placeholder={placeholder}
-          className="w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#8e8e8f] outline-none focus:border-[#99c221] transition-colors"
+          className="w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#323335] outline-none focus:border-[#99c221] transition-colors"
           style={{ fontFamily: "Inter, sans-serif" }}
         />
         <button

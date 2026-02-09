@@ -1,11 +1,70 @@
 import React, { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { Close, Search, Upload, Box } from "@carbon/icons-react";
+import { Box, Close, Search } from "@carbon/icons-react";
 import axios from "axios";
 import JSZip from "jszip";
 
 import { ActionButton } from "./ActionButton";
 import { SimpleLoader } from "../UI/SimpleLoader";
+
+const UploadIcon: React.FC = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path
+      d="M8.37927 3.11147L8.3749 12.7602C8.3749 12.926 8.44074 13.085 8.55795 13.2022C8.67516 13.3194 8.83414 13.3852 8.9999 13.3852C9.16566 13.3852 9.32463 13.3194 9.44184 13.2022C9.55905 13.085 9.6249 12.926 9.6249 12.7602L9.62927 3.1221L11.4493 4.94272C11.5665 5.05989 11.7254 5.12572 11.8911 5.12572C12.0569 5.12572 12.2158 5.05989 12.333 4.94272C12.4502 4.82552 12.516 4.66658 12.516 4.50085C12.516 4.33512 12.4502 4.17618 12.333 4.05897L10.3261 2.0496C10.152 1.87536 9.94527 1.73714 9.7177 1.64284C9.49014 1.54854 9.24622 1.5 8.9999 1.5C8.75357 1.5 8.50965 1.54854 8.28209 1.64284C8.05452 1.73714 7.84777 1.87536 7.67365 2.0496L5.66677 4.0571C5.5496 4.1743 5.48378 4.33325 5.48378 4.49897C5.48378 4.6647 5.5496 4.82365 5.66677 4.94085C5.78398 5.05802 5.94292 5.12384 6.10865 5.12384C6.27437 5.12384 6.43332 5.05802 6.55052 4.94085L8.37927 3.11147Z"
+      fill="url(#upload_paint0)"
+    />
+    <path
+      d="M15.25 12.1248V14.6248C15.25 14.7905 15.1842 14.9495 15.0669 15.0667C14.9497 15.1839 14.7908 15.2498 14.625 15.2498H3.375C3.20924 15.2498 3.05027 15.1839 2.93306 15.0667C2.81585 14.9495 2.75 14.7905 2.75 14.6248V12.1248C2.75 11.959 2.68415 11.8 2.56694 11.6828C2.44973 11.5656 2.29076 11.4998 2.125 11.4998C1.95924 11.4998 1.80027 11.5656 1.68306 11.6828C1.56585 11.8 1.5 11.959 1.5 12.1248V14.6248C1.5 15.122 1.69754 15.599 2.04917 15.9506C2.40081 16.3022 2.87772 16.4998 3.375 16.4998H14.625C15.1223 16.4998 15.5992 16.3022 15.9508 15.9506C16.3025 15.599 16.5 15.122 16.5 14.6248V12.1248C16.5 11.959 16.4342 11.8 16.3169 11.6828C16.1997 11.5656 16.0408 11.4998 15.875 11.4998C15.7092 11.4998 15.5503 11.5656 15.4331 11.6828C15.3158 11.8 15.25 11.959 15.25 12.1248Z"
+      fill="url(#upload_paint1)"
+    />
+    <defs>
+      <radialGradient
+        id="upload_paint0"
+        cx="0"
+        cy="0"
+        r="1"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="translate(12.3743 16.3126) rotate(-102.833) scale(15.1921 15.1923)"
+      >
+        <stop stopColor="#929298" />
+        <stop offset="1" stopColor="#E5E5E7" />
+      </radialGradient>
+      <radialGradient
+        id="upload_paint1"
+        cx="0"
+        cy="0"
+        r="1"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="translate(12.3743 16.3126) rotate(-102.833) scale(15.1921 15.1923)"
+      >
+        <stop stopColor="#929298" />
+        <stop offset="1" stopColor="#E5E5E7" />
+      </radialGradient>
+    </defs>
+  </svg>
+);
+
+const SellExcessIcon: React.FC = () => (
+  <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+    <path
+      d="M16.2572 8.27275L15.1833 6.0273C15.0471 5.74287 14.7195 5.60347 14.4214 5.70411L8.99787 7.51447L3.56684 5.70474C3.2687 5.60534 2.94117 5.7435 2.80491 6.02855L1.77234 8.19961C1.47419 8.69471 1.41794 9.2892 1.61795 9.83055C1.81171 10.3557 2.22049 10.7626 2.74366 10.9527L2.73991 12.3998C2.73991 13.7482 3.5981 14.9409 4.87694 15.3673L7.60527 16.2775C8.05155 16.4256 8.52033 16.5 8.98912 16.5C9.4579 16.5 9.92669 16.4256 10.373 16.2768L13.1038 15.3667C14.3814 14.9403 15.2402 13.7501 15.2408 12.4048L15.2446 10.9533C15.7734 10.7682 16.1871 10.3625 16.3815 9.83556C16.5791 9.2992 16.5234 8.71033 16.2572 8.27275ZM2.87117 8.7916L3.69498 7.06438L8.11093 8.53592L7.09835 10.5713C6.94709 10.8251 6.64269 10.9364 6.36455 10.8439L3.18869 9.7843C3.00243 9.72241 2.85742 9.58176 2.78929 9.39797C2.72178 9.21481 2.74116 9.01289 2.87117 8.7916ZM5.27259 14.182C4.50504 13.9257 3.98937 13.21 3.99 12.4017L3.9925 11.3702L5.97015 12.0297C6.81146 12.3085 7.7159 11.9735 8.19468 11.1721L8.36782 10.8251L8.36532 15.1879C8.24219 15.1629 8.12093 15.131 8.00155 15.0916L5.27322 14.182H5.27259ZM12.7081 14.1808L9.97731 15.091C9.85856 15.1304 9.7373 15.1629 9.61479 15.1879L9.61729 10.8151L9.81668 11.2152C10.1648 11.7953 10.7742 12.1279 11.418 12.1279C11.6168 12.1279 11.8199 12.096 12.0181 12.0297L13.9932 11.3715L13.9907 12.4036C13.9907 13.2112 13.4751 13.9251 12.7081 14.1808ZM15.2083 9.40172C15.1427 9.57988 15.0014 9.71678 14.8214 9.77742L11.6224 10.8433C11.3487 10.9351 11.038 10.8208 10.9124 10.6151L9.87856 8.53842L14.2939 7.06501L15.1577 8.86536C15.2552 9.02852 15.2746 9.22356 15.2083 9.40172ZM4.75881 5.18464C4.51441 4.94021 4.51441 4.54513 4.75881 4.30071L7.19461 1.86523C7.68152 1.37826 8.47533 1.37826 8.96224 1.86523L9.95981 2.86293C10.4305 2.62225 11.0461 2.69414 11.4305 3.07859L12.84 4.48825C13.0844 4.73267 13.0844 5.12775 12.84 5.37217C12.5956 5.6166 12.2006 5.6166 11.9562 5.37217L10.5467 3.96252L8.57721 5.93228C8.45533 6.05418 8.29532 6.11545 8.1353 6.11545C7.97529 6.11545 7.81528 6.05418 7.6934 5.93228C7.449 5.68786 7.449 5.29278 7.6934 5.04836L9.03537 3.70622L8.07905 2.74978L5.64325 5.18526C5.52136 5.30716 5.36135 5.36842 5.20134 5.36842C5.04133 5.36842 4.88132 5.30716 4.75943 5.18526L4.75881 5.18464Z"
+      fill="url(#sell_paint0)"
+    />
+    <defs>
+      <radialGradient
+        id="sell_paint0"
+        cx="0"
+        cy="0"
+        r="1"
+        gradientTransform="matrix(-3.37427 -14.8128 14.8128 -3.37438 12.3743 16.3128)"
+        gradientUnits="userSpaceOnUse"
+      >
+        <stop stopColor="#929298" />
+        <stop offset="1" stopColor="#E5E5E7" />
+      </radialGradient>
+    </defs>
+  </svg>
+);
 
 interface SearchResult {
   id: string;
@@ -75,16 +134,20 @@ export const HeroSection: React.FC = () => {
             setSearchResult(
               res.data?.data.map((item: SearchResult) => ({
                 ...item,
-              imagePath: "",
+                imagePath: "",
                 type: "LOCAL",
               }))
             );
-        } else {
-          setSearchResult([]);
+            setIsSearching(false);
+          } else {
+            setSearchResult([]);
+            setIsSearching(false);
+            // Auto-try external results when local is empty
+            if (value.length >= 3) {
+              handleExternalSearch(value);
+            }
           }
-
-          setIsSearching(false);
-      })
+        })
       .catch(() => {
         setIsSearching(false);
         setSearchResult([]);
@@ -190,9 +253,9 @@ export const HeroSection: React.FC = () => {
       
       return (
         <div className="flex flex-col gap-0.5 min-w-0">
-          <p className="text-[12px] text-[#cececf] leading-[1.4] whitespace-nowrap">{label}</p>
+          <p className="text-[12px] text-[#cececf] leading-[1.4] truncate whitespace-nowrap">{label}</p>
           <p 
-            className="text-[14px] text-[#e5e5e7] font-medium leading-[1.4] break-words min-w-0"
+            className="text-[14px] text-[#e5e5e7] font-medium leading-[1.4] truncate whitespace-nowrap min-w-0"
           >
             {displayValue}
           </p>
@@ -271,30 +334,30 @@ export const HeroSection: React.FC = () => {
             General Information
           </p>
 
-          <div className="flex flex-wrap gap-4 lg:gap-6">
+          <div className="flex items-start gap-6 self-stretch flex-nowrap w-full">
             {/* Column 1 */}
-            <div className="flex flex-col gap-2 flex-1 min-w-[140px] max-w-[200px]">
+            <div className="flex flex-col gap-2 flex-1 basis-0 min-w-0">
               <InfoField label="Manufacturer" value={partData?.manufacturer} />
               <InfoField label="Category" value={partData?.category} />
               <InfoField label="Packaging" value={partData?.packaging || "Tape and Reel"} />
             </div>
 
             {/* Column 2 */}
-            <div className="flex flex-col gap-2 min-w-[140px] max-w-[180px] flex-1 lg:flex-initial lg:w-[152px]">
+            <div className="flex flex-col gap-2 flex-1 basis-0 min-w-0">
               <InfoField label="Lifecycle" value={partData?.lifecycleRisk?.lifecycle} />
               <InfoField label="Introduced" value={partData?.introductionDate} />
               <InfoField label="Cage Code" value={partData?.mfrCageCode} />
             </div>
 
             {/* Column 3 */}
-            <div className="flex flex-col gap-2 min-w-[140px] max-w-[180px] flex-1 lg:flex-initial lg:w-[140px]">
+            <div className="flex flex-col gap-2 flex-1 basis-0 min-w-0">
               <InfoField label="Lead-Free Status" value={partData?.environmentData?.leadFree || "Compliant"} />
               <InfoField label="RoHS Status" value={partData?.environmentData?.rohsStatus || "Compliant"} />
               <InfoField label="REACH Status" value={partData?.environmentData?.reachStatus || "Unaffected"} />
             </div>
 
             {/* Column 4 */}
-            <div className="flex flex-col gap-2 min-w-[120px] max-w-[160px] flex-1 lg:flex-initial lg:w-[120px]">
+            <div className="flex flex-col gap-2 flex-1 basis-0 min-w-0">
               <InfoField label="ECCN" value={partData?.eccn} />
               <InfoField label="HTSUSA" value={partData?.htsusa || partData?.environmentData?.htsus} />
               <InfoField label="UNSPSC" value={partData?.unspsc} />
@@ -1060,14 +1123,14 @@ export const HeroSection: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="flex items-center gap-2 flex-wrap justify-center">
-            <ActionButton icon={<Upload size={18} />} label="Upload a BOM" onClick={() => navigate("/upload-bom")} />
-            <ActionButton icon={<Box size={18} />} label="Sell excess" onClick={() => navigate("/sell-excess")} />
+            <ActionButton icon={<UploadIcon />} label="Upload a BOM" onClick={() => navigate("/upload-bom")} />
+            <ActionButton icon={<SellExcessIcon />} label="Sell excess" onClick={() => navigate("/sell-excess")} />
           </div>
         </div>
 
         {/* Category Cards OR Selected Part Details */}
         {selectedPart && (
-          <div className="flex flex-col gap-4 w-full max-w-[1000px] px-4 lg:px-0">
+          <div className="flex flex-col gap-4 w-full max-w-[1400px] px-4 lg:px-0">
             {/* Part Info Section */}
             <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 lg:p-6 overflow-x-auto">
               {renderPart()}

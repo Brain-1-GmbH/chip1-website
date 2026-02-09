@@ -32,7 +32,7 @@ export const ServicesHeroSection: React.FC<ServicesHeroSectionProps> = ({
       </div>
 
       {/* Content */}
-      <div className="relative z-10 flex flex-col gap-4 items-start w-full max-w-[1280px] mx-auto px-4 pt-[160px] md:px-20 md:pt-[200px]">
+      <div className="relative z-10 flex flex-col gap-4 items-start w-full max-w-[1280px] mx-auto px-4 pt-[160px] md:px-[60px] md:pt-[200px]">
         {/* Tag */}
         <div className="border-l-2 border-[#99c221] pl-4">
           <p

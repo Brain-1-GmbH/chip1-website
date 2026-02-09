@@ -17,6 +17,7 @@ const navItems = [
 export const Header: React.FC = () => {
   const location = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isContactDropdownOpen, setIsContactDropdownOpen] = useState(false);
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -71,7 +72,7 @@ export const Header: React.FC = () => {
         </Link>
 
         {/* Navigation - Centered */}
-        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2">
+        <nav className="hidden md:flex items-center gap-8 absolute left-1/2 -translate-x-1/2 whitespace-nowrap">
           {navItems.map((item) => {
             const isActive = item.href.startsWith("/") && location.pathname === item.href;
             
@@ -87,9 +88,6 @@ export const Header: React.FC = () => {
                 style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
               >
                 {item.label}
-                {isActive && (
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#B8D434] rounded-full" />
-                )}
                 {item.hasDropdown && (
                   <ChevronDown 
                     size={14} 
@@ -98,15 +96,43 @@ export const Header: React.FC = () => {
                 )}
               </Link>
             ) : (
-              <a
+              <div
                 key={item.label}
-                href={item.href}
-                className="flex items-center gap-1.5 text-[#b6b6b7] text-sm font-medium hover:text-[#B8D434] transition-colors duration-200"
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                className="relative"
+                onMouseEnter={() => setIsContactDropdownOpen(true)}
+                onMouseLeave={() => setIsContactDropdownOpen(false)}
               >
-                {item.label}
-                {item.hasDropdown && <ChevronDown size={14} />}
-              </a>
+                <button
+                  className="flex items-center gap-1.5 text-[#b6b6b7] text-sm font-medium hover:text-[#B8D434] transition-colors duration-200 cursor-pointer"
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  {item.label}
+                  {item.hasDropdown && (
+                    <ChevronDown 
+                      size={14} 
+                      className={`transition-transform ${isContactDropdownOpen ? 'rotate-180' : ''}`}
+                    />
+                  )}
+                </button>
+                {item.hasDropdown && isContactDropdownOpen && (
+                  <div className="absolute top-full left-0 mt-2 w-[160px] bg-[#1c1d22] border border-[#323335] rounded-lg shadow-lg overflow-hidden z-50">
+                    <a
+                      href="#"
+                      className="block px-4 py-3 text-sm text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833] transition-colors duration-200"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      S
+                    </a>
+                    <a
+                      href="/careers"
+                      className="block px-4 py-3 text-sm text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833] transition-colors duration-200"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      Careers
+                    </a>
+                  </div>
+                )}
+              </div>
             );
           })}
         </nav>

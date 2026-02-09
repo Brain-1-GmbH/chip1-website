@@ -240,13 +240,18 @@ interface ComponentCardProps {
 
 const ComponentCard: React.FC<ComponentCardProps> = ({ component }) => {
   return (
-    <div className="flex items-center gap-4 p-4 border border-[#1c1d22] hover:border-[#323335] transition-colors">
+    <div className="relative flex items-center gap-4 p-4 border border-[#1c1d22] hover:border-[#323335] transition-colors">
+      {/* Corner circles */}
+      <span className="absolute top-0 left-0 w-1.5 h-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+      <span className="absolute top-0 right-0 w-1.5 h-1.5 translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+      <span className="absolute bottom-0 left-0 w-1.5 h-1.5 -translate-x-1/2 translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
+      <span className="absolute bottom-0 right-0 w-1.5 h-1.5 translate-x-1/2 translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
       {/* Image */}
       <div className="w-[154px] h-[144px] rounded-2xl overflow-hidden flex-shrink-0 flex items-center justify-center">
         <img
           src={component.image}
           alt={component.name}
-          className="w-[152px] h-[115px] object-contain mix-blend-luminosity"
+          className="w-[152px] h-[115px] object-contain grayscale"
         />
       </div>
 
@@ -276,12 +281,12 @@ export const ComponentsWeOfferSection: React.FC = () => {
     if (isAnimating || index === activeIndex) return;
     setIsAnimating(true);
     setActiveIndex(index);
-    setTimeout(() => setIsAnimating(false), 600);
+    setTimeout(() => setIsAnimating(false), 400);
   };
 
   return (
-    <section className="bg-[#0e0e0f] px-3 py-10 md:px-20 md:py-24 md:pb-32">
-      <div className="max-w-[1280px] mx-auto">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 md:pb-32 mb-[120px] md:mb-[120px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Title */}
         <h2
           className="hidden md:block text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-20"
@@ -362,20 +367,12 @@ export const ComponentsWeOfferSection: React.FC = () => {
                   key={category.id}
                   className="flex flex-col transition-opacity duration-500 ease-in-out opacity-100"
                 >
-                  {/* Decorative dots */}
-                  <div className="absolute -left-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
-                    {category.components.map((_, i) => (
-                      <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
-                    ))}
-                  </div>
-                  <div className="absolute -right-4 top-0 bottom-0 flex flex-col justify-between py-4 pointer-events-none">
-                    {category.components.map((_, i) => (
-                      <div key={i} className="w-2 h-2 rounded-full bg-[#1c1d22]" />
-                    ))}
-                  </div>
-
                   {/* Component list */}
-                  <div className="flex flex-col">
+                  <div
+                    className={`flex flex-col transition-all duration-[400ms] ease-in-out ${
+                      isAnimating ? "opacity-0 -translate-y-2" : "opacity-100 translate-y-0"
+                    }`}
+                  >
                     {category.components.map((component) => (
                       <ComponentCard key={component.id} component={component} />
                     ))}

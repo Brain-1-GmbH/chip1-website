@@ -63,8 +63,8 @@ const articlesData: ArticleCard[] = [
 
 export const ArticlesSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:py-10">
-      <div className="max-w-[1280px] mx-auto">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-10 mb-[120px] md:mb-[120px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Section Title */}
         <h2
           className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-6 md:mb-16"
@@ -133,7 +133,7 @@ const ArticleCardComponent: React.FC<{ article: ArticleCard }> = ({
   article,
 }) => {
   return (
-    <div className="flex-1 flex flex-col gap-4 p-6 rounded-2xl border border-[#1c1d22] h-[468px] shadow-[0px_-1px_0px_0px_rgba(255,255,255,0.15)]">
+    <div className="flex-1 flex flex-col gap-4 p-6 rounded-2xl border border-[#1c1d22] min-h-[420px] shadow-[0px_-1px_0px_0px_rgba(255,255,255,0.15)]">
       {/* Image */}
       <div className="h-[216px] rounded-lg overflow-hidden">
         <img
@@ -144,20 +144,20 @@ const ArticleCardComponent: React.FC<{ article: ArticleCard }> = ({
       </div>
 
       {/* Content */}
-      <div className="flex flex-col gap-4 h-[146px]">
+      <div className="flex flex-col gap-4 flex-1">
         <h3
           className="text-2xl font-semibold text-[#efeff0] leading-[1.4] line-clamp-2"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           {article.title}
         </h3>
-        <p className="text-xl text-[#cececf] leading-[1.5] line-clamp-3">
+        <p className="text-xl text-[#cececf] leading-[1.5] line-clamp-4">
           {article.description}
         </p>
       </div>
 
       {/* Read More Button */}
-      <button className="flex items-center gap-2 text-[#99c221] text-sm font-medium px-3 py-2 rounded-3xl self-end hover:bg-[#99c221]/10 transition-colors">
+      <button className="mt-auto flex items-center gap-2 text-[#99c221] text-sm font-medium px-3 py-2 rounded-3xl self-end hover:bg-[#99c221]/10 transition-colors">
         Read More
         <ArrowUpRight size={20} />
       </button>

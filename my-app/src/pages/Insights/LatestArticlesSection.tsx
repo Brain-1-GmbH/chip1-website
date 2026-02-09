@@ -49,8 +49,8 @@ export const LatestArticlesSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
 
   return (
-    <section className="bg-[#0e0e0f] px-4 pt-10 pb-0 md:px-20 md:pt-[104px]">
-      <div className="max-w-[1280px] mx-auto">
+    <section className="bg-[#0e0e0f] px-4 pt-10 pb-0 md:px-[60px] md:pt-[104px] mb-[120px] md:mb-[120px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Section Title */}
         <h2
           className="hidden md:block text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-16"

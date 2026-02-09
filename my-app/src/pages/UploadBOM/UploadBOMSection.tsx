@@ -146,6 +146,13 @@ export const UploadBOMSection: React.FC = () => {
         >
           Upload your BoM
         </h1>
+        {/* Description - desktop */}
+        <p
+          className="hidden md:block text-sm text-[#b6b6b7] leading-[1.5] text-left mt-2"
+          style={{ fontFamily: "Inter, sans-serif" }}
+        >
+          You may skip this step. Once the project is created, additional parts can be added at any time.
+        </p>
       </div>
 
       {/* File Drop Zone / Selected File */}
@@ -204,8 +211,8 @@ export const UploadBOMSection: React.FC = () => {
         />
       </div>
 
-      {/* Description */}
-      <p className="text-sm text-[#b6b6b7] leading-[1.5] text-left" style={{ fontFamily: "Inter, sans-serif" }}>
+      {/* Description - mobile */}
+      <p className="block md:hidden text-sm text-[#b6b6b7] leading-[1.5] text-left" style={{ fontFamily: "Inter, sans-serif" }}>
         You may skip this step. Once the project is created, additional parts can be added at any time.
       </p>
 
@@ -275,7 +282,7 @@ export const UploadBOMSection: React.FC = () => {
             value={formData.projectName}
             onChange={(e) => handleInputChange("projectName", e.target.value)}
             placeholder="Enter project name"
-            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#8e8e8f] outline-none focus:border-[#99c221] transition-colors"
+            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#323335] outline-none focus:border-[#99c221] transition-colors"
             style={{ fontFamily: "Inter, sans-serif" }}
           />
         </div>
@@ -351,13 +358,13 @@ export const UploadBOMSection: React.FC = () => {
             {/* Checkbox */}
             <button
               onClick={() => handleInputChange("trackBomHealth", !formData.trackBomHealth)}
-              className={`w-6 h-6 flex-shrink-0 rounded flex items-center justify-center transition-colors ${
+              className={`w-[18px] h-[18px] mt-1 flex-shrink-0 rounded flex items-center justify-center transition-colors ${
                 formData.trackBomHealth 
                   ? "bg-[#99c221]" 
                   : "border border-[#99c221]"
               }`}
             >
-              {formData.trackBomHealth && <Checkmark size={14} className="text-[#0e0e0f]" />}
+              {formData.trackBomHealth && <Checkmark size={12} className="text-[#0e0e0f]" />}
             </button>
             <div className="flex flex-col gap-0.5">
               <span className="text-base text-[#e5e5e7]" style={{ fontFamily: "Inter, sans-serif" }}>
@@ -449,7 +456,7 @@ export const UploadBOMSection: React.FC = () => {
             value={signInData.email}
             onChange={(e) => handleSignInInputChange("email", e.target.value)}
             placeholder="Enter your email"
-            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#8e8e8f] outline-none focus:border-[#99c221] transition-colors"
+            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#323335] outline-none focus:border-[#99c221] transition-colors"
             style={{ fontFamily: "Inter, sans-serif" }}
           />
         </div>
@@ -464,7 +471,7 @@ export const UploadBOMSection: React.FC = () => {
             value={signInData.companyName}
             onChange={(e) => handleSignInInputChange("companyName", e.target.value)}
             placeholder="Enter company name"
-            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#8e8e8f] outline-none focus:border-[#99c221] transition-colors"
+            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#323335] outline-none focus:border-[#99c221] transition-colors"
             style={{ fontFamily: "Inter, sans-serif" }}
           />
         </div>
@@ -479,7 +486,7 @@ export const UploadBOMSection: React.FC = () => {
             value={signInData.contactName}
             onChange={(e) => handleSignInInputChange("contactName", e.target.value)}
             placeholder="Enter contact name"
-            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#8e8e8f] outline-none focus:border-[#99c221] transition-colors"
+            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#323335] outline-none focus:border-[#99c221] transition-colors"
             style={{ fontFamily: "Inter, sans-serif" }}
           />
         </div>
@@ -488,13 +495,13 @@ export const UploadBOMSection: React.FC = () => {
       {/* Bottom Actions */}
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-auto pb-8">
         {/* Sign Up Link */}
-        <div className="flex items-center gap-4">
-          <span className="text-base text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
+        <div className="flex items-center gap-4 flex-nowrap">
+          <span className="text-base text-[#cececf] whitespace-nowrap" style={{ fontFamily: "Inter, sans-serif" }}>
             Already a MyChip1 member?
           </span>
           <button 
             onClick={handleSignUp}
-            className="text-base font-medium text-[#99c221] hover:underline"
+            className="text-base font-medium text-[#99c221] hover:underline whitespace-nowrap"
             style={{ fontFamily: "Inter, sans-serif" }}
           >
             Sign In
@@ -518,7 +525,7 @@ export const UploadBOMSection: React.FC = () => {
   );
 
   return (
-    <section className="pt-[64px] md:pt-[90px] px-4 md:px-20 pb-0">
+    <section className="pt-[64px] md:pt-[90px] px-4 md:px-[60px] pb-0">
       <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-start min-h-[calc(100vh-64px)] md:min-h-[720px]">
         {/* Left Column - Info & Video */}
         <div className="hidden md:flex w-[58%] flex-col gap-6 justify-center pr-10 py-10">
