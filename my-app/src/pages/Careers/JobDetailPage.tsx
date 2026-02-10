@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useParams, Link } from "react-router-dom";
 import { ArrowLeft, Add } from "@carbon/icons-react";
 import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
@@ -54,7 +54,6 @@ const jobData: Record<string, {
 
 export const JobDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
   const job = id ? jobData[id] : null;
   const fileInputRefs = {
     cv: useRef<HTMLInputElement>(null),
