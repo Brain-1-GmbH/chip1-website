@@ -16,6 +16,7 @@ interface VerificationStep {
   number: number;
   title: string;
   image: string;
+  position: "left" | "right";
 }
 
 const steps: VerificationStep[] = [
@@ -23,98 +24,104 @@ const steps: VerificationStep[] = [
     number: 1,
     title: "Documentation of delivery (condition of outer and inner package) incl. pictures",
     image: img1,
+    position: "left",
   },
   {
     number: 2,
     title: "Label verification of packed material (trays, tubes, reels, bulk)",
     image: img2,
+    position: "right",
   },
   {
     number: 3,
     title: "Sampling based on sampling plan",
     image: img3,
+    position: "left",
   },
   {
     number: 4,
     title: "Microscopy of component body, inscription, leads, etc",
     image: img4,
+    position: "right",
   },
   {
     number: 5,
     title: "Check of dimensions and weight",
     image: img5,
+    position: "left",
   },
   {
     number: 6,
     title: "Aceton wipe test incl. microscopy",
     image: img6,
+    position: "right",
   },
   {
     number: 7,
     title: "X-Ray",
     image: img7,
+    position: "left",
   },
   {
     number: 8,
     title: "Decapsulation incl. microscopy (Optional based on customer approval)",
     image: img8,
+    position: "right",
   },
   {
     number: 9,
     title: "Documentation",
     image: img9,
+    position: "left",
   },
   {
     number: 10,
     title: "Based on the results, further analysis (destructive and non-destructive) is proposed",
     image: img10,
+    position: "right",
   },
 ];
 
-interface StepTimelineCardProps {
+interface StepCardProps {
   step: VerificationStep;
-  position: "left" | "right";
+  isFirst?: boolean;
 }
 
-const StepTimelineCard: React.FC<StepTimelineCardProps> = ({ step, position }) => {
-  const isLeft = position === "left";
-  const isFirst = step.number === 1;
+const StepCard: React.FC<StepCardProps> = ({ step, isFirst = false }) => {
+  const isLeft = step.position === "left";
 
   return (
     <div
-      className={`relative z-10 flex w-[784px] h-[267px] items-center gap-6 ${
-        isLeft ? "flex-row" : "flex-row-reverse"
+      className={`flex flex-col gap-6 md:gap-10 w-full max-w-[343px] md:max-w-none md:w-[378px] ${
+        isLeft ? "items-start text-left" : "items-end text-right"
       }`}
     >
       {/* Image */}
-      <div className="w-[380px] h-[267px] rounded-lg overflow-hidden flex-shrink-0 mt-3">
+      <div className={`w-[240px] md:w-[378px] h-[152px] md:h-[240px] rounded-lg overflow-hidden ${isLeft && isFirst ? 'md:ml-0 -ml-4' : ''}`}>
         <img
           src={step.image}
           alt={step.title}
           className="w-full h-full object-cover"
+          style={isLeft && isFirst ? { objectPosition: "left center" } : undefined}
         />
       </div>
 
-      {/* Number + Title */}
-      <div className="flex flex-col gap-4 items-center text-center">
-        <div
-          className={`w-20 h-20 rounded-full border-2 flex items-center justify-center ${
-            isFirst ? "border-[#323335] bg-[#99c221]" : "border-[#323335] bg-transparent"
-          }`}
-        >
+      {/* Text Content */}
+      <div className={`flex flex-col gap-3 md:gap-4 ${isLeft ? "items-start" : "items-end"}`}>
+        <div className={`flex flex-col ${isLeft ? "items-start" : "items-end"}`}>
           <span
-            className={`text-[30px] font-normal ${isFirst ? "text-black" : "text-white"}`}
-            style={{ fontFamily: "'Inter', sans-serif" }}
+            className="text-[32px] md:text-5xl font-semibold text-[#99c221] leading-[1.3]"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
             {step.number}
           </span>
+          <span
+            className="text-[20px] md:text-2xl font-medium text-[#cececf] leading-[1.4]"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            {step.title}
+          </span>
         </div>
-        <p
-          className="text-2xl font-medium text-[#e5e5e7] leading-[1.4] max-w-[360px]"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        >
-          {step.title}
-        </p>
       </div>
     </div>
   );
@@ -154,63 +161,56 @@ const TimelineConnector: React.FC<{
 
 export const VerificationStepsSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-24 mb-6 md:mb-[120px]">
+    <section className="bg-[#0e0e0f] px-4 py-4 md:px-[60px] md:py-24 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
-        {/* Title */}
-        <h2
-          className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-8 md:mb-10 text-center"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-        >
-          Verification Steps
-        </h2>
-
-        {/* Roadmap - same layout as Our Story */}
-        <div className="relative flex flex-col items-start gap-[60px] w-[784px] mx-auto pt-6 overflow-visible">
-          {/* Desktop dashed line */}
-          <svg
-            className="hidden md:block absolute left-1/2 top-0 -translate-x-1/2 mt-2 z-0"
-            width="816"
-            height="3264.545"
-            viewBox="0 0 816 3264.545"
-            fill="none"
-            aria-hidden="true"
+        {/* Header */}
+        <div className="flex flex-col gap-2 md:gap-4 mb-10 md:mb-24">
+          <h2
+            className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3]"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
           >
-            <path
-              d="M2 2V328.455H817.402M2.59809 3266.55H818V2940.09H2.59809V2613.64H818V2287.18H2.59809V1960.73H818V1634.27H2.59809V1307.82H818V981.364H2.59809V654.909H818V328.455L2.59809 328.455"
-              stroke="#323335"
-              strokeWidth="4"
-              strokeLinecap="round"
-              strokeDasharray="16 16"
-            />
-          </svg>
+            Verification Steps
+          </h2>
+        </div>
+
+        {/* Timeline */}
+        <div className="relative w-full max-w-[1100px] mx-auto">
           {steps.map((step, index) => {
             const isFirst = index === 0;
             const isLast = index === steps.length - 1;
-            const position = index % 2 === 0 ? "left" : "right";
-            const nextPosition = (index + 1) % 2 === 0 ? "left" : "right";
+            const nextStep = steps[index + 1];
 
             return (
               <div key={step.number}>
+                {/* Timeline Card Row */}
                 <div className="relative">
+                  {/* Vertical line on the OUTER edge (outside the card) */}
                   <div
-                    className={`absolute w-[2px] bg-[#323335] md:hidden ${
-                      position === "left" ? LEFT_OUTER_LINE : RIGHT_OUTER_LINE
+                    className={`absolute w-[2px] bg-[#323335] ${
+                      step.position === "left" ? LEFT_OUTER_LINE : RIGHT_OUTER_LINE
                     }`}
                     style={{
                       height: isFirst ? "calc(100% - 120px)" : "100%",
                       top: isFirst ? "120px" : "0",
                     }}
                   />
-                  <StepTimelineCard step={step} position={position} />
+
+                  {/* Card - with padding to leave room for outer line */}
+                  <div
+                    className={`flex ${
+                      step.position === "left" ? "justify-start pl-10" : "justify-end pr-10"
+                    }`}
+                  >
+                    <StepCard step={step} isFirst={isFirst} />
+                  </div>
                 </div>
 
-                {!isLast && (
-                  <div className="md:hidden">
-                    <TimelineConnector
-                      fromPosition={position}
-                      toPosition={nextPosition}
-                    />
-                  </div>
+                {/* Connector to next item */}
+                {!isLast && nextStep && (
+                  <TimelineConnector
+                    fromPosition={step.position}
+                    toPosition={nextStep.position}
+                  />
                 )}
               </div>
             );
