@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 interface Job {
   id: string;
@@ -129,8 +130,8 @@ const JobCard: React.FC<{ job: Job }> = ({ job }) => {
         <p className="text-base text-[#b6b6b7] leading-[1.5] line-clamp-2">
           {job.description}
         </p>
-        <a
-          href="#"
+        <Link
+          to={`/careers/${job.id}`}
           className="text-[#99c221] hover:text-[#B8D434] transition-colors text-sm font-medium inline-flex items-center gap-1 w-fit"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
@@ -150,33 +151,33 @@ const JobCard: React.FC<{ job: Job }> = ({ job }) => {
               strokeLinejoin="round"
             />
           </svg>
-        </a>
-      </div>
+        </Link>
 
-      {/* Right Side - Tags in 2 columns */}
-      <div className="flex flex-col gap-2">
-        {tagRows.map((row, rowIndex) => (
-          <div key={rowIndex} className="flex gap-2">
-            {row.map((tag, tagIndex) => (
-              <span
-                key={`${rowIndex}-${tagIndex}`}
-                className="whitespace-nowrap text-xs text-[#b6b6b7]"
-                style={{
-                  display: "flex",
-                  padding: "8px 16px",
-                  alignItems: "center",
-                  gap: "16px",
-                  borderRadius: "8px",
-                  border: "1px solid rgba(77, 77, 78, 0.34)",
-                  background: "#111215",
-                  backdropFilter: "blur(4px)",
-                }}
-              >
-                {tag}
-              </span>
-            ))}
-          </div>
-        ))}
+        {/* Tags under VIEW MORE button */}
+        <div className="flex flex-col gap-2 mt-2">
+          {tagRows.map((row, rowIndex) => (
+            <div key={rowIndex} className="flex gap-2">
+              {row.map((tag, tagIndex) => (
+                <span
+                  key={`${rowIndex}-${tagIndex}`}
+                  className="whitespace-nowrap text-xs text-[#b6b6b7]"
+                  style={{
+                    display: "flex",
+                    padding: "8px 16px",
+                    alignItems: "center",
+                    gap: "16px",
+                    borderRadius: "8px",
+                    border: "1px solid rgba(77, 77, 78, 0.34)",
+                    background: "#111215",
+                    backdropFilter: "blur(4px)",
+                  }}
+                >
+                  {tag}
+                </span>
+              ))}
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );

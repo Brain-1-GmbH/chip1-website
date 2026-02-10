@@ -226,23 +226,26 @@ export const OpenPositionsSection: React.FC = () => {
                 />
               </div>
 
-              {/* Department Dropdown */}
-              <CareersDropdown
-                value={selectedDepartment}
-                onChange={setSelectedDepartment}
-                options={departments}
-                placeholder="Department"
-                width={154}
-              />
+              {/* Dropdowns Container - Side by Side */}
+              <div className="flex flex-row gap-4">
+                {/* Department Dropdown */}
+                <CareersDropdown
+                  value={selectedDepartment}
+                  onChange={setSelectedDepartment}
+                  options={departments}
+                  placeholder="Department"
+                  width={154}
+                />
 
-              {/* Location Dropdown */}
-              <CareersDropdown
-                value={selectedLocation}
-                onChange={setSelectedLocation}
-                options={locations}
-                placeholder="Location"
-                width={123}
-              />
+                {/* Location Dropdown */}
+                <CareersDropdown
+                  value={selectedLocation}
+                  onChange={setSelectedLocation}
+                  options={locations}
+                  placeholder="Location"
+                  width={123}
+                />
+              </div>
             </div>
           </div>
         </div>

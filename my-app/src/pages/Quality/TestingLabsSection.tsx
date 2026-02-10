@@ -104,7 +104,15 @@ export const TestingLabsSection: React.FC = () => {
         </h2>
 
         {/* Mobile Content */}
-        <div className="md:hidden flex flex-col gap-6 items-center">
+        <div className="md:hidden flex flex-col gap-6 items-center w-full">
+          {/* Section Title */}
+          <h2
+            className="text-[32px] font-semibold text-[#efeff0] leading-[1.3] text-left w-full"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          >
+            Advanced Testing Laboratories
+          </h2>
+
           {/* Image */}
           <div className="w-full h-[280px] rounded-2xl overflow-hidden">
             <img

@@ -228,7 +228,11 @@ export const Header: React.FC = () => {
           </Link>
           <Link
             to="/careers"
-            className="block px-4 py-3 text-sm text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833] transition-colors duration-200 border-t border-[#323335]"
+            className={`block px-4 py-3 text-sm border-t border-[#323335] transition-colors duration-200 ${
+              location.pathname === "/careers"
+                ? "text-[#B8D434] bg-[#252833]"
+                : "text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833]"
+            }`}
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             onClick={() => setIsContactDropdownOpen(false)}
           >

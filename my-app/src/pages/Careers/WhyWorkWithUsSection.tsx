@@ -83,6 +83,7 @@ export const WhyWorkWithUsSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [expandedIndexes, setExpandedIndexes] = useState<Set<number>>(new Set([0]));
 
   const goToNext = useCallback(() => {
     if (isAnimating) return;
@@ -112,125 +113,148 @@ export const WhyWorkWithUsSection: React.FC = () => {
     setTimeout(() => setIsPaused(false), 10000);
   };
 
+  const handleMobileCategoryClick = (index: number) => {
+    setExpandedIndexes((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        // If clicking on already expanded category, collapse it
+        newSet.delete(index);
+      } else {
+        // Expand only the clicked category (close others)
+        return new Set([index]);
+      }
+      return newSet;
+    });
+  };
+
   return (
-    <section className="bg-[#0e0e0f] px-4 pt-2 pb-10 md:px-[60px] md:py-20 border-t-0 mb-6 md:mb-[120px]">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+    <section className="bg-[#0e0e0f] px-4 pt-6 pb-10 md:px-[60px] md:py-20 mb-6 md:mb-[120px]">
+      <div className="max-w-[1280px] mx-auto px-0 md:px-[60px]">
         {/* Title */}
         <h2
-          className="hidden md:block text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-10"
+          className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-6 md:mb-10"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
         >
           Why Work With Us?
         </h2>
 
         {/* Mobile Content */}
-        <div className="md:hidden flex flex-col gap-6 items-center">
-          {/* Image */}
-          <div className="w-full h-[280px] rounded-2xl overflow-hidden relative">
-            {benefits.map((benefit, index) => (
-              <img
-                key={benefit.id}
-                src={benefit.image}
-                alt={benefit.title}
-                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
-                style={{
-                  opacity: index === activeIndex ? 1 : 0,
-                  pointerEvents: index === activeIndex ? "auto" : "none",
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Active Title */}
-          <h3
-            className="text-[24px] font-semibold text-[#e5e5e7] leading-[1.4] text-left w-full"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          >
-            {benefits[activeIndex].title}
-          </h3>
+        <div className="md:hidden flex flex-col gap-6 items-center w-full">
+          {/* Intro Text */}
           <p
             className="text-[14px] text-[#cececf] leading-[1.5] text-left w-full"
             style={{ fontFamily: "'Inter', sans-serif" }}
           >
-            {benefits[activeIndex].description}
+            We believe in investing in our team members' growth and creating an environment where everyone can thrive and contribute. When you join Chip 1, you can expect:
           </p>
 
-          {/* Benefits List */}
+          {/* Benefits List with Expandable Items */}
           <div className="flex flex-col gap-3 w-full">
-            {benefits.map((benefit, index) => (
-              <button
-                key={benefit.id}
-                onClick={() => handleTabClick(index)}
-                className={`text-left text-[16px] leading-[1.4] transition-colors ${
-                  index === activeIndex
-                    ? "text-[#e5e5e7] font-semibold"
-                    : "text-[#858586]"
-                }`}
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-              >
-                {benefit.title}
-              </button>
-            ))}
+            {benefits.map((benefit, index) => {
+              const isExpanded = expandedIndexes.has(index);
+              return (
+                <div key={benefit.id} className="flex flex-col w-full">
+                  <button
+                    onClick={() => handleMobileCategoryClick(index)}
+                    className={`text-left text-[16px] leading-[1.4] transition-colors w-full py-2 ${
+                      isExpanded
+                        ? "text-[#e5e5e7] font-semibold"
+                        : "text-[#858586]"
+                    }`}
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    {benefit.title}
+                  </button>
+                  {isExpanded && (
+                    <div className="mt-3 mb-2 pl-0">
+                      <div className="w-full h-[200px] rounded-2xl overflow-hidden mb-3">
+                        <img
+                          src={benefit.image}
+                          alt={benefit.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <p
+                        className="text-[14px] text-[#cececf] leading-[1.5] text-left"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        {benefit.description}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 
         {/* Desktop Content */}
-        <div className="hidden md:flex gap-[72px] items-start">
-          {/* Left - Tabs */}
-          <div className="flex flex-col gap-2 w-[512px]">
-            {benefits.map((benefit, index) => (
-              <TabItem
-                key={benefit.id}
-                benefit={benefit}
-                isActive={index === activeIndex}
-                onClick={() => handleTabClick(index)}
-              />
-            ))}
-          </div>
+        <div className="hidden md:block">
+          {/* Intro Text */}
+          <p
+            className="text-[24px] text-[#cececf] leading-[1.5] mb-10"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            We believe in investing in our team members' growth and creating an environment where everyone can thrive and contribute. When you join Chip 1, you can expect:
+          </p>
 
-          {/* Right - Content */}
-          <div className="flex-1 flex flex-col gap-6">
-            {/* Image */}
-            <div className="h-[400px] rounded-2xl overflow-hidden relative">
+          <div className="flex gap-[72px] items-start">
+            {/* Left - Tabs */}
+            <div className="flex flex-col gap-2 w-[512px]">
               {benefits.map((benefit, index) => (
-                <img
+                <TabItem
                   key={benefit.id}
-                  src={benefit.image}
-                  alt={benefit.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
-                  style={{
-                    opacity: index === activeIndex ? 1 : 0,
-                    pointerEvents: index === activeIndex ? "auto" : "none",
-                  }}
+                  benefit={benefit}
+                  isActive={index === activeIndex}
+                  onClick={() => handleTabClick(index)}
                 />
               ))}
             </div>
 
-            {/* Text Content */}
-            <div className="flex flex-col gap-4 relative min-h-[120px]">
-              {benefits.map((benefit, index) => (
-                <div
-                  key={benefit.id}
-                  className="absolute inset-0 flex flex-col gap-4 transition-opacity duration-500 ease-in-out"
-                  style={{
-                    opacity: index === activeIndex ? 1 : 0,
-                    pointerEvents: index === activeIndex ? "auto" : "none",
-                  }}
-                >
-                  <h3
-                    className="text-[32px] font-semibold text-[#e5e5e7] leading-[1.4]"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            {/* Right - Content */}
+            <div className="flex-1 flex flex-col gap-6">
+              {/* Image */}
+              <div className="h-[400px] rounded-2xl overflow-hidden relative">
+                {benefits.map((benefit, index) => (
+                  <img
+                    key={benefit.id}
+                    src={benefit.image}
+                    alt={benefit.title}
+                    className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
+                    style={{
+                      opacity: index === activeIndex ? 1 : 0,
+                      pointerEvents: index === activeIndex ? "auto" : "none",
+                    }}
+                  />
+                ))}
+              </div>
+
+              {/* Text Content */}
+              <div className="flex flex-col gap-4 relative min-h-[120px]">
+                {benefits.map((benefit, index) => (
+                  <div
+                    key={benefit.id}
+                    className="absolute inset-0 flex flex-col gap-4 transition-opacity duration-500 ease-in-out"
+                    style={{
+                      opacity: index === activeIndex ? 1 : 0,
+                      pointerEvents: index === activeIndex ? "auto" : "none",
+                    }}
                   >
-                    {benefit.title}
-                  </h3>
-                  <p
-                    className="text-base text-[#cececf] leading-[1.5]"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {benefit.description}
-                  </p>
-                </div>
-              ))}
+                    <h3
+                      className="text-[32px] font-semibold text-[#e5e5e7] leading-[1.4]"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      {benefit.title}
+                    </h3>
+                    <p
+                      className="text-base text-[#cececf] leading-[1.5]"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {benefit.description}
+                    </p>
+                  </div>
+                ))}
+              </div>
             </div>
           </div>
         </div>
