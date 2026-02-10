@@ -97,7 +97,36 @@ export const HeroSection: React.FC = () => {
   const [downloadDocumentType, setDownloadDocumentType] = useState<"datasheet" | "pcn" | null>(null);
   const [downloadDocumentUrl, setDownloadDocumentUrl] = useState<string | null>(null);
   const [isDownloadingZip, setIsDownloadingZip] = useState(false);
+  const [rfqEmail, setRfqEmail] = useState("");
+  const [rfqEmailError, setRfqEmailError] = useState<string>("");
+  const [isRfqEmailFocused, setIsRfqEmailFocused] = useState<boolean>(false);
   const abortControllerRef = useRef<AbortController | null>(null);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+
+  const handleRfqEmailChange = (value: string) => {
+    setRfqEmail(value);
+    if (rfqEmailError) {
+      setRfqEmailError("");
+    }
+  };
+
+  const handleRfqEmailBlur = () => {
+    setIsRfqEmailFocused(false);
+    if (rfqEmail && !validateEmail(rfqEmail)) {
+      setRfqEmailError("Invalid email address");
+    } else {
+      setRfqEmailError("");
+    }
+  };
+
+  const handleRfqEmailFocus = () => {
+    setIsRfqEmailFocused(true);
+    setRfqEmailError("");
+  };
 
   const clearSearch = () => {
     // Cancel any pending API request
@@ -241,6 +270,286 @@ export const HeroSection: React.FC = () => {
       });
   };
 
+  const renderMobileSearchWithBack = () => {
+    const partMpn = selectedPart?.data?.globalPart?.mpn || selectedPart?.data?.part?.mpn || searchValue;
+    
+    return (
+      <div className="flex items-center w-full" style={{ gap: "8px", alignSelf: "stretch", paddingLeft: "16px", paddingRight: "16px" }}>
+        {/* Back Arrow */}
+        <button
+          onClick={clearSearch}
+          className="shrink-0 cursor-pointer"
+          aria-label="Go back"
+        >
+          <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 22 22" fill="none">
+            <path d="M14.651 17.389C14.7149 17.4529 14.7656 17.5287 14.8001 17.6121C14.8347 17.6956 14.8525 17.785 14.8525 17.8754C14.8525 17.9657 14.8347 18.0552 14.8001 18.1386C14.7656 18.2221 14.7149 18.2979 14.651 18.3618C14.5871 18.4257 14.5113 18.4763 14.4278 18.5109C14.3444 18.5455 14.2549 18.5633 14.1646 18.5633C14.0743 18.5633 13.9848 18.5455 13.9014 18.5109C13.8179 18.4763 13.7421 18.4257 13.6782 18.3618L6.8032 11.4868C6.73928 11.4229 6.68857 11.3471 6.65397 11.2637C6.61937 11.1802 6.60156 11.0907 6.60156 11.0004C6.60156 10.91 6.61937 10.8206 6.65397 10.7371C6.68857 10.6536 6.73928 10.5778 6.8032 10.514L13.6782 3.63898C13.8072 3.50997 13.9822 3.4375 14.1646 3.4375C14.347 3.4375 14.522 3.50997 14.651 3.63898C14.78 3.76798 14.8525 3.94294 14.8525 4.12538C14.8525 4.30782 14.78 4.48279 14.651 4.61179L8.26156 11.0004L14.651 17.389Z" fill="#8E8E8F"/>
+          </svg>
+        </button>
+        
+        {/* Modified Search Input */}
+        <div className="relative flex items-center flex-1" style={{
+          height: "48px",
+          padding: "8px 16px",
+          alignItems: "center",
+          gap: "16px",
+          flex: "1 0 0",
+          borderRadius: "48px",
+          border: "1px solid rgba(77, 77, 78, 0.54)",
+          background: "#161616",
+          backdropFilter: "blur(4px)"
+        }}>
+          <div className="absolute left-4 top-1/2 -translate-y-1/2 z-10">
+            <Search size={16} className="text-[#8e8e8f]" />
+          </div>
+          <input
+            value={partMpn}
+            type="text"
+            readOnly
+            className="w-full h-full pl-10 pr-10 text-sm text-white outline-none bg-transparent"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+          />
+          <button
+            className="absolute right-4 top-1/2 -translate-y-1/2 p-1.5 rounded-full hover:bg-white/10 transition-colors"
+            onClick={clearSearch}
+            aria-label="Clear search"
+          >
+            <Close size={18} className="text-[#8e8e8f]" />
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  const renderPartMobile = () => {
+    const partData = selectedPart?.data?.globalPart;
+    const partInfo = selectedPart?.data?.part;
+    const hasData = !!partData;
+    const healthScore = partInfo?.chip1HealthScore ?? 0;
+
+    const InfoRow = ({ label, value, children }: { label: string; value?: string | null; children?: React.ReactNode }) => (
+      <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+        <span className="text-[14px] text-[#8e8e8f] shrink-0" style={{ minWidth: "155px" }}>{label}:</span>
+        {children || <span className="text-[14px] text-[#fcfdfc] flex-1">{value || "N/A"}</span>}
+      </div>
+    );
+
+    const Divider = () => (
+      <div style={{ flex: 1, height: "1px", background: "#5F657D", marginLeft: "16px", marginRight: "16px" }} />
+    );
+
+    return (
+      <>
+        {/* Part Health */}
+        <div className="flex flex-col items-center gap-4 w-full">
+          <div className="flex items-center justify-between w-full">
+            <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">Part Health</p>
+            <a href="#" className="text-[11px] text-[#99c221] hover:text-[#B8D434] transition-colors cursor-pointer">
+              See Full Analysis
+            </a>
+          </div>
+          <div className="flex flex-col items-center gap-1">
+            <div className="relative w-[197px] h-[107px]">
+              <svg viewBox="0 0 200 110" className="w-full h-full">
+                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#3F4451" strokeWidth="8" strokeLinecap="round" />
+                <path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="url(#gaugeGradient)" strokeWidth="8" strokeLinecap="round" strokeDasharray={`${(Number(healthScore) / 100) * 251.2} 251.2`} />
+                <defs>
+                  <linearGradient id="gaugeGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#b6db40" />
+                    <stop offset="100%" stopColor="#99c221" />
+                  </linearGradient>
+                </defs>
+              </svg>
+              <p className="absolute top-[43px] left-1/2 -translate-x-1/2 text-[28px] font-medium text-[#ecf0fa]">
+                {hasData ? healthScore : "N/A"}
+              </p>
+              <p className="absolute bottom-0 left-1/2 -translate-x-1/2 text-[10px] text-[#ecf0fa] opacity-90">
+                Chip1 Health Score
+              </p>
+            </div>
+            <div className="relative w-[197px] flex justify-between px-1">
+              <p className="text-[10px] text-[#b6b6b7]">High Risk</p>
+              <p className="text-[10px] text-[#b6b6b7]">Low Risk</p>
+            </div>
+          </div>
+        </div>
+
+        {/* General Information */}
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex items-center w-full" style={{ paddingRight: "16px" }}>
+            <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4] shrink-0" style={{ paddingLeft: "16px" }}>General Information</p>
+            <Divider />
+          </div>
+          <div className="flex flex-col gap-4 w-full" style={{ paddingLeft: "16px" }}>
+            <InfoRow label="Manufacturer" value={partData?.manufacturer} />
+            <InfoRow label="Category" value={partData?.category} />
+            <InfoRow label="Packaging" value={partData?.packaging || "Tape and Reel"} />
+            <InfoRow label="Lifecycle" value={partData?.lifecycleRisk?.lifecycle} />
+            <InfoRow label="Introduced" value={partData?.introductionDate} />
+            <InfoRow label="Cage Code" value={partData?.mfrCageCode} />
+            <InfoRow label="Lead-Free Status" value={partData?.environmentData?.leadFree || "Compliant"} />
+            <InfoRow label="RoHS Status" value={partData?.environmentData?.rohsStatus || "Compliant"} />
+            <InfoRow label="REACH Status" value={partData?.environmentData?.reachStatus || "Unaffected"} />
+            <InfoRow label="ECCN" value={partData?.eccn} />
+            <InfoRow label="HTS/USA" value={partData?.htsusa || partData?.environmentData?.htsus} />
+            <InfoRow label="UNSPSC" value={partData?.unspsc} />
+          </div>
+        </div>
+
+        {/* Alternatives */}
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex items-center w-full" style={{ paddingRight: "16px" }}>
+            <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4] shrink-0" style={{ paddingLeft: "16px" }}>Alternatives</p>
+            <Divider />
+          </div>
+          <div className="flex flex-col gap-4 w-full" style={{ paddingLeft: "16px" }}>
+            {partData?.alternateParts && partData.alternateParts.length > 0 ? (
+              [...partData.alternateParts]
+                .sort((a: unknown, b: unknown) => {
+                  // @ts-expect-error - TODO: fix this
+                  const aCompat = (a.compatibility || "").toLowerCase();
+                  // @ts-expect-error - TODO: fix this
+                  const bCompat = (b.compatibility || "").toLowerCase();
+                  const aIsDropIn = aCompat.includes("drop");
+                  const bIsDropIn = bCompat.includes("drop");
+                  if (aIsDropIn && !bIsDropIn) return -1;
+                  if (!aIsDropIn && bIsDropIn) return 1;
+                  return 0;
+                })
+                .slice(0, 2)
+                .map((alt: unknown, index: number) => (
+                  <div key={index} className="flex flex-col items-start gap-1 w-full">
+                    <p className="text-[14px] font-medium text-[#efeff0] leading-[1.4]">
+                      {/* @ts-expect-error - TODO: fix this */}
+                      {alt.mpn || "N/A"}
+                    </p>
+                    <div className="flex flex-col gap-1">
+                      <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">
+                        {/* @ts-expect-error - TODO: fix this */}
+                        {alt.manufacturer || "N/A"}
+                      </p>
+                      <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">
+                        {/* @ts-expect-error - TODO: fix this */}
+                        {alt.compatibility || "Pin to Pin Replacement"}
+                      </p>
+                    </div>
+                  </div>
+                ))
+            ) : null}
+          </div>
+        </div>
+      </>
+    );
+  };
+
+  const renderPartTableMobile = () => {
+    const partData = selectedPart?.data?.globalPart;
+    const prices = selectedPart?.data?.prices;
+    
+    const countries = partData?.countryOfOrigin?.map((c: { country: string }) => c.country).join(", ") || "N/A";
+    const leadTime = partData?.pricingData?.minLeadTime || "N/A";
+    const lifecycle = partData?.lifecycleRisk?.lifecycle || "N/A";
+    const lifecycleRisk = partData?.lifecycleRisk?.lifecycleRisk || "Unknown";
+    const pcnSource = partData?.pcnData?.pcnDto?.lastPcnSource;
+    const eolYears = partData?.lifecycleRisk?.estimatedYearsToEol;
+    const datasheet = partData?.document?.latestDatasheet;
+    const franchiseStock = prices?.find((p: { origin: { value: string } }) => p.origin?.value === "Franchise")?.quantityInStock;
+    const openMarketStock = prices?.find((p: { origin: { value: string } }) => p.origin?.value === "Open Market")?.quantityInStock;
+
+    const downloadIcon = (
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
+        <path d="M17.5 11.25V16.25C17.5 16.4158 17.4342 16.5747 17.3169 16.6919C17.1997 16.8092 17.0408 16.875 16.875 16.875H3.125C2.95924 16.875 2.80027 16.8092 2.68306 16.6919C2.56585 16.5747 2.5 16.4158 2.5 16.25V11.25C2.5 11.0842 2.56585 10.9253 2.68306 10.8081C2.80027 10.6908 2.95924 10.625 3.125 10.625C3.29076 10.625 3.44973 10.6908 3.56694 10.8081C3.68415 10.9253 3.75 11.0842 3.75 11.25V15.625H16.25V11.25C16.25 11.0842 16.3158 10.9253 16.4331 10.8081C16.5503 10.6908 16.7092 10.625 16.875 10.625C17.0408 10.625 17.1997 10.6908 17.3169 10.8081C17.4342 10.9253 17.5 11.0842 17.5 11.25ZM9.55781 11.6922C9.61586 11.7503 9.68479 11.7964 9.76066 11.8279C9.83654 11.8593 9.91787 11.8755 10 11.8755C10.0821 11.8755 10.1635 11.8593 10.2393 11.8279C10.3152 11.7964 10.3841 11.7503 10.4422 11.6922L13.5672 8.56719C13.6253 8.50912 13.6713 8.44018 13.7027 8.36431C13.7342 8.28844 13.7503 8.20712 13.7503 8.125C13.7503 8.04288 13.7342 7.96156 13.7027 7.88569C13.6713 7.80982 13.6253 7.74088 13.5672 7.68281C13.5091 7.62474 13.4402 7.57868 13.3643 7.54725C13.2884 7.51583 13.2071 7.49965 13.125 7.49965C13.0429 7.49965 12.9616 7.51583 12.8857 7.54725C12.8098 7.57868 12.7409 7.62474 12.6828 7.68281L10.625 9.74141V2.5C10.625 2.33424 10.5592 2.17527 10.4419 2.05806C10.3247 1.94085 10.1658 1.875 10 1.875C9.83424 1.875 9.67527 1.94085 9.55806 2.05806C9.44085 2.17527 9.375 2.33424 9.375 2.5V9.74141L7.31719 7.68281C7.19991 7.56554 7.04085 7.49965 6.875 7.49965C6.70915 7.49965 6.55009 7.56554 6.43281 7.68281C6.31554 7.80009 6.24965 7.95915 6.24965 8.125C6.24965 8.29085 6.31554 8.44991 6.43281 8.56719L9.55781 11.6922Z" fill="#5D97EE"/>
+      </svg>
+    );
+
+    const InfoRow = ({ label, value, children }: { label: string; value?: string | null; children?: React.ReactNode }) => (
+      <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+        <span className="text-[14px] text-[#8e8e8f] shrink-0" style={{ minWidth: "155px" }}>{label}:</span>
+        {children || <span className="text-[14px] text-[#fcfdfc] flex-1">{value || "N/A"}</span>}
+      </div>
+    );
+
+    const Divider = () => (
+      <div style={{ flex: 1, height: "1px", background: "#5F657D", marginLeft: "16px", marginRight: "16px" }} />
+    );
+
+    return (
+      <>
+        {/* Part details */}
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex items-center w-full" style={{ paddingRight: "16px" }}>
+            <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4] shrink-0" style={{ paddingLeft: "16px" }}>Part details</p>
+            <Divider />
+          </div>
+          <div className="flex flex-col gap-4 w-full" style={{ paddingLeft: "16px" }}>
+            <InfoRow label="Mfr Part #" value={partData?.mpn} />
+            <InfoRow label="Lead Time" value={leadTime} />
+            <InfoRow label="Lifecycle / Risk" value={undefined}>
+              <div className="flex-1 flex flex-col gap-1">
+                <div className="flex items-center gap-1">
+                  <span className="text-[14px] text-[#fcfdfc]">{lifecycleRisk} Risk</span>
+                  {lifecycleRisk === "High" && (
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                      <path d="M8 5V9M8 11V11.5M2 14H14L8 3L2 14Z" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                    </svg>
+                  )}
+                </div>
+                <span className="text-[14px] text-[#b6b6b7]">{lifecycle}</span>
+              </div>
+            </InfoRow>
+            <InfoRow label="Country of origin" value={countries} />
+            <InfoRow label="Latest PCN / End of Life" value={pcnSource ? undefined : "N/A"}>
+              {pcnSource ? (
+                <div className="flex-1">
+                  <div className="flex items-center gap-1">
+                    <a href={pcnSource} target="_blank" rel="noopener noreferrer" className="text-[14px] text-[#5d97ee] underline cursor-pointer">
+                      PCN Document
+                    </a>
+                    <button
+                      onClick={(e) => { e.stopPropagation(); handleDocumentClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, "pcn", pcnSource); }}
+                      className="shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors"
+                      title="Download all documents"
+                    >
+                      {downloadIcon}
+                    </button>
+                  </div>
+                  {eolYears && <p className="text-[12px] text-[#f7f7f7] mt-1">{eolYears} years to end of life</p>}
+                </div>
+              ) : null}
+            </InfoRow>
+            <InfoRow label="Data Sheet" value={datasheet ? undefined : "N/A"}>
+              {datasheet ? (
+                <div className="flex items-center gap-1">
+                  <a href={datasheet} target="_blank" rel="noopener noreferrer" className="text-[14px] text-[#5d97ee] underline cursor-pointer">
+                    Data Sheet
+                  </a>
+                  <button
+                    onClick={(e) => { e.stopPropagation(); handleDocumentClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, "datasheet", datasheet); }}
+                    className="shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors"
+                    title="Download all documents"
+                  >
+                    {downloadIcon}
+                  </button>
+                </div>
+              ) : null}
+            </InfoRow>
+          </div>
+        </div>
+
+        {/* Availability */}
+        <div className="flex flex-col gap-4 w-full">
+          <div className="flex items-center w-full" style={{ paddingRight: "16px" }}>
+            <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4] shrink-0" style={{ paddingLeft: "16px" }}>Availability</p>
+            <Divider />
+          </div>
+          <div className="flex flex-col gap-4 w-full" style={{ paddingLeft: "16px" }}>
+            <InfoRow label="Franchise" value={franchiseStock ? `In Stock: ${franchiseStock.toLocaleString()}+` : "N/A"} />
+            <InfoRow label="Open Market" value={openMarketStock ? `Available: ${openMarketStock.toLocaleString()}+` : "Available"} />
+          </div>
+        </div>
+      </>
+    );
+  };
+
   const renderPart = () => {
     const partData = selectedPart?.data?.globalPart;
     const partInfo = selectedPart?.data?.part;
@@ -264,12 +573,17 @@ export const HeroSection: React.FC = () => {
     };
 
     return (
-      <div className="flex flex-col lg:flex-row gap-4 items-stretch w-full">
+      <div className="flex flex-col lg:flex-row gap-8 md:gap-4 items-stretch w-full">
         {/* Part Health */}
         <div className="flex flex-col items-center gap-4 shrink-0 w-full lg:w-auto">
-          <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4] w-full text-center lg:text-left">
-            Part Health
-          </p>
+          <div className="flex items-center justify-between w-full">
+            <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">
+              Part Health
+            </p>
+            <button className="bg-[#252833] text-[#ecebf5] text-[11px] px-2 py-1 rounded-full hover:bg-[#2f3340] transition-colors md:hidden">
+              See Full Analysis
+            </button>
+          </div>
 
           <div className="flex flex-col items-center gap-1">
             <div className="relative w-[197px] h-[107px]">
@@ -320,7 +634,7 @@ export const HeroSection: React.FC = () => {
             </div>
           </div>
 
-          <button className="bg-[#252833] text-[#ecebf5] text-[11px] px-2 py-1 rounded-full hover:bg-[#2f3340] transition-colors">
+          <button className="hidden md:block bg-[#252833] text-[#ecebf5] text-[11px] px-2 py-1 rounded-full hover:bg-[#2f3340] transition-colors">
             See Full Analysis
           </button>
         </div>
@@ -334,7 +648,7 @@ export const HeroSection: React.FC = () => {
             General Information
           </p>
 
-          <div className="flex items-start gap-6 self-stretch flex-nowrap w-full">
+          <div className="hidden md:flex items-start gap-6 self-stretch flex-nowrap w-full">
             {/* Column 1 */}
             <div className="flex flex-col gap-2 flex-1 basis-0 min-w-0">
               <InfoField label="Manufacturer" value={partData?.manufacturer} />
@@ -363,6 +677,58 @@ export const HeroSection: React.FC = () => {
               <InfoField label="UNSPSC" value={partData?.unspsc} />
             </div>
           </div>
+
+          {/* Mobile Layout */}
+          <div className="flex md:hidden flex-col gap-4 w-full">
+            <div style={{ display: "flex", alignItems: "baseline", gap: "155px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Manufacturer:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.manufacturer || "N/A"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Category:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.category || "N/A"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Packaging:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.packaging || "Tape and Reel"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Lifecycle:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.lifecycleRisk?.lifecycle || "N/A"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Introduced:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.introductionDate || "N/A"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Cage Code:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.mfrCageCode || "N/A"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Lead-Free Status:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.environmentData?.leadFree || "Compliant"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">RoHS Status:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.environmentData?.rohsStatus || "Compliant"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">REACH Status:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.environmentData?.reachStatus || "Unaffected"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">ECCN:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.eccn || "N/A"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">HTS/USA:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.htsusa || partData?.environmentData?.htsus || "N/A"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">UNSPSC:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.unspsc || "N/A"}</span>
+            </div>
+          </div>
         </div>
 
         {/* Vertical Divider */}
@@ -371,10 +737,10 @@ export const HeroSection: React.FC = () => {
         {/* Alternates */}
         <div className="flex flex-col gap-4 w-full lg:w-[312px] shrink-0">
           <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">
-            Alternates
+            Alternatives
           </p>
 
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4 w-full">
             {partData?.alternateParts && partData.alternateParts.length > 0 ? (
               [...partData.alternateParts]
                 .sort((a: unknown, b: unknown) => {
@@ -396,18 +762,28 @@ export const HeroSection: React.FC = () => {
                 })
                 .slice(0, 2)
                 .map((alt: unknown, index: number) => (
-                  <div key={index} className="flex flex-col gap-1">
+                  <div key={index} className="flex flex-col items-start gap-1 w-full">
                     <p className="text-[14px] font-medium text-[#efeff0] leading-[1.4]">
                       {/* @ts-expect-error - TODO: fix this */}
                       {alt.mpn || "N/A"}
                     </p>
-                    <div className="flex items-center gap-2">
+                    <div className="hidden md:flex items-center gap-2">
                       <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">
                         {/* @ts-expect-error - TODO: fix this */}
                         {alt.manufacturer || "N/A"}
                       </p>
                       <div className="w-1 h-1 rounded-full bg-[#b6b6b7]" />
                       <p className="text-[14px] text-[#b6b6b7] leading-[1.4] flex-1">
+                        {/* @ts-expect-error - TODO: fix this */}
+                        {alt.compatibility || "Pin to Pin Replacement"}
+                      </p>
+                    </div>
+                    <div className="flex md:hidden flex-col gap-1">
+                      <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">
+                        {/* @ts-expect-error - TODO: fix this */}
+                        {alt.manufacturer || "N/A"}
+                      </p>
+                      <p className="text-[14px] text-[#b6b6b7] leading-[1.4]">
                         {/* @ts-expect-error - TODO: fix this */}
                         {alt.compatibility || "Pin to Pin Replacement"}
                       </p>
@@ -729,6 +1105,7 @@ export const HeroSection: React.FC = () => {
     const eolYears = partData?.lifecycleRisk?.estimatedYearsToEol;
     const datasheet = partData?.document?.latestDatasheet;
     const franchiseStock = prices?.find((p: { origin: { value: string } }) => p.origin?.value === "Franchise")?.quantityInStock;
+    const openMarketStock = prices?.find((p: { origin: { value: string } }) => p.origin?.value === "Open Market")?.quantityInStock;
 
     const downloadIcon = (
       <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 20 20" fill="none">
@@ -737,44 +1114,145 @@ export const HeroSection: React.FC = () => {
     );
 
     return (
-      <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg overflow-x-auto">
-        <table className="w-full min-w-[700px]">
-          {/* Table Header */}
-          <thead>
-            <tr className="bg-[#323543] border-b border-[#494B59]">
-              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Mfr Part #</th>
-              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Lead Time</th>
-              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Lifecycle / Risk</th>
-              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Country of origin</th>
-              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Latest PCN / End of Life</th>
-              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Data Sheet</th>
-              <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Availability</th>
-            </tr>
-          </thead>
-          {/* Table Body */}
-          <tbody>
-            <tr className="border-b border-[#494B59]">
-              <td className="px-3 py-4 align-top">
-                <p className="text-[14px] text-[#f7f7f7] break-words">{partData?.mpn || "N/A"}</p>
-              </td>
-              <td className="px-3 py-4 align-top">
-                <p className="text-[14px] text-[#f7f7f7]">{leadTime}</p>
-              </td>
-              <td className="px-3 py-4 align-top">
-                <div className="flex items-center gap-1">
-                  <p className="text-[14px] text-[#f7f7f7]">{lifecycleRisk} Risk</p>
-                  {lifecycleRisk === "High" && (
-                    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
-                      <path d="M8 5V9M8 11V11.5M2 14H14L8 3L2 14Z" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
-                    </svg>
+      <>
+        {/* Desktop Table */}
+        <div className="hidden md:block bg-[#1F222B] border border-solid border-[#494B59] rounded-lg overflow-x-auto">
+          <table className="w-full min-w-[700px]">
+            {/* Table Header */}
+            <thead>
+              <tr className="bg-[#323543] border-b border-[#494B59]">
+                <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Mfr Part #</th>
+                <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Lead Time</th>
+                <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Lifecycle / Risk</th>
+                <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Country of origin</th>
+                <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Latest PCN / End of Life</th>
+                <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Data Sheet</th>
+                <th className="px-3 py-3 text-left text-[14px] text-[#f7f7f7] font-normal">Availability</th>
+              </tr>
+            </thead>
+            {/* Table Body */}
+            <tbody>
+              <tr className="border-b border-[#494B59]">
+                <td className="px-3 py-4 align-top">
+                  <p className="text-[14px] text-[#f7f7f7] break-words">{partData?.mpn || "N/A"}</p>
+                </td>
+                <td className="px-3 py-4 align-top">
+                  <p className="text-[14px] text-[#f7f7f7]">{leadTime}</p>
+                </td>
+                <td className="px-3 py-4 align-top">
+                  <div className="flex items-center gap-1">
+                    <p className="text-[14px] text-[#f7f7f7]">{lifecycleRisk} Risk</p>
+                    {lifecycleRisk === "High" && (
+                      <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                        <path d="M8 5V9M8 11V11.5M2 14H14L8 3L2 14Z" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                      </svg>
+                    )}
+                  </div>
+                  <p className="text-[14px] text-[#b6b6b7] mt-1">{lifecycle}</p>
+                </td>
+                <td className="px-3 py-4 align-top">
+                  <p className="text-[14px] text-[#f7f7f7] break-words">{countries}</p>
+                </td>
+                <td className="px-3 py-4 align-top">
+                  {pcnSource ? (
+                    <>
+                      <div className="flex items-center gap-1">
+                        <a 
+                          href={pcnSource} 
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-[14px] text-[#5d97ee] underline cursor-pointer"
+                        >
+                          PCN Document
+                        </a>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); handleDocumentClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, "pcn", pcnSource); }}
+                          className="shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors"
+                          title="Download all documents"
+                        >
+                          {downloadIcon}
+                        </button>
+                      </div>
+                      {eolYears && (
+                        <p className="text-[12px] text-[#f7f7f7] mt-1">{eolYears} years to end of life</p>
+                      )}
+                    </>
+                  ) : (
+                    <p className="text-[14px] text-[#f7f7f7]">N/A</p>
                   )}
-                </div>
-                <p className="text-[14px] text-[#b6b6b7] mt-1">{lifecycle}</p>
-              </td>
-              <td className="px-3 py-4 align-top">
-                <p className="text-[14px] text-[#f7f7f7] break-words">{countries}</p>
-              </td>
-              <td className="px-3 py-4 align-top">
+                </td>
+                <td className="px-3 py-4 align-top">
+                  {datasheet ? (
+                    <div className="flex items-center gap-1">
+                      <a 
+                        href={datasheet} 
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[14px] text-[#5d97ee] underline cursor-pointer"
+                      >
+                        Data Sheet
+                      </a>
+                      <button
+                        onClick={(e) => { e.stopPropagation(); handleDocumentClick(e as unknown as React.MouseEvent<HTMLAnchorElement>, "datasheet", datasheet); }}
+                        className="shrink-0 p-0.5 rounded hover:bg-white/10 transition-colors"
+                        title="Download all documents"
+                      >
+                        {downloadIcon}
+                      </button>
+                    </div>
+                  ) : (
+                    <p className="text-[14px] text-[#f7f7f7]">N/A</p>
+                  )}
+                </td>
+                <td className="px-3 py-4 align-top">
+                  <div className="flex gap-3">
+                    <div className="flex flex-col gap-1 flex-1 min-w-0">
+                      <p className="text-[12px] text-[#b6b6b7]">Franchise</p>
+                      <p className="text-[14px] text-[#f7f7f7] break-words">
+                        {franchiseStock ? `In Stock: ${franchiseStock.toLocaleString()}+` : "N/A"}
+                      </p>
+                    </div>
+                    <div className="flex flex-col gap-1 flex-1 min-w-0">
+                      <p className="text-[12px] text-[#b6b6b7]">Open Market</p>
+                      <p className="text-[14px] text-[#f7f7f7]">Available</p>
+                    </div>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        {/* Mobile Layout - Part details */}
+        <div className="md:hidden bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 flex flex-col items-start gap-4 w-full">
+          <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">Part details</p>
+          <div className="flex flex-col gap-4 w-full">
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Mfr Part #:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{partData?.mpn || "N/A"}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Lead Time:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{leadTime}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Lifecycle / Risk:</span>
+              <div className="flex-1 flex items-center gap-1">
+                <span className="text-[14px] text-[#fcfdfc]">{lifecycleRisk} Risk</span>
+                {lifecycleRisk === "High" && (
+                  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" className="shrink-0">
+                    <path d="M8 5V9M8 11V11.5M2 14H14L8 3L2 14Z" stroke="#f59e0b" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                )}
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Country of origin:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">{countries}</span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Latest PCN / End of Life:</span>
+              <div className="flex-1">
                 {pcnSource ? (
                   <>
                     <div className="flex items-center gap-1">
@@ -799,10 +1277,13 @@ export const HeroSection: React.FC = () => {
                     )}
                   </>
                 ) : (
-                  <p className="text-[14px] text-[#f7f7f7]">N/A</p>
+                  <span className="text-[14px] text-[#f7f7f7]">N/A</span>
                 )}
-              </td>
-              <td className="px-3 py-4 align-top">
+              </div>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Data Sheet:</span>
+              <div className="flex-1">
                 {datasheet ? (
                   <div className="flex items-center gap-1">
                     <a 
@@ -822,41 +1303,56 @@ export const HeroSection: React.FC = () => {
                     </button>
                   </div>
                 ) : (
-                  <p className="text-[14px] text-[#f7f7f7]">N/A</p>
+                  <span className="text-[14px] text-[#f7f7f7]">N/A</span>
                 )}
-              </td>
-              <td className="px-3 py-4 align-top">
-                <div className="flex gap-3">
-                  <div className="flex flex-col gap-1 flex-1 min-w-0">
-                    <p className="text-[12px] text-[#b6b6b7]">Franchise</p>
-                    <p className="text-[14px] text-[#f7f7f7] break-words">
-                      {franchiseStock ? `In Stock: ${franchiseStock.toLocaleString()}+` : "N/A"}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-1 flex-1 min-w-0">
-                    <p className="text-[12px] text-[#b6b6b7]">Open Market</p>
-                    <p className="text-[14px] text-[#f7f7f7]">Available</p>
-                  </div>
-                </div>
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Mobile Layout - Availability */}
+        <div className="md:hidden bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 flex flex-col items-start gap-4 w-full">
+          <p className="text-[16px] font-medium text-[#fcfdfc] leading-[1.4]">Availability</p>
+          <div className="flex flex-col gap-4 w-full">
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Franchise:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">
+                {franchiseStock ? `In Stock: ${franchiseStock.toLocaleString()}+` : "N/A"}
+              </span>
+            </div>
+            <div style={{ display: "flex", alignItems: "baseline", gap: "8px", alignSelf: "stretch" }}>
+              <span className="text-[14px] text-[#8e8e8f] shrink-0">Open Market:</span>
+              <span className="text-[14px] text-[#fcfdfc] flex-1">
+                {openMarketStock ? `Available: ${openMarketStock.toLocaleString()}+` : "Available"}
+              </span>
+            </div>
+          </div>
+        </div>
+      </>
     );
   };
 
   const renderRFQSection = () => {
     return (
-      <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg overflow-hidden">
+      <div className="bg-[#0E0E0F] md:bg-[#1F222B] md:border md:border-solid md:border-[#494B59] rounded-lg overflow-hidden">
         {/* Header */}
-        <div className="bg-[#323543] border-b border-[#494B59] px-4 py-3">
-          <p className="text-[14px] text-[#f7f7f7]">Request for Quote</p>
+        <div className="bg-[#0E0E0F] md:bg-[#323543] md:border-b md:border-[#494B59] px-4 py-3">
+          <p 
+            className="text-[24px] md:text-[14px] text-[#f7f7f7] font-medium"
+            style={{ 
+              fontFamily: "'Plus Jakarta Sans', sans-serif",
+              fontSize: "24px",
+              fontWeight: 500,
+              lineHeight: "140%"
+            }}
+          >
+            Request for Quote
+          </p>
         </div>
         
         {/* Form */}
         <div className="p-4 flex flex-col gap-6">
-          <div className="flex gap-4">
+          <div className="flex flex-col md:flex-row gap-4">
             {/* Quantity */}
             <div className="flex-1 flex flex-col gap-1">
               <label className="text-[14px] text-[#cececf]">Quantity</label>
@@ -865,6 +1361,29 @@ export const HeroSection: React.FC = () => {
                 placeholder="Enter quantity"
                 className="h-12 px-4 bg-[#1c1d22] border border-[#323335] rounded-lg text-[16px] text-white placeholder-[#323335] outline-none focus:border-[#494B59]"
               />
+            </div>
+            {/* Email */}
+            <div className="flex-1 flex flex-col gap-1">
+              <label className="text-[14px] text-[#cececf]">Email</label>
+              <input
+                type="email"
+                value={rfqEmail}
+                onChange={(e) => handleRfqEmailChange(e.target.value)}
+                onBlur={handleRfqEmailBlur}
+                onFocus={handleRfqEmailFocus}
+                placeholder="Enter your email"
+                className={`h-12 px-4 bg-[#1c1d22] border rounded-lg text-[16px] text-white placeholder-[#323335] outline-none transition-colors ${
+                  rfqEmailError && !isRfqEmailFocused
+                    ? "border-[#A21212]"
+                    : "border-[#323335] focus:border-[#494B59]"
+                }`}
+                style={{
+                  borderRadius: rfqEmailError && !isRfqEmailFocused ? "4px" : undefined,
+                }}
+              />
+              {rfqEmailError && !isRfqEmailFocused && (
+                <p className="text-sm text-[#A21212] mt-1">{rfqEmailError}</p>
+              )}
             </div>
             {/* Contact Name */}
             <div className="flex-1 flex flex-col gap-1">
@@ -884,23 +1403,14 @@ export const HeroSection: React.FC = () => {
                 className="h-12 px-4 bg-[#1c1d22] border border-[#323335] rounded-lg text-[16px] text-white placeholder-[#323335] outline-none focus:border-[#494B59]"
               />
             </div>
-            {/* Email */}
-            <div className="flex-1 flex flex-col gap-1">
-              <label className="text-[14px] text-[#cececf]">Email</label>
-              <input
-                type="email"
-                placeholder="Enter your email"
-                className="h-12 px-4 bg-[#1c1d22] border border-[#323335] rounded-lg text-[16px] text-white placeholder-[#323335] outline-none focus:border-[#494B59]"
-              />
-            </div>
           </div>
           
           {/* Bottom row */}
-          <div className="flex items-center gap-10">
+          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-4 md:gap-10">
             <p className="flex-1 text-[14px] text-[#b6b6b7]">
               By submitting this RFQ, you get complimentary access to our partner Partwatch - a live market platform with real-time availability and pricing from franchised and independent distributors, BOM health insights, PCNs, datasheets, approved alt
             </p>
-            <button className="h-12 px-8 bg-[#99c221] border-t border-[#ceea6c] rounded-3xl shadow-md text-[16px] font-semibold text-[#05080d] hover:bg-[#a8d12f] transition-colors">
+            <button className="h-12 px-8 bg-[#99c221] border-t border-[#ceea6c] rounded-3xl shadow-md text-[16px] font-semibold text-[#05080d] hover:bg-[#a8d12f] transition-colors w-full md:w-auto">
               Submit RFQ
             </button>
           </div>
@@ -910,7 +1420,7 @@ export const HeroSection: React.FC = () => {
   };
 
   return (
-    <section className="relative flex flex-col items-center justify-center min-h-screen pt-20">
+    <section className={`relative flex flex-col items-center justify-center min-h-screen ${selectedPart ? 'pt-0 md:pt-20' : 'pt-20'}`}>
       {/* Glow Effect Behind Title */}
       <div className="absolute top-[20%] left-1/2 -translate-x-1/2 w-[738px] h-[320px] pointer-events-none">
         <div
@@ -923,41 +1433,41 @@ export const HeroSection: React.FC = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex flex-col items-center gap-8 md:gap-14 z-10">
-        {/* Title Section */}
-        <div className="flex flex-col items-center gap-4 text-center max-w-[898px]">
-          <h1
-            className="md:hidden text-[32px] font-normal leading-[1.1] text-[#efeff0]"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          >
-            <span className="block">Powering your</span>
-            <span className="block">components needs</span>
-          </h1>
-          <h1
-            className="hidden md:block text-[60px] font-semibold leading-[1.1] capitalize"
-            style={{
-              fontFamily: "'Plus Jakarta Sans', sans-serif",
-              background:
-                "radial-gradient(ellipse at 58% 100%, #b1b2b1 0%, #d2d4d2 50%, #f4f5f4 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-            }}
-          >
-            Powering your
-            <br />
-            component needs
-          </h1>
-          <p
-            className="text-sm md:text-xl text-[#b6b6b7] leading-[1.4]"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          >
-            Which parts are you searching for today?
-          </p>
-        </div>
+      <div className="flex flex-col items-center gap-6 md:gap-14 z-10 w-full">
+        {/* Title Section - Hide on mobile when part is selected */}
+        <div className={`flex flex-col items-center gap-4 text-center max-w-[898px] ${selectedPart ? 'hidden md:flex' : ''}`}>
+            <h1
+              className="md:hidden text-[32px] font-normal leading-[1.1] text-[#efeff0]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              <span className="block">Powering your</span>
+              <span className="block">components needs</span>
+            </h1>
+            <h1
+              className="hidden md:block text-[60px] font-semibold leading-[1.1] capitalize"
+              style={{
+                fontFamily: "'Plus Jakarta Sans', sans-serif",
+                background:
+                  "radial-gradient(ellipse at 58% 100%, #b1b2b1 0%, #d2d4d2 50%, #f4f5f4 100%)",
+                WebkitBackgroundClip: "text",
+                WebkitTextFillColor: "transparent",
+                backgroundClip: "text",
+              }}
+            >
+              Powering your
+              <br />
+              component needs
+            </h1>
+            <p
+              className="text-sm md:text-xl text-[#b6b6b7] leading-[1.4]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              Which parts are you searching for today?
+            </p>
+          </div>
 
-        {/* Search Section */}
-        <div className="flex flex-col items-center gap-4 md:gap-6 px-4 md:px-0">
+        {/* Search Section - Hide on mobile when part is selected */}
+        <div className={`flex flex-col items-center gap-4 md:gap-6 px-4 md:px-0 ${selectedPart ? 'hidden md:flex' : ''}`}>
           {/* Search Input Container - positioned relative for dropdown */}
           <div className="relative">
             {/* Search Input */}
@@ -976,7 +1486,7 @@ export const HeroSection: React.FC = () => {
                 value={searchValue}
                 type="text"
                 placeholder="Search"
-                className="w-[268px] h-[32px] pl-10 pr-4 py-2 rounded-full text-sm
+                className="w-[300px] h-[44px] pl-[40px] pr-4 py-2 rounded-full text-sm
                          md:w-[495px] md:h-12 md:pl-14 md:pr-12 md:text-base
                          bg-[#17181a] backdrop-blur-sm
                          border border-[rgba(77,77,78,0.34)]
@@ -1121,27 +1631,45 @@ export const HeroSection: React.FC = () => {
             )}
           </div>
 
-          {/* Action Buttons */}
-          <div className="flex items-center gap-2 flex-wrap justify-center">
-            <ActionButton icon={<UploadIcon />} label="Upload a BOM" onClick={() => navigate("/upload-bom")} />
-            <ActionButton icon={<SellExcessIcon />} label="Sell excess" onClick={() => navigate("/sell-excess")} />
+            {/* Action Buttons */}
+            <div className="flex items-center gap-2 flex-wrap justify-center">
+              <ActionButton icon={<UploadIcon />} label="Upload a BOM" onClick={() => navigate("/upload-bom")} />
+              <ActionButton icon={<SellExcessIcon />} label="Sell excess" onClick={() => navigate("/sell-excess")} />
+            </div>
           </div>
-        </div>
 
         {/* Category Cards OR Selected Part Details */}
         {selectedPart && (
-          <div className="flex flex-col gap-4 w-full max-w-[1400px] px-4 lg:px-0">
-            {/* Part Info Section */}
-            <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 lg:p-6 overflow-x-auto">
-              {renderPart()}
+          <>
+            {/* Desktop Layout */}
+            <div className="hidden md:block flex flex-col gap-8 md:gap-4 w-full max-w-[1400px] md:px-4 lg:px-0">
+              {/* Part Info Section */}
+              <div className="bg-[#1F222B] border border-solid border-[#494B59] rounded-lg p-4 lg:p-6 overflow-x-auto">
+                {renderPart()}
+              </div>
+              
+              {/* Part Details Table */}
+              {renderPartTable()}
+              
+              {/* Request for Quote Section */}
+              {renderRFQSection()}
             </div>
-            
-            {/* Part Details Table */}
-            {renderPartTable()}
-            
-            {/* Request for Quote Section */}
-            {renderRFQSection()}
-          </div>
+
+            {/* Mobile Layout - Combined Sections */}
+            <div className="md:hidden bg-[#0E0E0F] flex flex-col w-full relative z-0 -mx-4">
+              {/* Mobile Search with Back Button */}
+              <div className="relative z-10 pt-[70px] mb-6">
+                {renderMobileSearchWithBack()}
+              </div>
+              
+              {/* Part Content - 24px gap from search, padding only for content */}
+              <div className="flex flex-col gap-8 px-4 relative z-0">
+                {renderPartMobile()}
+                {renderPartTableMobile()}
+                {renderRFQSection()}
+              </div>
+            </div>
+          </>
         )}
       </div>
 

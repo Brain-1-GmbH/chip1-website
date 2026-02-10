@@ -125,6 +125,7 @@ const IndustryTab: React.FC<IndustryTabProps> = ({
 
 export const IndustriesWeServeSection: React.FC = () => {
   const [activeIndex, setActiveIndex] = useState(0);
+  const [expandedIndexes, setExpandedIndexes] = useState<Set<number>>(new Set());
   const [isAnimating, setIsAnimating] = useState(false);
 
   const handleTabClick = (index: number) => {
@@ -134,57 +135,62 @@ export const IndustriesWeServeSection: React.FC = () => {
     setTimeout(() => setIsAnimating(false), 600);
   };
 
+  const handleMobileCategoryClick = (index: number) => {
+    setExpandedIndexes((prev) => {
+      const newSet = new Set(prev);
+      if (newSet.has(index)) {
+        // If clicking on already expanded category, collapse it
+        newSet.delete(index);
+      } else {
+        // Expand only the clicked category (close others)
+        return new Set([index]);
+      }
+      return newSet;
+    });
+  };
+
   return (
     <section className="bg-[#0e0e0f] px-4 pt-2 pb-10 md:px-[60px] md:py-24 border-t-0 mb-6 md:mb-[120px]">
       <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
         {/* Mobile Content */}
-        <div className="md:hidden flex flex-col gap-6 items-center">
-          {/* Image */}
-          <div className="w-full h-[280px] rounded-2xl overflow-hidden relative">
-            {industriesData.map((industry, index) => (
-              <img
-                key={industry.id}
-                src={industry.image}
-                alt={industry.title}
-                className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
-                style={{
-                  opacity: index === activeIndex ? 1 : 0,
-                  pointerEvents: index === activeIndex ? "auto" : "none",
-                }}
-              />
-            ))}
-          </div>
-
-          {/* Active Title */}
-          <h3
-            className="text-[24px] font-semibold text-[#e5e5e7] leading-[1.4] text-left w-full"
-            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-          >
-            {industriesData[activeIndex].title}
-          </h3>
-          <p
-            className="text-[14px] text-[#cececf] leading-[1.5] text-left w-full"
-            style={{ fontFamily: "'Inter', sans-serif" }}
-          >
-            {industriesData[activeIndex].description}
-          </p>
-
-          {/* Industries List */}
-          <div className="flex flex-col gap-2 w-full">
-            {industriesData.map((industry, index) => (
-              <button
-                key={industry.id}
-                onClick={() => handleTabClick(index)}
-                className={`text-left text-[16px] leading-[1.4] transition-colors ${
-                  index === activeIndex
-                    ? "text-[#e5e5e7] font-semibold"
-                    : "text-[#858586]"
-                }`}
-                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-              >
-                {industry.title}
-              </button>
-            ))}
+        <div className="md:hidden flex flex-col gap-6 items-center w-full">
+          {/* Industries List with Expandable Items */}
+          <div className="flex flex-col gap-3 w-full">
+            {industriesData.map((industry, index) => {
+              const isExpanded = expandedIndexes.has(index);
+              return (
+                <div key={industry.id} className="flex flex-col w-full">
+                  <button
+                    onClick={() => handleMobileCategoryClick(index)}
+                    className={`text-left text-[16px] leading-[1.4] transition-colors w-full py-2 ${
+                      isExpanded
+                        ? "text-[#e5e5e7] font-semibold"
+                        : "text-[#858586]"
+                    }`}
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    {industry.title}
+                  </button>
+                  {isExpanded && (
+                    <div className="mt-3 mb-2 pl-0">
+                      <div className="w-full h-[200px] rounded-2xl overflow-hidden mb-3">
+                        <img
+                          src={industry.image}
+                          alt={industry.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <p
+                        className="text-[14px] text-[#cececf] leading-[1.5] text-left"
+                        style={{ fontFamily: "'Inter', sans-serif" }}
+                      >
+                        {industry.description}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
 

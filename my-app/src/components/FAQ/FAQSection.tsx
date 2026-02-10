@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from "react";
 
 // Background image for FAQ section
-import faqBg from "../../assets/Picture-17.png";
+import faqBg from "../../assets/Faq_Web-7162cedc-b5dd-43a2-bbfe-a01317a7ef2a.png";
 
 interface FAQItem {
   question: string;
@@ -170,13 +170,12 @@ export const FAQSection: React.FC = () => {
           background: "linear-gradient(180deg, #0E0E0F 0.01%, rgba(14, 14, 15, 0) 20.01%, rgba(14, 14, 15, 0) 80%, #0E0E0F 100%)",
         }}
       >
-        {/* Background Image with Overlay - desktop / when image is used */}
+        {/* Background Image with Overlay */}
         <div className="absolute inset-0 pointer-events-none overflow-hidden" aria-hidden>
           <img
             src={faqBg}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover opacity-[0.08]"
-            style={{ objectPosition: "-602.101px -837px" }}
+            className="absolute inset-0 w-full h-full object-cover opacity-[0.10]"
           />
           <div
             className="absolute inset-0"

@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Checkmark, ChevronDown } from "@carbon/icons-react";
 
 // Import background image
-import bgImage from "../../assets/Picture-14.png";
+import bgImage from "../../assets/The_Chipline_Web-7e01a815-cda3-4b18-9b49-b5e55a7cbb67.png";
 
 const benefits = [
   "Monitor key component prices",
@@ -19,12 +19,37 @@ export const NewsletterSection: React.FC = () => {
     country: "",
     message: "",
   });
+  const [emailError, setEmailError] = useState<string>("");
+  const [isEmailFocused, setIsEmailFocused] = useState<boolean>(false);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleInputChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
+    // Clear error when user starts typing
+    if (name === "email" && emailError) {
+      setEmailError("");
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setIsEmailFocused(false);
+    if (formData.email && !validateEmail(formData.email)) {
+      setEmailError("Invalid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handleEmailFocus = () => {
+    setIsEmailFocused(true);
+    setEmailError("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -33,26 +58,26 @@ export const NewsletterSection: React.FC = () => {
   };
 
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-16 mb-6 md:mb-[120px]">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px] relative md:rounded-3xl overflow-hidden">
-        {/* Background Image with Overlay */}
-        <div className="absolute inset-0 opacity-[0.12]">
-          <img
-            src={bgImage}
-            alt=""
-            className="w-full h-full object-cover"
-          />
-        </div>
-        <div
-          className="absolute inset-0"
-          style={{
-            background:
-              "linear-gradient(rgb(14, 14, 15) 0%, rgba(14, 14, 15, 0) 20%, rgba(14, 14, 15, 0) 80%, rgb(14, 14, 15) 100%)",
-          }}
+    <section className="bg-[#0e0e0f] py-10 md:py-16 mb-6 md:mb-[120px] relative">
+      {/* Background Image - Full Width */}
+      <div className="absolute inset-0 w-full">
+        <img
+          src={bgImage}
+          alt=""
+          className="w-full h-full object-cover opacity-[0.15]"
         />
-
-        {/* Content Container */}
-        <div className="relative flex flex-col md:flex-row gap-10 items-start md:items-center px-0 md:px-6 py-0">
+      </div>
+      <div
+        className="absolute inset-0 w-full"
+        style={{
+          background:
+            "linear-gradient(rgb(14, 14, 15) 0%, rgba(14, 14, 15, 0) 20%, rgba(14, 14, 15, 0) 80%, rgb(14, 14, 15) 100%)",
+        }}
+      />
+      
+      {/* Content Container */}
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px] relative">
+        <div className="flex flex-col md:flex-row gap-10 items-start md:items-center px-0 md:px-6 py-0">
           {/* Left Side - Title and Benefits */}
           <div className="flex-1 flex flex-col gap-4 md:py-14">
             <h2
@@ -100,9 +125,21 @@ export const NewsletterSection: React.FC = () => {
                   name="email"
                   value={formData.email}
                   onChange={handleInputChange}
+                  onBlur={handleEmailBlur}
+                  onFocus={handleEmailFocus}
                   placeholder="Enter company email"
-                  className="h-12 px-4 py-2 bg-[#1c1d22] border border-[#323335] rounded-lg text-base text-white placeholder-[#323335] focus:outline-none focus:border-[#99c221] transition-colors"
+                  className={`h-12 px-4 py-2 bg-[#1c1d22] border rounded-lg text-base text-white placeholder-[#323335] focus:outline-none transition-colors ${
+                    emailError && !isEmailFocused
+                      ? "border-[#A21212]"
+                      : "border-[#323335] focus:border-[#99c221]"
+                  }`}
+                  style={{
+                    borderRadius: emailError && !isEmailFocused ? "4px" : undefined,
+                  }}
                 />
+                {emailError && !isEmailFocused && (
+                  <p className="text-sm text-[#A21212] mt-1">{emailError}</p>
+                )}
               </div>
 
               {/* Company Name */}

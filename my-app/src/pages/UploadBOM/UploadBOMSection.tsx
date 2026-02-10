@@ -45,6 +45,13 @@ export const UploadBOMSection: React.FC = () => {
     companyName: "",
     contactName: "",
   });
+  const [emailError, setEmailError] = useState<string>("");
+  const [isEmailFocused, setIsEmailFocused] = useState<boolean>(false);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   // Check if step 2 form is valid
   const isStep2Valid = 
@@ -107,6 +114,24 @@ export const UploadBOMSection: React.FC = () => {
 
   const handleSignInInputChange = (field: keyof SignInFormData, value: string) => {
     setSignInData(prev => ({ ...prev, [field]: value }));
+    // Clear error when user starts typing
+    if (field === "email" && emailError) {
+      setEmailError("");
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setIsEmailFocused(false);
+    if (signInData.email && !validateEmail(signInData.email)) {
+      setEmailError("Invalid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handleEmailFocus = () => {
+    setIsEmailFocused(true);
+    setEmailError("");
   };
 
   const handleBack = () => {
@@ -155,29 +180,54 @@ export const UploadBOMSection: React.FC = () => {
         </p>
       </div>
 
+      {/* Selected File Chip - Desktop: right after description */}
+      {selectedFile && (
+        <div className="hidden md:flex items-center gap-2 px-3 py-2 bg-[#111215] border border-[#212225] rounded-lg w-full -mt-2">
+          <Document size={24} className="text-[#99c221] flex-shrink-0" />
+          <span 
+            className="text-base text-[#e5e5e7] flex-1 truncate"
+            style={{ fontFamily: "Inter, sans-serif" }}
+          >
+            {selectedFile.name}
+          </span>
+          <button
+            onClick={() => setSelectedFile(null)}
+            className="flex-shrink-0 p-0.5 hover:bg-[#1a1a1b] rounded transition-colors"
+          >
+            <Close size={16} className="text-[#8e8e8f]" />
+          </button>
+        </div>
+      )}
+
       {/* File Drop Zone / Selected File */}
-      <div className="h-[304px]">
+      <div className={`${selectedFile ? 'md:hidden' : ''} h-[304px]`}>
         {selectedFile ? (
-          /* Selected File Chip */
-          <div className="flex items-center gap-2 px-3 py-2 bg-[#111215] border border-[#212225] rounded-lg w-full">
-            <Document size={24} className="text-[#99c221] flex-shrink-0" />
-            <span 
-              className="text-base text-[#e5e5e7] flex-1 truncate"
-              style={{ fontFamily: "Inter, sans-serif" }}
-            >
-              {selectedFile.name}
-            </span>
-            <button
-              onClick={() => setSelectedFile(null)}
-              className="flex-shrink-0 p-0.5 hover:bg-[#1a1a1b] rounded transition-colors"
-            >
-              <Close size={16} className="text-[#8e8e8f]" />
-            </button>
-          </div>
+          <>
+            {/* Selected File Chip - Mobile */}
+            <div className="flex items-center gap-2 px-3 py-2 bg-[#111215] border border-[#212225] rounded-lg w-full">
+              <Document size={24} className="text-[#99c221] flex-shrink-0" />
+              <span 
+                className="text-base text-[#e5e5e7] flex-1 truncate"
+                style={{ fontFamily: "Inter, sans-serif" }}
+              >
+                {selectedFile.name}
+              </span>
+              <button
+                onClick={() => setSelectedFile(null)}
+                className="flex-shrink-0 p-0.5 hover:bg-[#1a1a1b] rounded transition-colors"
+              >
+                <Close size={16} className="text-[#8e8e8f]" />
+              </button>
+            </div>
+            {/* Description - mobile */}
+            <p className="block md:hidden text-sm text-[#b6b6b7] leading-[1.5] text-left mt-4" style={{ fontFamily: "Inter, sans-serif" }}>
+              You may skip this step. Once the project is created, additional parts can be added at any time.
+            </p>
+          </>
         ) : (
           /* Drop Zone */
           <div
-            className={`flex flex-col items-center justify-center gap-2 h-full border border-dashed rounded-2xl transition-colors ${
+            className={`flex flex-col items-center justify-center gap-2 h-full border border-dashed rounded-2xl transition-colors cursor-pointer ${
               isDragOver
                 ? "border-[#99c221] bg-[#99c221]/5"
                 : "border-[#323335] hover:border-[#4a4a4c]"
@@ -185,6 +235,7 @@ export const UploadBOMSection: React.FC = () => {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            onClick={handleChooseFile}
           >
             <p className="hidden md:block text-sm text-[#e5e5e7]" style={{ fontFamily: "Inter, sans-serif" }}>
               Drop a file here
@@ -192,13 +243,12 @@ export const UploadBOMSection: React.FC = () => {
             <p className="hidden md:block text-sm text-[#8e8e8f]" style={{ fontFamily: "Inter, sans-serif" }}>
               or
             </p>
-            <button
-              onClick={handleChooseFile}
-              className="h-auto px-0 md:h-10 md:px-4 rounded-3xl text-sm font-medium text-[#99c221] hover:bg-[#99c221]/10 transition-colors"
+            <span
+              className="h-auto px-0 md:h-10 md:px-4 text-sm font-medium text-[#99c221]"
               style={{ fontFamily: "Inter, sans-serif" }}
             >
               Choose file
-            </button>
+            </span>
           </div>
         )}
         
@@ -211,14 +261,16 @@ export const UploadBOMSection: React.FC = () => {
         />
       </div>
 
-      {/* Description - mobile */}
-      <p className="block md:hidden text-sm text-[#b6b6b7] leading-[1.5] text-left" style={{ fontFamily: "Inter, sans-serif" }}>
-        You may skip this step. Once the project is created, additional parts can be added at any time.
-      </p>
+      {/* Description - mobile (when no file selected) */}
+      {!selectedFile && (
+        <p className="block md:hidden text-sm text-[#b6b6b7] leading-[1.5] text-left mt-4" style={{ fontFamily: "Inter, sans-serif" }}>
+          You may skip this step. Once the project is created, additional parts can be added at any time.
+        </p>
+      )}
 
-      {/* Bottom Actions */}
-      <div className="flex flex-col md:flex-row items-center justify-between gap-4 mt-auto pb-8">
-        {/* Download Template Button - Disabled */}
+      {/* Bottom Actions - Desktop */}
+      <div className="hidden md:flex flex-row items-center justify-between gap-4 mt-auto pb-8">
+        {/* Download Template Button */}
         <button 
           disabled
           className="flex items-center gap-2 h-10 px-4 text-sm font-medium text-[#99c221]/40 rounded-3xl cursor-not-allowed"
@@ -231,7 +283,7 @@ export const UploadBOMSection: React.FC = () => {
         <button 
           onClick={handleContinue}
           disabled={!selectedFile}
-          className={`flex items-center justify-center w-full md:w-[200px] h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
+          className={`flex items-center justify-center w-full md:w-[200px] h-10 rounded-3xl text-sm font-medium transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
             selectedFile
               ? "bg-[#99c221] hover:bg-[#a8d32f] border-t border-[#ceea6c] text-[#05080d]"
               : "bg-[#99c221]/40 text-[#05080d]/60 cursor-not-allowed"
@@ -239,6 +291,33 @@ export const UploadBOMSection: React.FC = () => {
         >
           <span style={{ fontFamily: "Inter, sans-serif" }}>Continue</span>
         </button>
+      </div>
+
+      {/* Bottom Actions - Mobile Fixed */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0e0e0f] p-4 z-50">
+        <div className="flex flex-col gap-4">
+          {/* Download Template Button - Mobile */}
+          <button 
+            disabled
+            className="flex items-center justify-center gap-2 h-12 px-4 text-sm font-medium text-[#99c221]/40 rounded-3xl cursor-not-allowed"
+          >
+            <Download size={20} />
+            <span style={{ fontFamily: "Inter, sans-serif" }}>BoM Template</span>
+          </button>
+
+          {/* Continue Button */}
+          <button 
+            onClick={handleContinue}
+            disabled={!selectedFile}
+            className={`flex items-center justify-center w-full h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
+              selectedFile
+                ? "bg-[#99c221] hover:bg-[#a8d32f] text-[#05080d]"
+                : "bg-[#99c221]/40 text-[#05080d]/60 cursor-not-allowed"
+            }`}
+          >
+            <span style={{ fontFamily: "Inter, sans-serif" }}>Continue</span>
+          </button>
+        </div>
       </div>
     </>
   );
@@ -287,7 +366,7 @@ export const UploadBOMSection: React.FC = () => {
           />
         </div>
 
-        {/* Project Type & BoM Type */}
+        {/* Project Type */}
         <div className="flex flex-col md:flex-row gap-4">
           <div className="flex-1 flex flex-col gap-1">
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
@@ -305,7 +384,8 @@ export const UploadBOMSection: React.FC = () => {
             />
           </div>
 
-          <div className="flex-1 flex flex-col gap-1">
+          {/* BoM Type - Desktop only */}
+          <div className="hidden md:flex flex-1 flex-col gap-1">
             <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
               BoM Type
             </label>
@@ -320,6 +400,23 @@ export const UploadBOMSection: React.FC = () => {
               placeholder="Select BoM type"
             />
           </div>
+        </div>
+
+        {/* BoM Type - Mobile only */}
+        <div className="md:hidden flex flex-col gap-1">
+          <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
+            BoM Type
+          </label>
+          <CustomDropdown
+            value={formData.bomType}
+            onChange={(value) => handleInputChange("bomType", value)}
+            options={[
+              { value: "Standard", label: "Standard" },
+              { value: "Multi-level", label: "Multi-level" },
+              { value: "Configurable", label: "Configurable" },
+            ]}
+            placeholder="Select BoM type"
+          />
         </div>
 
         {/* Production Stage & Need by */}
@@ -381,26 +478,39 @@ export const UploadBOMSection: React.FC = () => {
               <label className="text-sm text-[#cececf]" style={{ fontFamily: "Inter, sans-serif" }}>
                 Tracking Duration
               </label>
-              <div className="relative">
-                <select
-                  value={formData.trackingDuration}
-                  onChange={(e) => handleInputChange("trackingDuration", e.target.value)}
-                  className="w-full h-10 px-3 pr-10 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] outline-none focus:border-[#99c221] transition-colors appearance-none cursor-pointer"
-                  style={{ fontFamily: "Inter, sans-serif" }}
-                >
-                  <option value="3 Months">3 Months</option>
-                  <option value="6 Months">6 Months</option>
-                  <option value="12 Months">12 Months</option>
-                </select>
-                <ChevronDown size={20} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#8e8e8f] pointer-events-none" />
-              </div>
+              <CustomDropdown
+                value={formData.trackingDuration}
+                onChange={(value) => handleInputChange("trackingDuration", value)}
+                options={[
+                  { value: "3 Months", label: "3 Months" },
+                  { value: "6 Months", label: "6 Months" },
+                  { value: "12 Months", label: "12 Months" },
+                ]}
+                placeholder="Select duration"
+              />
             </div>
           )}
         </div>
       </div>
 
-      {/* Bottom Actions */}
-      <div className="flex items-center justify-end mt-auto pb-8">
+      {/* Bottom Actions - Mobile Fixed */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0e0e0f] p-4 z-50">
+        {/* Continue Button */}
+        <button 
+          onClick={handleContinue}
+          disabled={!isStep2Valid}
+          className={`flex items-center justify-center w-full h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
+            isStep2Valid
+              ? "bg-[#99c221] hover:bg-[#a8d32f] text-[#05080d]"
+              : "bg-[#99c221]/40 text-[#05080d]/60 cursor-not-allowed"
+          }`}
+        >
+          <span style={{ fontFamily: "Inter, sans-serif" }}>Continue</span>
+        </button>
+      </div>
+
+      {/* Bottom Actions - Desktop */}
+      <div className="hidden md:flex items-center justify-end mt-auto pb-8">
         {/* Continue Button */}
         <button 
           onClick={handleContinue}
@@ -455,10 +565,22 @@ export const UploadBOMSection: React.FC = () => {
             type="email"
             value={signInData.email}
             onChange={(e) => handleSignInInputChange("email", e.target.value)}
+            onBlur={handleEmailBlur}
+            onFocus={handleEmailFocus}
             placeholder="Enter your email"
-            className="h-10 px-3 bg-[#1c1d22] border border-[#323335] rounded text-sm text-[#f7f7f7] placeholder:text-[#323335] outline-none focus:border-[#99c221] transition-colors"
-            style={{ fontFamily: "Inter, sans-serif" }}
+            className={`h-10 px-3 bg-[#1c1d22] border rounded text-sm text-[#f7f7f7] placeholder:text-[#323335] outline-none transition-colors ${
+              emailError && !isEmailFocused
+                ? "border-[#A21212]"
+                : "border-[#323335] focus:border-[#99c221]"
+            }`}
+            style={{
+              fontFamily: "Inter, sans-serif",
+              borderRadius: emailError && !isEmailFocused ? "4px" : undefined,
+            }}
           />
+          {emailError && !isEmailFocused && (
+            <p className="text-sm text-[#A21212] mt-1" style={{ fontFamily: "Inter, sans-serif" }}>{emailError}</p>
+          )}
         </div>
 
         {/* Company Name */}
@@ -492,8 +614,24 @@ export const UploadBOMSection: React.FC = () => {
         </div>
       </div>
 
-      {/* Bottom Actions */}
-      <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-auto pb-8">
+      {/* Bottom Actions - Mobile Fixed */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0e0e0f] p-4 z-50">
+        {/* Continue Button */}
+        <button 
+          onClick={handleContinue}
+          disabled={!isStep3Valid}
+          className={`flex items-center justify-center w-full h-12 rounded-3xl text-base font-semibold transition-colors shadow-[0px_4px_4px_0px_rgba(17,18,21,0.35)] ${
+            isStep3Valid
+              ? "bg-[#99c221] hover:bg-[#a8d32f] text-[#05080d]"
+              : "bg-[#99c221]/40 text-[#05080d]/60 cursor-not-allowed"
+          }`}
+        >
+          <span style={{ fontFamily: "Inter, sans-serif" }}>Continue</span>
+        </button>
+      </div>
+
+      {/* Bottom Actions - Desktop */}
+      <div className="hidden md:flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mt-auto pb-8">
         {/* Sign Up Link */}
         <div className="flex items-center gap-4 flex-nowrap">
           <span className="text-base text-[#cececf] whitespace-nowrap" style={{ fontFamily: "Inter, sans-serif" }}>
@@ -544,7 +682,7 @@ export const UploadBOMSection: React.FC = () => {
 
         {/* Right Column - Form */}
         <div className="w-full md:w-[42%] bg-[#0e0e0f] pt-6 md:pt-10 px-0 md:px-10 h-full flex flex-col">
-          <div className="flex flex-col gap-10 h-full">
+          <div className={`flex flex-col gap-10 h-full ${currentStep === 2 ? 'pb-24 md:pb-0' : 'pb-24 md:pb-0'}`}>
             {currentStep === 1 && renderStep1()}
             {currentStep === 2 && renderStep2()}
             {currentStep === 3 && renderStep3()}

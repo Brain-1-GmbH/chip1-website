@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 // Background image
-import contactBg from "../../assets/Picture-18.png";
+import contactBg from "../../assets/Let_s_connect_Web-8ade505a-236a-4f4f-b68f-b310af30973c.png";
 
 interface FormData {
   name: string;
@@ -15,6 +15,13 @@ export const ContactSection: React.FC = () => {
     email: "",
     message: "",
   });
+  const [emailError, setEmailError] = useState<string>("");
+  const [isEmailFocused, setIsEmailFocused] = useState<boolean>(false);
+
+  const validateEmail = (email: string): boolean => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -24,6 +31,24 @@ export const ContactSection: React.FC = () => {
       ...prev,
       [name]: value,
     }));
+    // Clear error when user starts typing
+    if (name === "email" && emailError) {
+      setEmailError("");
+    }
+  };
+
+  const handleEmailBlur = () => {
+    setIsEmailFocused(false);
+    if (formData.email && !validateEmail(formData.email)) {
+      setEmailError("Invalid email address");
+    } else {
+      setEmailError("");
+    }
+  };
+
+  const handleEmailFocus = () => {
+    setIsEmailFocused(true);
+    setEmailError("");
   };
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -105,11 +130,23 @@ export const ContactSection: React.FC = () => {
                     name="email"
                     value={formData.email}
                     onChange={handleChange}
+                    onBlur={handleEmailBlur}
+                    onFocus={handleEmailFocus}
                     placeholder="Enter your email"
-                    className="h-12 px-4 py-2 bg-[#1c1d22] border border-[#323335] rounded-lg
+                    className={`h-12 px-4 py-2 bg-[#1c1d22] border rounded-lg
                              text-base text-white placeholder-[#323335]
-                             outline-none focus:border-[#99c221] transition-colors"
+                             outline-none transition-colors ${
+                               emailError && !isEmailFocused
+                                 ? "border-[#A21212]"
+                                 : "border-[#323335] focus:border-[#99c221]"
+                             }`}
+                    style={{
+                      borderRadius: emailError && !isEmailFocused ? "4px" : undefined,
+                    }}
                   />
+                  {emailError && !isEmailFocused && (
+                    <p className="text-sm text-[#A21212] mt-1">{emailError}</p>
+                  )}
                 </div>
 
                 {/* Message Field */}

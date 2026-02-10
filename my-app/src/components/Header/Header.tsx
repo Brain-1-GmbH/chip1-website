@@ -219,8 +219,16 @@ export const Header: React.FC = () => {
           }}
         >
           <Link
-            to="/careers"
+            to="/contact"
             className="block px-4 py-3 text-sm text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833] transition-colors duration-200"
+            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            onClick={() => setIsContactDropdownOpen(false)}
+          >
+            Contact Us
+          </Link>
+          <Link
+            to="/careers"
+            className="block px-4 py-3 text-sm text-[#b6b6b7] hover:text-[#B8D434] hover:bg-[#252833] transition-colors duration-200 border-t border-[#323335]"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
             onClick={() => setIsContactDropdownOpen(false)}
           >

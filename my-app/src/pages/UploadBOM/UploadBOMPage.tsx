@@ -8,7 +8,9 @@ export const UploadBOMPage: React.FC = () => {
     <div className="bg-[#0e0e0f] min-h-screen">
       <Header />
       <UploadBOMSection />
-      <Footer />
+      <div className="hidden md:block">
+        <Footer />
+      </div>
     </div>
   );
 };
