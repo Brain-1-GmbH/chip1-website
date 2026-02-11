@@ -18,7 +18,7 @@ export const ContactInformationSection: React.FC = () => {
 
   return (
     <section className="bg-[#0e0e0f] py-10 md:py-16 mb-6 md:mb-[120px]">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
         <h2
           className="text-[32px] md:text-5xl font-semibold text-[#efeff0] text-left mb-12 md:mb-16 uppercase"
           style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}

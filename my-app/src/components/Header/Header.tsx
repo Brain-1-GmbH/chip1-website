@@ -126,9 +126,9 @@ export const Header: React.FC = () => {
   return (
     <>
       <header 
-        className={`fixed top-0 left-0 right-0 flex items-start justify-between px-4 pt-4 pb-2 md:items-center md:px-10 md:py-4 backdrop-blur-md bg-[linear-gradient(180deg,#0E0E0F_39.81%,rgba(14,14,15,0)_100%)] md:bg-[#0E0E0F]/95 border-b border-[#292a2a]/50 ${isMobileMenuOpen ? 'z-[302]' : 'z-[200]'}`}
-        style={{ width: "100%", maxWidth: "100vw", overflowX: "hidden" }}
+        className={`fixed top-0 left-0 right-0 w-full max-w-[100vw] overflow-x-clip flex items-start justify-between px-4 pt-4 pb-2 md:items-center md:py-4 backdrop-blur-md bg-[linear-gradient(180deg,#0E0E0F_39.81%,rgba(14,14,15,0)_100%)] md:bg-[#0E0E0F]/95 border-b border-[#292a2a]/50 ${isMobileMenuOpen ? 'z-[302]' : 'z-[200]'}`}
       >
+        <div className="w-full min-w-0 mx-auto px-4 md:pl-[40px] md:pr-[40px] flex items-start justify-between md:items-center gap-4 max-w-[100vw] overflow-x-clip">
         {/* Logo */}
         <Link to="/" className="flex items-center gap-1 flex-shrink-0 z-10">
           <img
@@ -206,6 +206,7 @@ export const Header: React.FC = () => {
 
         {/* Right spacer for balance */}
         <div className="hidden md:block flex-shrink-0 w-[130px]" />
+        </div>
       </header>
 
       {/* Contact Us Dropdown - Fixed positioning to escape stacking context */}

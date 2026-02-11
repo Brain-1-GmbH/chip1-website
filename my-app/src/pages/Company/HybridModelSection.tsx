@@ -3,8 +3,8 @@ import hybridModelChip from "../../assets/hybrid-model-chip.png";
 
 export const HybridModelSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-10 mb-6 md:mb-[120px]">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[80px] md:py-10 mb-6 md:mb-[120px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
         {/* Header */}
         <div className="flex flex-col gap-4 mb-8 md:mb-10">
           <h2

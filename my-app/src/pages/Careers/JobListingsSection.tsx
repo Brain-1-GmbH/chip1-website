@@ -203,7 +203,7 @@ export const JobListingsSection: React.FC = () => {
 
   return (
     <section className="bg-[#0e0e0f] py-10 md:py-24 mb-6 md:mb-[120px]">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
         <div className="flex flex-col gap-12">
           {Object.entries(jobsByDepartment).map(([department, departmentJobs]) => (
             <div key={department} className="flex flex-col gap-6">

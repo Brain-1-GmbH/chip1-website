@@ -4,7 +4,7 @@ import teamPhoto from "../../assets/team-photo.png";
 export const PerformanceSection: React.FC = () => {
   return (
     <section className="bg-[#0e0e0f] py-10 md:py-16 mb-6 md:mb-[120px]">
-      <div className="max-w-[1280px] mx-auto px-4 md:pl-[60px] md:pr-[40px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
         <div className="grid grid-cols-1 md:grid-cols-[450px_1fr] gap-10 md:gap-6 items-center">
           {/* Left Column - Text */}
           <div className="flex flex-col gap-6">

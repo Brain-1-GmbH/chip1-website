@@ -25,7 +25,7 @@ export const InsightsHeroSection: React.FC = () => {
       />
 
       {/* Content - same layout as other heroes for alignment */}
-      <div className="relative z-10 flex flex-col gap-4 items-start w-full max-w-[1280px] mx-auto px-4 pt-[160px] md:px-[60px] md:pt-[200px]">
+      <div className="relative z-10 flex flex-col gap-4 items-start w-full max-w-[1280px] mx-auto px-4 pt-[160px] md:px-[80px] md:pt-[200px]">
         {/* Tag */}
         <div className="border-l-2 border-[#99c221] px-4">
           <p

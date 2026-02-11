@@ -189,7 +189,7 @@ export const ByCategoryPage: React.FC = () => {
       
       {/* Hero Section */}
       <section className="relative pt-24 pb-16">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
           {/* Breadcrumbs */}
           <div className="mb-8">
             <nav className="text-sm text-[#8e8e8f]">
@@ -270,7 +270,7 @@ export const ByCategoryPage: React.FC = () => {
 
       {/* Categories Grid Section */}
       <section className="pb-24">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {categories.map((category) => (
               <div

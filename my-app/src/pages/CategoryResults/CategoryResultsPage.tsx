@@ -131,7 +131,7 @@ export const CategoryResultsPage: React.FC = () => {
       
       {/* Hero Section */}
       <section className="relative pt-24 pb-12">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
           {/* Breadcrumbs */}
           <div className="mb-6">
             <nav className="text-sm text-[#8e8e8f]">
@@ -184,7 +184,7 @@ export const CategoryResultsPage: React.FC = () => {
 
       {/* Main Content */}
       <section className="pb-24">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
           <div className="flex gap-6">
             {/* Left Sidebar - Filters */}
             <div className="relative overflow-visible w-64 shrink-0 bg-[#0F0F0F] border border-[#1C1D22] p-4 h-fit sticky top-24">

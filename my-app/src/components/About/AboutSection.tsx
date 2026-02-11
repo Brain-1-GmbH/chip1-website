@@ -127,7 +127,7 @@ export const AboutSection: React.FC = () => {
   };
 
   return (
-    <section className="flex flex-col items-center w-full bg-[#0e0e0f] md:px-4 md:py-10 md:py-20">
+    <section className="flex flex-col items-center w-full bg-[#0e0e0f] md:px-[80px] md:py-10 md:py-20">
       <div className="max-w-[1280px] w-full flex flex-col md:gap-[72px]">
 
         {/* Second container (mobile): padding 16px, flex wrap, gap 24px — stats + all cards */}

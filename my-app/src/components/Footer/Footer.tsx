@@ -31,7 +31,7 @@ const legalLinks = [
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-[#0e0e0f] px-4 py-10 md:px-20 md:pt-12 md:pb-20">
+    <footer className="bg-[#0e0e0f] px-4 py-10 md:px-[80px] md:pt-12 md:pb-20">
       <div className="max-w-[1280px] mx-auto flex flex-col gap-6">
         {/* Mobile Layout */}
         <div className="flex flex-col gap-6 md:hidden">

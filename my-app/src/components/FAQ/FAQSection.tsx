@@ -164,7 +164,7 @@ export const FAQSection: React.FC = () => {
       <div
         className="relative w-full max-w-[375px] md:max-w-[1280px] mx-auto
                    flex flex-col items-end
-                   py-6 px-4 md:py-10 md:px-6"
+                   py-6 px-4 md:py-10 md:px-[80px]"
         style={{
           gap: "var(--gap-padding-2-xl, 40px)",
           background: "linear-gradient(180deg, #0E0E0F 0.01%, rgba(14, 14, 15, 0) 20.01%, rgba(14, 14, 15, 0) 80%, #0E0E0F 100%)",

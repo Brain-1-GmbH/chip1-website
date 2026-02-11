@@ -24,7 +24,7 @@ export const ContactHeroSection: React.FC = () => {
       </div>
 
       {/* Content */}
-      <div className="relative max-w-[1280px] mx-auto px-4 pt-[220px] pb-4 md:px-[60px] md:pt-[360px] md:pb-20">
+      <div className="relative max-w-[1280px] mx-auto px-4 pt-[220px] pb-4 md:px-[80px] md:pt-[360px] md:pb-20">
         <div className="flex flex-col gap-4 max-w-[736px]">
           {/* Tag */}
           <div className="flex items-center border-l-2 border-[#99c221] px-4">

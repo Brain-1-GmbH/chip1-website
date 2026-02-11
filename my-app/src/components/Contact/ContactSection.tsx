@@ -60,7 +60,7 @@ export const ContactSection: React.FC = () => {
   };
 
   return (
-    <section className="relative w-full px-4 pt-6 pb-10 md:px-20 md:py-24 bg-[#0e0e0f] overflow-hidden md:rounded-3xl md:mx-4">
+    <section className="relative w-full px-4 pt-6 pb-10 md:px-[80px] md:py-24 bg-[#0e0e0f] overflow-hidden md:rounded-3xl">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 pointer-events-none md:rounded-3xl overflow-hidden">
         <img

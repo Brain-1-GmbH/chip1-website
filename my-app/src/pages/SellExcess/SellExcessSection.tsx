@@ -685,7 +685,7 @@ export const SellExcessSection: React.FC = () => {
   );
 
   return (
-    <section className="pt-[64px] md:pt-[90px] px-4 md:px-[60px] pb-0">
+    <section className="pt-[64px] md:pt-[90px] px-4 md:px-[80px] pb-0">
       <div className="max-w-[1440px] mx-auto flex flex-col md:flex-row items-start min-h-[calc(100vh-64px)] md:min-h-[720px]">
         {/* Left Column - Info & Image */}
         <div className="hidden md:flex w-[58%] flex-col gap-6 justify-center pr-10 py-10">

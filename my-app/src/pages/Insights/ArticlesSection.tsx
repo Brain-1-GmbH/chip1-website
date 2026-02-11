@@ -63,8 +63,8 @@ const articlesData: ArticleCard[] = [
 
 export const ArticlesSection: React.FC = () => {
   return (
-    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[60px] md:py-10 mb-6 md:mb-[120px]">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+    <section className="bg-[#0e0e0f] px-4 py-10 md:px-[80px] md:py-10 mb-6 md:mb-[120px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
         {/* Section Title */}
         <h2
           className="text-[32px] md:text-5xl font-semibold text-[#efeff0] leading-[1.3] mb-6 md:mb-16"

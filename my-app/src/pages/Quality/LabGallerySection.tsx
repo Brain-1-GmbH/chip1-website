@@ -41,7 +41,7 @@ const bottomRowImages = [
 export const LabGallerySection: React.FC = () => {
   return (
     <section className="bg-[#0e0e0f] py-10 md:py-24 overflow-hidden mb-6 md:mb-[120px]">
-      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
         {/* Header */}
         <div className="flex flex-col gap-6 md:gap-10 items-start mb-8 md:mb-12">
           <h2

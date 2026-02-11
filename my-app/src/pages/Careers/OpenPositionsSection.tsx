@@ -189,7 +189,7 @@ export const OpenPositionsSection: React.FC = () => {
       `}</style>
 
       {/* Content */}
-      <div className="relative z-10 max-w-[1280px] mx-auto px-4 md:px-[60px]">
+      <div className="relative z-10 max-w-[1280px] mx-auto px-4 md:px-[80px]">
         <div className="flex flex-col items-center gap-6 md:gap-8">
           {/* Title */}
           <h2

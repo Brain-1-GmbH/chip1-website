@@ -145,7 +145,7 @@ export const JobDetailPage: React.FC = () => {
 
       {/* Job Description Section */}
       <section className="bg-[#0e0e0f] pt-20 md:pt-24 pb-10 md:pb-16">
-        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px]">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
           {/* Back Link */}
           <Link
             to="/careers"
@@ -317,7 +317,7 @@ export const JobDetailPage: React.FC = () => {
           <div className="absolute inset-0 w-full h-full bg-gradient-to-b from-[#0e0e0f] via-transparent to-[#0e0e0f]" />
         </div>
 
-        <div className="max-w-[1280px] mx-auto px-4 md:px-[60px] relative">
+        <div className="max-w-[1280px] mx-auto px-4 md:px-[80px] relative">
           <h2
             className="text-[24px] md:text-[32px] md:text-5xl font-semibold text-[#efeff0] text-center mb-6 md:mb-8"
             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}

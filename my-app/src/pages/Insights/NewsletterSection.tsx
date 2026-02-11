@@ -76,7 +76,7 @@ export const NewsletterSection: React.FC = () => {
       />
       
       {/* Content Container */}
-      <div className="max-w-[1280px] mx-auto px-4 md:px-[60px] relative">
+      <div className="max-w-[1280px] mx-auto px-4 md:px-[80px] relative">
         <div className="flex flex-col md:flex-row gap-10 items-start md:items-center px-0 md:px-6 py-0">
           {/* Left Side - Title and Benefits */}
           <div className="flex-1 flex flex-col gap-4 md:py-14">
