@@ -71,6 +71,7 @@ const MAP_MARKERS: MapMarker[] = [
 ];
 
 const HIGHLIGHT_CLASS = "region-highlighted";
+const HOVER_CLASS = "region-hovered";
 
 /** Path indices per type - which map regions to highlight when that type is selected */
 export type RegionHighlightConfig = Record<LocationType, number[]>;
@@ -82,27 +83,89 @@ const REGION_HIGHLIGHT_CONFIG: RegionHighlightConfig = {
   operational: [45, 88, 102, 109, 123, 151, 152],
 };
 
+/** All region path indices to highlight (offices + warehouse-labs + operational) - applied once, never turned off */
+const ALL_REGION_INDICES = Array.from(
+  new Set([
+    ...REGION_HIGHLIGHT_CONFIG.office,
+    ...REGION_HIGHLIGHT_CONFIG["warehouse-lab"],
+    ...REGION_HIGHLIGHT_CONFIG.operational,
+  ])
+);
+
+const MOBILE_BREAKPOINT = 768;
+
+/** Resolve which path indices contain each marker (point-in-polygon). Run once when SVG is ready. */
+function buildMarkerRegionMap(
+  container: HTMLElement
+): Map<string, number[]> {
+  const svg = container.querySelector("svg");
+  const paths = container.querySelectorAll<SVGPathElement>("svg path");
+  if (!svg || paths.length === 0) return new Map();
+  const pt = svg.createSVGPoint();
+  const map = new Map<string, number[]>();
+  for (const marker of MAP_MARKERS) {
+    pt.x = marker.x;
+    pt.y = marker.y;
+    const indices: number[] = [];
+    const candidateIndices = REGION_HIGHLIGHT_CONFIG[marker.type] ?? [];
+    for (const i of candidateIndices) {
+      const path = paths[i];
+      if (path && typeof path.isPointInFill === "function") {
+        try {
+          if (path.isPointInFill(pt)) indices.push(i);
+        } catch {
+          // ignore
+        }
+      }
+    }
+    if (indices.length > 0) map.set(marker.id, indices);
+  }
+  return map;
+}
+
 export const WorldwideMap: React.FC = () => {
   const [activeTypes, setActiveTypes] = useState<Set<LocationType>>(new Set());
-  const [selectedMarkerId, setSelectedMarkerId] = useState<string | null>(null);
+  const [hoveredMarkerId, setHoveredMarkerId] = useState<string | null>(null);
   const mapRef = useRef<HTMLDivElement>(null);
+  const markerRegionMapRef = useRef<Map<string, number[]>>(new Map());
+  const [isMobile, setIsMobile] = useState(false);
 
-  // Apply highlights from config - re-run when selection changes so highlights persist after re-renders
+  useEffect(() => {
+    const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    const fn = () => setIsMobile(mq.matches);
+    fn();
+    mq.addEventListener("change", fn);
+    return () => mq.removeEventListener("change", fn);
+  }, []);
+
+  // Base highlights: always on, never removed. Re-run when hover/selection changes so they persist if DOM updates.
   useEffect(() => {
     const container = mapRef.current;
     if (!container) return;
     const paths = container.querySelectorAll<SVGPathElement>("svg path");
-    paths.forEach((p) => p.classList.remove(HIGHLIGHT_CLASS));
+    if (paths.length === 0) return;
+    markerRegionMapRef.current = buildMarkerRegionMap(container);
+    ALL_REGION_INDICES.forEach((i) => paths[i]?.classList.add(HIGHLIGHT_CLASS));
+  }, [activeTypes, hoveredMarkerId]);
 
-    if (activeTypes.size === 0) return;
-
-    const pathsToHighlight = new Set<number>();
-    for (const type of activeTypes) {
-      const indices = REGION_HIGHLIGHT_CONFIG[type];
-      if (indices?.length) indices.forEach((i) => pathsToHighlight.add(i));
+  // Apply hover highlight only to the region(s) containing the hovered marker.
+  // Only touch paths in ALL_REGION_INDICES to avoid affecting other SVG elements.
+  useEffect(() => {
+    const container = mapRef.current;
+    if (!container) return;
+    const paths = container.querySelectorAll<SVGPathElement>("svg path");
+    // Clear hover from region paths only (not the entire SVG)
+    ALL_REGION_INDICES.forEach((i) => paths[i]?.classList.remove(HOVER_CLASS));
+    if (hoveredMarkerId) {
+      const indices = markerRegionMapRef.current.get(hoveredMarkerId);
+      if (indices?.length) {
+        // Only add to paths that contain this marker and are in our region set
+        indices.forEach((i) => {
+          if (ALL_REGION_INDICES.includes(i)) paths[i]?.classList.add(HOVER_CLASS);
+        });
+      }
     }
-    pathsToHighlight.forEach((i) => paths[i]?.classList.add(HIGHLIGHT_CLASS));
-  }, [activeTypes, selectedMarkerId]);
+  }, [hoveredMarkerId, activeTypes]);
 
   const toggleType = (type: LocationType) => {
     setActiveTypes((prev) => {
@@ -120,9 +183,6 @@ export const WorldwideMap: React.FC = () => {
         <div
           ref={mapRef}
           className="relative rounded-2xl overflow-visible w-full aspect-[1280/800] max-w-[1280px] mx-auto"
-          onClick={(e) => {
-            if (!(e.target as HTMLElement).closest(".map-marker")) setSelectedMarkerId(null);
-          }}
         >
           {/* Map SVG layer - clipped to rounded corners only */}
           <div className="absolute inset-0 rounded-2xl overflow-hidden">
@@ -137,21 +197,22 @@ export const WorldwideMap: React.FC = () => {
           const left = (x / 1280) * 100;
           const top = (y / 800) * 100;
           const hasCardData = (year || country || city) && (type === "office" || type === "warehouse-lab");
-          const isClickable = hasCardData && isActive;
-          const isSelected = hasCardData && id === selectedMarkerId;
+          const isHovered = hasCardData && id === hoveredMarkerId;
+          const isHoverable = isActive && (type === "office" || type === "warehouse-lab" || type === "operational");
           return (
             <div
               key={id}
-              className={`absolute map-marker ${isClickable ? "cursor-pointer" : ""}`}
+              className={`absolute map-marker ${isHoverable ? "cursor-pointer" : ""}`}
               style={{
                 left: `${left}%`,
                 top: `${top}%`,
                 transform: "translate(-50%, -50%)",
-                pointerEvents: isClickable ? "auto" : undefined,
+                pointerEvents: isHoverable ? "auto" : undefined,
               }}
-              onClick={isClickable ? () => setSelectedMarkerId((prev) => (prev === id ? null : id)) : undefined}
+              onMouseEnter={isHoverable ? () => setHoveredMarkerId(id) : undefined}
+              onMouseLeave={isHoverable ? () => setHoveredMarkerId(null) : undefined}
             >
-              {(type === "office" || type === "warehouse-lab") && isSelected && (year || country || city) && (
+              {(type === "office" || type === "warehouse-lab") && isHovered && !isMobile && (year || country || city) && (
                 <div
                   className="office-label-block office-card-animate absolute left-1/2 pointer-events-none flex flex-col items-start gap-1 whitespace-nowrap"
                   style={{
@@ -187,7 +248,7 @@ export const WorldwideMap: React.FC = () => {
                   )}
                 </div>
               )}
-              {(type === "office" || type === "warehouse-lab") && isSelected && (
+              {(type === "office" || type === "warehouse-lab") && isHovered && !isMobile && (
                 <svg
                   className="office-line office-card-animate absolute bottom-1/2 left-1/2 pointer-events-none"
                   viewBox="0 0 337 200"
@@ -208,7 +269,7 @@ export const WorldwideMap: React.FC = () => {
                   />
                 </svg>
               )}
-              {(type === "office" || type === "warehouse-lab") && isSelected && (
+              {(type === "office" || type === "warehouse-lab") && isHovered && !isMobile && (
                 <div
                   className="office-details-block office-card-animate absolute left-1/2 pointer-events-none flex flex-col items-start gap-2"
                   style={{ top: "calc(50% - 181px)", transform: "translate(95px, 0)", minWidth: 240, animationDelay: "160ms" }}
@@ -389,6 +450,116 @@ export const WorldwideMap: React.FC = () => {
       </div>
       </div>
 
+      {/* Mobile list - offices and warehouse-labs open downward when type selected */}
+      {isMobile && (activeTypes.has("office") || activeTypes.has("warehouse-lab")) && (
+        <div className="flex flex-col gap-6 mt-4 md:hidden">
+          {activeTypes.has("office") && (
+            <div className="flex flex-col gap-4">
+              <h3 className="text-[#efeff0] font-medium" style={{ fontFamily: "Inter, sans-serif", fontSize: 18 }}>
+                {LEGEND[0].label}
+              </h3>
+              <div className="flex flex-col gap-4">
+                {MAP_MARKERS.filter((m) => m.type === "office" && (m.year || m.country || m.city))
+                  .map((m) => (
+                    <div
+                      key={m.id}
+                      className="flex flex-col gap-2 p-4 rounded-xl bg-[#1a1a1b] border border-[#2a2a2b]"
+                    >
+                      {m.year && (
+                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: "#CECECF" }}>{m.year}</span>
+                      )}
+                      {(m.country || m.city) && (
+                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 18, fontWeight: 500, color: "#EFEFF0" }}>
+                          {[m.country, m.city].filter(Boolean).join(", ")}
+                        </span>
+                      )}
+                      <div className="rounded overflow-hidden flex-shrink-0 w-full max-w-[240px] aspect-[240/144]">
+                          {m.image ? (
+                            <img src={m.image} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-[#2A2A2B]" />
+                          )}
+                        </div>
+                      {m.address && (
+                        <div className="flex items-start gap-2">
+                          <span className="flex-shrink-0 mt-0.5">
+                            <IconLocation />
+                          </span>
+                          <span style={body3Style} className="whitespace-normal">
+                            {m.address}
+                          </span>
+                        </div>
+                      )}
+                      {m.phone && (
+                        <div className="flex items-start gap-2">
+                          <span className="flex-shrink-0 mt-0.5">
+                            <IconPhone />
+                          </span>
+                          <span style={body3Style} className="whitespace-normal">
+                            {m.phone}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+          {activeTypes.has("warehouse-lab") && (
+            <div className="flex flex-col gap-4">
+              <h3 className="text-[#efeff0] font-medium" style={{ fontFamily: "Inter, sans-serif", fontSize: 18 }}>
+                {LEGEND[1].label}
+              </h3>
+              <div className="flex flex-col gap-4">
+                {MAP_MARKERS.filter((m) => m.type === "warehouse-lab")
+                  .map((m) => (
+                    <div
+                      key={m.id}
+                      className="flex flex-col gap-2 p-4 rounded-xl bg-[#1a1a1b] border border-[#2a2a2b]"
+                    >
+                      {m.year && (
+                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: "#CECECF" }}>{m.year}</span>
+                      )}
+                      {(m.country || m.city) && (
+                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 18, fontWeight: 500, color: "#EFEFF0" }}>
+                          {[m.country, m.city].filter(Boolean).join(", ")}
+                        </span>
+                      )}
+                      <div className="rounded overflow-hidden flex-shrink-0 w-full max-w-[240px] aspect-[240/144]">
+                          {m.image ? (
+                            <img src={m.image} alt="" className="w-full h-full object-cover" />
+                          ) : (
+                            <div className="w-full h-full bg-[#2A2A2B]" />
+                          )}
+                        </div>
+                      {m.address && (
+                        <div className="flex items-start gap-2">
+                          <span className="flex-shrink-0 mt-0.5">
+                            <IconLocation />
+                          </span>
+                          <span style={body3Style} className="whitespace-normal">
+                            {m.address}
+                          </span>
+                        </div>
+                      )}
+                      {m.phone && (
+                        <div className="flex items-start gap-2">
+                          <span className="flex-shrink-0 mt-0.5">
+                            <IconPhone />
+                          </span>
+                          <span style={body3Style} className="whitespace-normal">
+                            {m.phone}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       <style>{`
         @keyframes officeCardFadeIn {
           from { opacity: 0; }
@@ -419,11 +590,23 @@ export const WorldwideMap: React.FC = () => {
         .worldwide-map-inner path {
           transition: fill 0.55s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.55s cubic-bezier(0.22, 1, 0.36, 1);
         }
+        .worldwide-map-inner path.${HIGHLIGHT_CLASS},
+        .worldwide-map-inner path.${HOVER_CLASS} {
+          transition: none;
+        }
         .worldwide-map-inner path.${HIGHLIGHT_CLASS} {
           fill: #2B2C2C;
           stroke: #3D4B1E;
           stroke-width: 1px;
           paint-order: stroke fill;
+        }
+        .worldwide-map-inner path.${HOVER_CLASS} {
+          fill: rgba(153, 194, 33, 0.12);
+          stroke-width: 1px;
+          stroke: var(--Main-Primary-Scale-600, #769A16);
+          opacity: 0.5;
+          paint-order: stroke fill;
+          filter: drop-shadow(0 0 16px rgba(227, 244, 162, 0.12)) drop-shadow(0 0 16px rgba(227, 244, 162, 0.12));
         }
         .legend-icon-slot { width: 20px; min-width: 20px; height: 20px; min-height: 20px; display: flex; align-items: center; justify-content: center; }
         .legend-office { width: 10px; height: 10px; aspect-ratio: 1/1; border-radius: 40px; position: relative; transition: background 0.4s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
