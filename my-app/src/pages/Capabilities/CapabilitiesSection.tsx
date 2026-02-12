@@ -13,51 +13,96 @@ interface CapabilityItem {
   id: string;
   title: string;
   image: string;
-  description: string;
+  description: string | React.ReactNode;
 }
 
 const capabilitiesData: CapabilityItem[] = [
   {
-    id: "testing",
-    title: "Component testing & inspection",
+    id: "inventory",
+    title: "Extensive In-Stock Inventory",
     image: imgTesting,
     description:
-      "Our state-of-the-art testing laboratories perform comprehensive electrical, visual, and X-ray inspections on every component. We verify authenticity, functionality, and compliance with manufacturer specifications to ensure only genuine, quality-tested parts enter your supply chain.",
-  },
-  {
-    id: "warehouse",
-    title: "Warehouse & inventory management",
-    image: imgWarehouse,
-    description:
-      "With strategically located warehouses across the globe, we maintain millions of components in controlled environments. Our advanced inventory management systems provide real-time visibility and enable rapid fulfillment of orders with same-day shipping capabilities.",
+      "We are proud to maintain one of the industry's largest in-house inventories of electronic components – with $100Mn+ worth of parts in stock at any time. This means immediate availability for many critical components, reducing your lead times and keeping your production lines moving. Our status as the largest independent stocking distributor means we likely have what you need on our shelves, ready to ship, even when others don't.",
   },
   {
     id: "global",
-    title: "Global logistics network",
+    title: "Global Reach, Local Support",
+    image: imgWarehouse,
+    description: (
+      <>
+        <p className="mb-4">
+          At Chip 1, our global footprint is more than just geography—it's a strategic advantage for our customers. We deliver personalized service through our regional teams while leveraging our global sourcing power.
+        </p>
+        <div className="flex flex-col gap-3">
+          <div>
+            <p className="font-semibold text-[#e5e5e7] mb-1">North-America</p>
+            <p>
+              We operate distribution hubs in Texas, California, Boston, and Guadalajara, offering 24/7 support to North American OEMs and EMS providers. Local knowledge with fast shipping options and compliance support (ITAR-ready).
+            </p>
+          </div>
+          <div>
+            <p className="font-semibold text-[#e5e5e7] mb-1">Europe</p>
+            <p>
+              From our German HQ to offices in the Netherlands, Italy, Romania and UK, we support European design houses and manufacturers with localized compliance, regional logistics, and multilingual service.
+            </p>
+          </div>
+          <div>
+            <p className="font-semibold text-[#e5e5e7] mb-1">Asia-Pacific</p>
+            <p>
+              With presence in the Philippines, Hong Kong, China and Singapore, we offer sourcing proximity to leading fabs and CMs, enabling shorter lead times and stronger supplier relationships.
+            </p>
+          </div>
+        </div>
+      </>
+    ),
+  },
+  {
+    id: "hybrid",
+    title: "Hybrid Sourcing Model",
     image: imgGlobal,
     description:
-      "Our worldwide logistics infrastructure ensures fast, reliable delivery to any destination. We partner with leading carriers and maintain regional hubs to optimize shipping routes, reduce transit times, and provide flexible delivery options tailored to your needs.",
+      "A key Chip 1 advantage is our hybrid distribution model. We have direct franchised distributor authorizations for select product lines – giving you the confidence of factory-direct supply – while also excelling in open market sourcing for more flexibility. This dual approach means we can fulfill scheduled production orders as an authorized partner when available, or tap into the open market to solve urgent shortages and find cost-saving alternates when needed. It's the best of both worlds: authorized reliability plus brokerage agility.",
   },
   {
-    id: "programming",
-    title: "Device programming services",
+    id: "quality",
+    title: "Quality / Laboratories",
     image: imgProgramming,
     description:
-      "We offer in-house programming services for microcontrollers, FPGAs, and memory devices. Our programming capabilities reduce your time-to-market by delivering ready-to-use components, eliminating the need for additional programming steps in your production process.",
+      "Our commitment to quality isn't just a promise - it's built into our operations. We operate state-of-the-art Quality Control (QC) laboratories on multiple continents, staffed by trained engineers and inspectors. Chip 1 Laboratories are equipped with advanced tools for counterfeit detection and reliability testing (high-powered microscopes, X-ray, XRF analysis, functional test stations, and more). Every part undergoes a strict multi-point inspection process. We are certified to ISO 9001:2015, AS6081 and AS9120B standards for quality management, ANSI/ESD S20.20 for electrostatic discharge control, and we are ITAR-registered for handling defense-related components. Our memberships and certifications (including ERAI and others) mean you can trust our components to meet the highest industry standards for authenticity and performance.",
   },
   {
-    id: "packaging",
-    title: "Custom packaging & kitting",
+    id: "logistics",
+    title: "Scalable Logistics & Fast Delivery",
     image: imgPackaging,
     description:
-      "From tape and reel conversion to custom kitting solutions, we prepare components exactly how you need them. Our packaging services optimize your production line efficiency and reduce handling costs while maintaining component integrity.",
+      "With multiple warehouse locations and logistics centers, we can scale to handle orders of any size – from small batch prototypes to massive production runs. Our logistics processes are optimized for speed and accuracy, offering services like just-in-time delivery, drop shipments, and consolidated invoicing to streamline your operations. We partner with reliable global carriers and manage all customs/export compliance (backed by our ITAR registration and knowledge of international trade regulations) so that your parts arrive on time and hassle-free.",
   },
   {
-    id: "reporting",
-    title: "Market intelligence & reporting",
+    id: "warehouse",
+    title: "Warehouse",
     image: imgReporting,
-    description:
-      "Stay ahead with our comprehensive market intelligence services. We provide detailed reports on component availability, pricing trends, and supply chain risks, empowering you to make informed procurement decisions and plan strategically for the future.",
+    description: (
+      <>
+        <p className="mb-4">
+          A true differentiator in the independent distribution landscape, Chip 1's Warehousing Capability offers OEMs a smarter way to manage their global inventory — without the hassle.
+        </p>
+        <p className="mb-4">
+          Here's how it works: OEMs store their strategic inventory directly within one of Chip 1's secure, climate-controlled global warehouses. As soon as any of their approved EMS or CM partners need access to specific parts, Chip 1 handles the entire fulfillment process — from part release and packaging to delivery and full documentation. We even integrate directly with the OEM's ERP system to ensure real-time inventory visibility, traceability, and audit compliance.
+        </p>
+        <p className="mb-4">
+          With this model, OEMs gain:
+        </p>
+        <ul className="list-disc list-inside space-y-2 mb-4">
+          <li>Centralized inventory control across global production sites</li>
+          <li>Faster, more reliable part delivery to manufacturing partners</li>
+          <li>ERP-integrated documentation and tracking for compliance and planning</li>
+          <li>Reduced logistics overhead, warehousing cost, and coordination burden</li>
+        </ul>
+        <p>
+          This white-glove service ensures precision logistics at scale, backed by Chip 1's fulfillment expertise and global reach. For customers, it's the best of both worlds — centralized inventory with decentralized fulfillment agility. Few in the industry offer anything comparable.
+        </p>
+      </>
+    ),
   },
 ];
 
@@ -182,12 +227,16 @@ export const CapabilitiesSection: React.FC = () => {
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <p
+                      <div
                         className="text-[14px] text-[#cececf] leading-[1.5] text-left"
                         style={{ fontFamily: "'Inter', sans-serif" }}
                       >
-                        {capability.description}
-                      </p>
+                        {typeof capability.description === "string" ? (
+                          <p>{capability.description}</p>
+                        ) : (
+                          capability.description
+                        )}
+                      </div>
                     </div>
                   )}
                 </div>
@@ -228,31 +277,30 @@ export const CapabilitiesSection: React.FC = () => {
               ))}
             </div>
 
-            {/* Text Content */}
-            <div className="flex flex-col gap-4 relative min-h-[120px]">
-              {capabilitiesData.map((capability, index) => (
-                <div
-                  key={capability.id}
-                  className="absolute inset-0 flex flex-col gap-4 transition-opacity duration-500 ease-in-out"
-                  style={{
-                    opacity: index === activeIndex ? 1 : 0,
-                    pointerEvents: index === activeIndex ? "auto" : "none",
-                  }}
-                >
-                  <h3
-                    className="text-[32px] font-semibold text-[#e5e5e7] leading-[1.4]"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                  >
-                    {capability.title}
-                  </h3>
-                  <p
-                    className="text-base text-[#cececf] leading-[1.5]"
-                    style={{ fontFamily: "'Inter', sans-serif" }}
-                  >
-                    {capability.description}
-                  </p>
-                </div>
-              ))}
+            {/* Text Content - expands to fit, no scroll */}
+            <div className="flex flex-col gap-4">
+              {capabilitiesData.map((capability, index) =>
+                index === activeIndex ? (
+                  <React.Fragment key={capability.id}>
+                    <h3
+                      className="text-[32px] font-semibold text-[#e5e5e7] leading-[1.4]"
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      {capability.title}
+                    </h3>
+                    <div
+                      className="text-base text-[#cececf] leading-[1.5]"
+                      style={{ fontFamily: "'Inter', sans-serif" }}
+                    >
+                      {typeof capability.description === "string" ? (
+                        <p>{capability.description}</p>
+                      ) : (
+                        capability.description
+                      )}
+                    </div>
+                  </React.Fragment>
+                ) : null
+              )}
             </div>
           </div>
         </div>

@@ -1,35 +1,37 @@
 @import "tailwindcss";
 
-/* Video container */
+/* Video container - scrolls with content */
 .video-container {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
+  position: relative;
+  width: 100%;
   height: 100vh;
-  z-index: -1;
   overflow: hidden;
-  max-width: 100vw;
+  flex-shrink: 0;
+}
+
+/* Hero variant - fills parent when used with top offset */
+.video-container--hero {
+  height: 100%;
 }
 
 .video-background {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  /* Hardware acceleration for smoother playback */
   transform: translateZ(0);
   will-change: transform;
   backface-visibility: hidden;
 }
 
-/* Bottom gradient fade for video - using a real div since ::after doesn't work on <video> */
+/* Gradient overlay - matches hero sections across the site */
 .video-gradient-overlay {
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 300px;
-  background: linear-gradient(to bottom, transparent, #0e0e0f);
+  inset: 0;
+  background-image:
+    linear-gradient(212.915deg, rgba(14, 14, 15, 0) 44.565%, rgba(14, 14, 15, 0.7) 78.124%),
+    linear-gradient(rgba(14, 14, 15, 0.08) 19.492%, rgba(14, 14, 15, 0.7) 77.657%, rgb(14, 14, 15) 100%);
   pointer-events: none;
 }
 

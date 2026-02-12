@@ -13,7 +13,7 @@ interface ValueCardProps {
 
 const ValueCard: React.FC<ValueCardProps> = ({ title, description, image }) => {
   return (
-    <div className="relative w-full h-[260px] md:w-auto md:h-[363px] rounded-2xl overflow-hidden flex flex-col justify-end p-4 md:p-6">
+    <div className="relative w-full flex-1 min-w-0 h-[260px] md:h-[363px] rounded-2xl overflow-hidden flex flex-col justify-end p-4 md:p-6">
       {/* Background Image */}
       <div className="absolute inset-0 pointer-events-none">
         <img
