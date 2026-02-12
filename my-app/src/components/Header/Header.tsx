@@ -268,9 +268,9 @@ export const Header: React.FC = () => {
 
             {/* Navigation menu - scrollable */}
             <nav className="flex-1 w-full px-6 py-8 flex flex-col gap-6">
-              {[...navItems, { label: "Careers", href: "/careers" }].map((item) => {
+              {[...navItems.filter((i) => i.label !== "Contact Us"), { label: "Contact Us", href: "/contact" }, { label: "Careers", href: "/careers" }].map((item) => {
                 const isActive = item.href.startsWith("/") && location.pathname === item.href;
-                return item.href.startsWith("/") ? (
+                return (
                   <Link
                     key={item.label}
                     to={item.href}
@@ -282,16 +282,6 @@ export const Header: React.FC = () => {
                   >
                     {item.label}
                   </Link>
-                ) : (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="text-xl text-[#e5e5e7]"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                  >
-                    {item.label}
-                  </a>
                 );
               })}
             </nav>

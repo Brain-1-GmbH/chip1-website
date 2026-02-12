@@ -23,7 +23,7 @@ export const PerformanceSection: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 flex-1">
             {/* Card 1: 50+ Countries served */}
             <div
-              className="flex flex-col justify-between items-start rounded-2xl p-6 self-stretch"
+              className="flex flex-col justify-between items-start rounded-2xl p-6 self-stretch md:order-1"
               style={{
                 height: "214px",
                 background: "#1D1D21",
@@ -36,7 +36,7 @@ export const PerformanceSection: React.FC = () => {
                 50+
               </span>
               <div className="flex flex-col gap-2">
-                <p className="text-[#cececf] text-base font-medium">
+                <p className="text-[#cececf] text-[20px] md:text-base font-medium">
                   Countries served
                 </p>
                 <p className="text-[#858586] text-sm">
@@ -47,7 +47,7 @@ export const PerformanceSection: React.FC = () => {
 
             {/* Card 2: $100M+ Inventory in stock */}
             <div
-              className="flex flex-col justify-between items-start rounded-2xl p-6"
+              className="flex flex-col justify-between items-start rounded-2xl p-6 md:order-2"
               style={{
                 height: "250px",
                 background: "#99C221",
@@ -61,7 +61,7 @@ export const PerformanceSection: React.FC = () => {
               </span>
               <div className="flex flex-col gap-2">
                 <p
-                  className="text-[#05080D] text-xl font-medium"
+                  className="text-[#05080D] text-[20px] md:text-xl font-medium"
                   style={{
                     fontFamily: "'Plus Jakarta Sans', sans-serif",
                     lineHeight: "140%",
@@ -83,7 +83,7 @@ export const PerformanceSection: React.FC = () => {
 
             {/* Card 3: 1M+ Orders shipped */}
             <div
-              className="p-[1px] rounded-2xl self-stretch"
+              className="p-[1px] rounded-2xl self-stretch md:order-3"
               style={{
                 background: "linear-gradient(to bottom, #0E0E0F, #333333)",
               }}
@@ -101,7 +101,7 @@ export const PerformanceSection: React.FC = () => {
                   1M+
                 </span>
                 <div className="flex flex-col gap-2">
-                  <p className="text-[#CECECF] text-base font-medium">
+                  <p className="text-[#CECECF] text-[20px] md:text-base font-medium">
                     Orders shipped
                   </p>
                   <p className="text-[#858586] text-sm">
@@ -113,7 +113,7 @@ export const PerformanceSection: React.FC = () => {
 
             {/* Card 4: 20+ Years of experience */}
             <div
-              className="flex flex-col justify-between items-start rounded-2xl p-6"
+              className="flex flex-col justify-between items-start rounded-2xl p-6 md:order-4"
               style={{
                 height: "195px",
                 background: "#1D1D21",
@@ -126,7 +126,7 @@ export const PerformanceSection: React.FC = () => {
                 20+
               </span>
               <div className="flex flex-col gap-2">
-                <p className="text-[#cececf] text-base font-medium">
+                <p className="text-[#cececf] text-[20px] md:text-base font-medium">
                   Years of experience
                 </p>
                 <p className="text-[#858586] text-sm">
@@ -136,7 +136,7 @@ export const PerformanceSection: React.FC = () => {
             </div>
 
             {/* Team Photo */}
-            <div className="rounded-2xl overflow-hidden self-stretch" style={{ height: "214px" }}>
+            <div className="rounded-2xl overflow-hidden self-stretch order-first md:order-5" style={{ height: "214px" }}>
               <img
                 src={teamPhoto}
                 alt="Team Spirit"
@@ -146,7 +146,7 @@ export const PerformanceSection: React.FC = () => {
 
             {/* Card 5: 100+ Global suppliers */}
             <div
-              className="p-[1px] rounded-2xl self-stretch"
+              className="p-[1px] rounded-2xl self-stretch md:order-6"
               style={{
                 background: "linear-gradient(to bottom, #0E0E0F, #333333)",
               }}
@@ -164,9 +164,9 @@ export const PerformanceSection: React.FC = () => {
                   100+
                 </span>
                 <div className="flex flex-col gap-2">
-                  <p className="text-[#CECECF] text-base font-medium">
-                    Global suppliers
-                  </p>
+<p className="text-[#CECECF] text-[20px] md:text-base font-medium">
+                  Global suppliers
+                </p>
                   <p className="text-[#858586] text-sm">
                     Trusted partnerships ensuring flexible and secure sourcing.
                   </p>

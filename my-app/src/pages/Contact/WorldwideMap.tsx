@@ -21,6 +21,14 @@ const IconPhone = () => (
   </svg>
 );
 
+const IconChevronAccordion = () => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="30" height="30" viewBox="0 0 30 30" fill="none" className="shrink-0">
+    <path d="M7.22117 15.5547L2.07497 23.3097C1.87917 23.6048 2.08971 24 2.4427 24C2.55188 24 2.6572 23.9594 2.73835 23.886L11.7442 15.7433C12.1835 15.3461 12.1835 14.6539 11.7442 14.2567L2.73835 6.11398C2.6572 6.0406 2.55188 6 2.4427 6C2.08971 6 1.87917 6.39522 2.07497 6.69029L7.22117 14.4453C7.44407 14.7812 7.44407 15.2188 7.22117 15.5547Z" fill="#99C221"/>
+    <path d="M15.1843 15.5547L10.0381 23.3097C9.84233 23.6048 10.0529 24 10.4059 24C10.515 24 10.6204 23.9594 10.7015 23.886L19.7073 15.7433C20.1467 15.3461 20.1467 14.6539 19.7073 14.2567L10.7015 6.11398C10.6204 6.0406 10.515 6 10.4059 6C10.0529 6 9.84233 6.39522 10.0381 6.69029L15.1843 14.4453C15.4072 14.7812 15.4072 15.2188 15.1843 15.5547Z" fill="#99C221"/>
+    <path d="M23.1475 15.5547L18.0013 23.3097C17.8055 23.6048 18.016 24 18.369 24C18.4782 24 18.5835 23.9594 18.6647 23.886L27.6705 15.7433C28.1098 15.3461 28.1098 14.6539 27.6705 14.2567L18.6647 6.11398C18.5835 6.0406 18.4782 6 18.369 6C18.016 6 17.8055 6.39522 18.0013 6.69029L23.1475 14.4453C23.3704 14.7812 23.3704 15.2188 23.1475 15.5547Z" fill="#99C221"/>
+  </svg>
+);
+
 export type MapMarker = {
   id: string;
   type: LocationType;
@@ -68,6 +76,17 @@ const MAP_MARKERS: MapMarker[] = [
   { id: "m-1770813975268-3t1pc9", type: "operational", x: 881, y: 327 },
   { id: "m-1770813982102-pj22yf", type: "operational", x: 1071, y: 493 },
   { id: "m-1770813984768-24s644", type: "operational", x: 1211, y: 570 },
+];
+
+/** Countries with operational regions - displayed as static list on mobile */
+const OPERATIONAL_REGION_COUNTRIES = [
+  "Canada",
+  "Brazil",
+  "Colombia",
+  "India",
+  "New Zealand",
+  "Australia",
+  "UAE",
 ];
 
 const HIGHLIGHT_CLASS = "region-highlighted";
@@ -129,6 +148,8 @@ export const WorldwideMap: React.FC = () => {
   const mapRef = useRef<HTMLDivElement>(null);
   const markerRegionMapRef = useRef<Map<string, number[]>>(new Map());
   const [isMobile, setIsMobile] = useState(false);
+  const [expandedOfficeIndex, setExpandedOfficeIndex] = useState(0);
+  const [expandedWarehouseIndex, setExpandedWarehouseIndex] = useState(0);
 
   useEffect(() => {
     const mq = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
@@ -138,19 +159,26 @@ export const WorldwideMap: React.FC = () => {
     return () => mq.removeEventListener("change", fn);
   }, []);
 
-  // Base highlights: always on, never removed. Re-run when hover/selection changes so they persist if DOM updates.
+  // Base highlights: desktop only. On mobile, no region highlighting.
   useEffect(() => {
     const container = mapRef.current;
     if (!container) return;
     const paths = container.querySelectorAll<SVGPathElement>("svg path");
     if (paths.length === 0) return;
-    markerRegionMapRef.current = buildMarkerRegionMap(container);
-    ALL_REGION_INDICES.forEach((i) => paths[i]?.classList.add(HIGHLIGHT_CLASS));
-  }, [activeTypes, hoveredMarkerId]);
+    if (!isMobile) {
+      markerRegionMapRef.current = buildMarkerRegionMap(container);
+      ALL_REGION_INDICES.forEach((i) => paths[i]?.classList.add(HIGHLIGHT_CLASS));
+    } else {
+      ALL_REGION_INDICES.forEach((i) => {
+        paths[i]?.classList.remove(HIGHLIGHT_CLASS);
+        paths[i]?.classList.remove(HOVER_CLASS);
+      });
+    }
+  }, [activeTypes, hoveredMarkerId, isMobile]);
 
-  // Apply hover highlight only to the region(s) containing the hovered marker.
-  // Only touch paths in ALL_REGION_INDICES to avoid affecting other SVG elements.
+  // Apply hover highlight only to the region(s) containing the hovered marker (desktop only).
   useEffect(() => {
+    if (isMobile) return;
     const container = mapRef.current;
     if (!container) return;
     const paths = container.querySelectorAll<SVGPathElement>("svg path");
@@ -165,10 +193,14 @@ export const WorldwideMap: React.FC = () => {
         });
       }
     }
-  }, [hoveredMarkerId, activeTypes]);
+  }, [hoveredMarkerId, activeTypes, isMobile]);
 
   const toggleType = (type: LocationType) => {
     setActiveTypes((prev) => {
+      if (isMobile) {
+        if (prev.has(type) && prev.size === 1) return new Set();
+        return new Set([type]);
+      }
       const next = new Set(prev);
       if (next.has(type)) next.delete(type);
       else next.add(type);
@@ -176,8 +208,10 @@ export const WorldwideMap: React.FC = () => {
     });
   };
 
+  const hasNoActiveTab = isMobile && activeTypes.size === 0;
+
   return (
-    <div className="w-full flex flex-col gap-6 overflow-visible">
+    <div className={`w-full flex flex-col gap-6 ${hasNoActiveTab ? "overflow-hidden" : "overflow-visible"}`}>
       {/* Extra padding so office cards and lines aren't clipped at edges */}
       <div className="overflow-visible py-16 px-8 sm:py-24 sm:px-16 -my-16 -mx-8 sm:-my-24 sm:-mx-16">
         <div
@@ -193,6 +227,7 @@ export const WorldwideMap: React.FC = () => {
           </div>
           {/* Map markers - can overflow, no clipping */}
         {MAP_MARKERS.map(({ id, type, x, y, year, country, city, image, address, phone }) => {
+          if (isMobile && !activeTypes.has(type)) return null;
           const isActive = activeTypes.has(type);
           const left = (x / 1280) * 100;
           const top = (y / 800) * 100;
@@ -311,7 +346,7 @@ export const WorldwideMap: React.FC = () => {
                   className={`legend-office map-marker-office ${isActive ? "legend-office--active" : "legend-office--inactive"}`}
                 />
               )}
-              {type === "warehouse-lab" && (
+              {type === "warehouse-lab" && !isMobile && (
                 <div className="legend-warehouse map-marker-warehouse">
                   <svg width="12" height="10" viewBox="-8 -8 31 31" fill="none" preserveAspectRatio="xMidYMid meet">
                     {isActive ? (
@@ -358,7 +393,12 @@ export const WorldwideMap: React.FC = () => {
                   </svg>
                 </div>
               )}
-              {type === "operational" && (
+              {type === "warehouse-lab" && isMobile && (
+                <div
+                  className={`legend-office map-marker-office ${isActive ? "legend-office--active" : "legend-office--inactive"}`}
+                />
+              )}
+              {type === "operational" && !isMobile && (
                 <div className={`legend-operational map-marker-operational ${isActive ? "legend-operational--active" : "legend-operational--inactive"}`}>
                   <svg width="20" height="20" viewBox="0 0 20 20" fill="none" className="legend-operational-ring">
                     <circle cx="10" cy="10" r="9.5" stroke={isActive ? "#99C221" : "#8E8E8F"} strokeWidth="1" fill="none" strokeDasharray="10.7 4.2 10.7 4.2 10.7 4.2 10.7 4.2" strokeDashoffset="4.95" />
@@ -373,13 +413,18 @@ export const WorldwideMap: React.FC = () => {
                   />
                 </div>
               )}
+              {type === "operational" && isMobile && (
+                <div
+                  className={`legend-office map-marker-office ${isActive ? "legend-office--active" : "legend-office--inactive"}`}
+                />
+              )}
             </div>
           );
         })}
 
-        {/* Legend */}
+        {/* Legend - desktop: inside map; mobile: below map */}
         <div
-          className="absolute bottom-6 left-6 flex flex-col gap-4"
+          className="absolute bottom-6 left-6 hidden md:flex flex-col gap-4"
           style={{ fontFamily: "Inter, sans-serif" }}
         >
           <button
@@ -448,113 +493,235 @@ export const WorldwideMap: React.FC = () => {
           </button>
         </div>
       </div>
+
+      {/* Mobile legend - text in one row, centered */}
+      <div
+        className="flex md:hidden items-center justify-center gap-1 self-stretch mt-4 flex-nowrap"
+        style={{ fontFamily: "Inter, sans-serif" }}
+      >
+        {LEGEND.map(({ type, label }) => (
+          <button
+            key={type}
+            type="button"
+            onClick={() => toggleType(type)}
+            className={`flex items-center justify-center py-1 px-3 rounded-[24px] transition-all cursor-pointer whitespace-nowrap shrink-0 ${
+              activeTypes.has(type)
+                ? "border border-[#99C221] bg-[#0E0E0F] text-white"
+                : "border border-transparent bg-transparent text-[#CECECF] opacity-70"
+            }`}
+            style={{ fontSize: 16, minHeight: 32 }}
+          >
+            {label}
+          </button>
+        ))}
+      </div>
       </div>
 
-      {/* Mobile list - offices and warehouse-labs open downward when type selected */}
-      {isMobile && (activeTypes.has("office") || activeTypes.has("warehouse-lab")) && (
-        <div className="flex flex-col gap-6 mt-4 md:hidden">
-          {activeTypes.has("office") && (
-            <div className="flex flex-col gap-4">
-              <h3 className="text-[#efeff0] font-medium" style={{ fontFamily: "Inter, sans-serif", fontSize: 18 }}>
-                {LEGEND[0].label}
-              </h3>
-              <div className="flex flex-col gap-4">
-                {MAP_MARKERS.filter((m) => m.type === "office" && (m.year || m.country || m.city))
-                  .map((m) => (
-                    <div
-                      key={m.id}
-                      className="flex flex-col gap-2 p-4 rounded-xl bg-[#1a1a1b] border border-[#2a2a2b]"
-                    >
-                      {m.year && (
-                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: "#CECECF" }}>{m.year}</span>
-                      )}
-                      {(m.country || m.city) && (
-                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 18, fontWeight: 500, color: "#EFEFF0" }}>
-                          {[m.country, m.city].filter(Boolean).join(", ")}
-                        </span>
-                      )}
-                      <div className="rounded overflow-hidden flex-shrink-0 w-full max-w-[240px] aspect-[240/144]">
-                          {m.image ? (
-                            <img src={m.image} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full bg-[#2A2A2B]" />
-                          )}
+      {/* Mobile list - accordion for offices and warehouse-labs */}
+      {isMobile && (activeTypes.has("office") || activeTypes.has("warehouse-lab") || activeTypes.has("operational")) && (
+        <div className="flex flex-col md:hidden" style={{ marginTop: 20 }}>
+          {activeTypes.has("office") && (() => {
+            const offices = MAP_MARKERS.filter((m) => m.type === "office" && (m.year || m.country || m.city));
+            return (
+              <div className="flex flex-col">
+                <div className="flex flex-col w-full max-w-[343px] accordion-list gap-2">
+                  {offices.map((m, idx) => {
+                    const isExpanded = expandedOfficeIndex === idx;
+                    return (
+                      <div key={m.id} className="flex flex-col accordion-item">
+                        {!isExpanded && (
+                          <button
+                            type="button"
+                            onClick={() => setExpandedOfficeIndex(idx)}
+                            className="flex w-full max-w-[343px] py-3 px-4 justify-between items-center cursor-pointer text-left gap-2"
+                            style={{
+                              borderRadius: "0 0 16px 16px",
+                              borderRight: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                              borderBottom: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                              borderLeft: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                              borderTop: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                            }}
+                          >
+                            {(m.country || m.city) && (
+                              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 20, fontWeight: 500, color: "#EFEFF0" }} className="truncate flex-1 min-w-0 text-left">
+                                {[m.country, m.city].filter(Boolean).join(", ")}
+                              </span>
+                            )}
+                            <IconChevronAccordion />
+                          </button>
+                        )}
+                        <div
+                          className="accordion-body"
+                          style={{ gridTemplateRows: isExpanded ? "1fr" : "0fr" }}
+                        >
+                          <div className="accordion-body-inner">
+                            <div
+                              className="flex flex-col items-start self-stretch"
+                              style={{
+                                padding: 16,
+                                gap: 8,
+                                borderRadius: 16,
+                                border: "1px solid var(--Main-Primary-Scale-600, #769A16)",
+                              }}
+                            >
+                              {m.image ? (
+                                <div className="rounded overflow-hidden flex-shrink-0 w-full max-w-[240px] aspect-[240/144]">
+                                  <img src={m.image} alt="" className="w-full h-full object-cover" />
+                                </div>
+                              ) : (
+                                <div className="rounded overflow-hidden flex-shrink-0 w-full max-w-[240px] aspect-[240/144] bg-[#2A2A2B]" />
+                              )}
+                              {m.year && (
+                                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 16, color: "#CECECF" }}>{m.year}</span>
+                              )}
+                              {(m.country || m.city) && (
+                                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 20, fontWeight: 500, color: "#EFEFF0" }}>
+                                  {[m.country, m.city].filter(Boolean).join(", ")}
+                                </span>
+                              )}
+                              {m.address && (
+                                <div className="flex items-start gap-2">
+                                  <span className="flex-shrink-0 mt-0.5">
+                                    <IconLocation />
+                                  </span>
+                                  <span style={{ ...body3Style, fontSize: 16 }} className="whitespace-normal">
+                                    {m.address}
+                                  </span>
+                                </div>
+                              )}
+                              {m.phone && (
+                                <div className="flex items-start gap-2">
+                                  <span className="flex-shrink-0 mt-0.5">
+                                    <IconPhone />
+                                  </span>
+                                  <span style={{ ...body3Style, fontSize: 16 }} className="whitespace-normal">
+                                    {m.phone}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      {m.address && (
-                        <div className="flex items-start gap-2">
-                          <span className="flex-shrink-0 mt-0.5">
-                            <IconLocation />
-                          </span>
-                          <span style={body3Style} className="whitespace-normal">
-                            {m.address}
-                          </span>
-                        </div>
-                      )}
-                      {m.phone && (
-                        <div className="flex items-start gap-2">
-                          <span className="flex-shrink-0 mt-0.5">
-                            <IconPhone />
-                          </span>
-                          <span style={body3Style} className="whitespace-normal">
-                            {m.phone}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
-            </div>
-          )}
-          {activeTypes.has("warehouse-lab") && (
-            <div className="flex flex-col gap-4">
-              <h3 className="text-[#efeff0] font-medium" style={{ fontFamily: "Inter, sans-serif", fontSize: 18 }}>
-                {LEGEND[1].label}
-              </h3>
-              <div className="flex flex-col gap-4">
-                {MAP_MARKERS.filter((m) => m.type === "warehouse-lab")
-                  .map((m) => (
-                    <div
-                      key={m.id}
-                      className="flex flex-col gap-2 p-4 rounded-xl bg-[#1a1a1b] border border-[#2a2a2b]"
-                    >
-                      {m.year && (
-                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 14, color: "#CECECF" }}>{m.year}</span>
-                      )}
-                      {(m.country || m.city) && (
-                        <span style={{ fontFamily: "Inter, sans-serif", fontSize: 18, fontWeight: 500, color: "#EFEFF0" }}>
-                          {[m.country, m.city].filter(Boolean).join(", ")}
-                        </span>
-                      )}
-                      <div className="rounded overflow-hidden flex-shrink-0 w-full max-w-[240px] aspect-[240/144]">
-                          {m.image ? (
-                            <img src={m.image} alt="" className="w-full h-full object-cover" />
-                          ) : (
-                            <div className="w-full h-full bg-[#2A2A2B]" />
-                          )}
+            );
+          })()}
+          {activeTypes.has("warehouse-lab") && (() => {
+            const warehouses = MAP_MARKERS.filter((m) => m.type === "warehouse-lab");
+            return (
+              <div className="flex flex-col">
+                <div className="flex flex-col w-full max-w-[343px] accordion-list gap-2">
+                  {warehouses.map((m, idx) => {
+                    const isExpanded = expandedWarehouseIndex === idx;
+                    return (
+                      <div key={m.id} className="flex flex-col accordion-item">
+                        {!isExpanded && (
+                          <button
+                            type="button"
+                            onClick={() => setExpandedWarehouseIndex(idx)}
+                            className="flex w-full max-w-[343px] py-3 px-4 justify-between items-center cursor-pointer text-left gap-2"
+                            style={{
+                              borderRadius: "0 0 16px 16px",
+                              borderRight: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                              borderBottom: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                              borderLeft: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                              borderTop: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                            }}
+                          >
+                            {(m.country || m.city) && (
+                              <span style={{ fontFamily: "Inter, sans-serif", fontSize: 20, fontWeight: 500, color: "#EFEFF0" }} className="truncate flex-1 min-w-0 text-left">
+                                {[m.country, m.city].filter(Boolean).join(", ")}
+                              </span>
+                            )}
+                            <IconChevronAccordion />
+                          </button>
+                        )}
+                        <div
+                          className="accordion-body"
+                          style={{ gridTemplateRows: isExpanded ? "1fr" : "0fr" }}
+                        >
+                          <div className="accordion-body-inner">
+                            <div
+                              className="flex flex-col items-start self-stretch"
+                              style={{
+                                padding: 16,
+                                gap: 8,
+                                borderRadius: 16,
+                                border: "1px solid var(--Main-Primary-Scale-600, #769A16)",
+                              }}
+                            >
+                              {m.image ? (
+                                <div className="rounded overflow-hidden flex-shrink-0 w-full max-w-[240px] aspect-[240/144]">
+                                  <img src={m.image} alt="" className="w-full h-full object-cover" />
+                                </div>
+                              ) : (
+                                <div className="rounded overflow-hidden flex-shrink-0 w-full max-w-[240px] aspect-[240/144] bg-[#2A2A2B]" />
+                              )}
+                              {m.year && (
+                                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 16, color: "#CECECF" }}>{m.year}</span>
+                              )}
+                              {(m.country || m.city) && (
+                                <span style={{ fontFamily: "Inter, sans-serif", fontSize: 20, fontWeight: 500, color: "#EFEFF0" }}>
+                                  {[m.country, m.city].filter(Boolean).join(", ")}
+                                </span>
+                              )}
+                              {m.address && (
+                                <div className="flex items-start gap-2">
+                                  <span className="flex-shrink-0 mt-0.5">
+                                    <IconLocation />
+                                  </span>
+                                  <span style={{ ...body3Style, fontSize: 16 }} className="whitespace-normal">
+                                    {m.address}
+                                  </span>
+                                </div>
+                              )}
+                              {m.phone && (
+                                <div className="flex items-start gap-2">
+                                  <span className="flex-shrink-0 mt-0.5">
+                                    <IconPhone />
+                                  </span>
+                                  <span style={{ ...body3Style, fontSize: 16 }} className="whitespace-normal">
+                                    {m.phone}
+                                  </span>
+                                </div>
+                              )}
+                            </div>
+                          </div>
                         </div>
-                      {m.address && (
-                        <div className="flex items-start gap-2">
-                          <span className="flex-shrink-0 mt-0.5">
-                            <IconLocation />
-                          </span>
-                          <span style={body3Style} className="whitespace-normal">
-                            {m.address}
-                          </span>
-                        </div>
-                      )}
-                      {m.phone && (
-                        <div className="flex items-start gap-2">
-                          <span className="flex-shrink-0 mt-0.5">
-                            <IconPhone />
-                          </span>
-                          <span style={body3Style} className="whitespace-normal">
-                            {m.phone}
-                          </span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+                      </div>
+                    );
+                  })}
+                </div>
               </div>
+            );
+          })()}
+          {activeTypes.has("operational") && (
+            <div className="flex flex-col w-full max-w-[343px] gap-2">
+              {OPERATIONAL_REGION_COUNTRIES.map((country) => (
+                <div
+                  key={country}
+                  className="flex w-full max-w-[343px] py-3 px-4 justify-between items-center"
+                  style={{
+                    borderRadius: 16,
+                    border: "1px solid var(--Main-Gray-Scale-800, #1C1D22)",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: "Inter, sans-serif",
+                      fontSize: 20,
+                      fontWeight: 500,
+                      color: "#EFEFF0",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    {country}
+                  </span>
+                </div>
+              ))}
             </div>
           )}
         </div>
@@ -629,6 +796,22 @@ export const WorldwideMap: React.FC = () => {
         .map-marker-operational { width: 14px; height: 14px; }
         .map-marker-operational .legend-operational-ring { width: 14px; height: 14px; }
         .map-marker-operational .legend-operational-dot { width: 5px; height: 5px; }
+        @media (max-width: 767px) {
+          .map-marker-office { width: 8px; height: 8px; }
+          .map-marker-warehouse svg { width: 18px; height: 15px; }
+          .map-marker-operational { width: 8px; height: 8px; }
+          .map-marker-operational .legend-operational-ring { width: 8px; height: 8px; }
+          .map-marker-operational .legend-operational-dot { width: 3px; height: 3px; }
+        .accordion-body {
+          display: grid;
+          grid-template-rows: 0fr;
+          transition: grid-template-rows 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .accordion-body-inner {
+          overflow: hidden;
+          min-height: 0;
+        }
+        }
       `}</style>
     </div>
   );

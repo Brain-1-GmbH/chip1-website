@@ -7,7 +7,7 @@ export const WorldwideLocationsSection: React.FC = () => {
       <div className="max-w-[1280px] mx-auto px-4 md:px-[80px] overflow-visible">
         <h2
           className="text-[32px] md:text-5xl font-semibold text-[#efeff0] text-left"
-          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", marginBottom: 40 }}
+          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", marginBottom: 96 }}
         >
           Worldwide Locations
         </h2>

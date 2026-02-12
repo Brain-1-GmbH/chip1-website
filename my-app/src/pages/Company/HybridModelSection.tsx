@@ -55,54 +55,6 @@ export const HybridModelSection: React.FC = () => {
 
           {/* Center - Chip Illustration */}
           <div className="order-1 md:order-none relative flex items-center justify-center">
-            {/* Left curved arrow */}
-            <svg
-              className="hidden md:block absolute -left-[120px] top-1/2 -translate-y-1/2"
-              width="140"
-              height="300"
-              viewBox="0 0 140 300"
-              fill="none"
-            >
-              <path
-                d="M140 150 Q 20 150, 20 50 Q 20 0, 60 0"
-                stroke="#99c221"
-                strokeWidth="1"
-                fill="none"
-                strokeDasharray="4 4"
-              />
-              <path
-                d="M140 150 Q 20 150, 20 250 Q 20 300, 60 300"
-                stroke="#99c221"
-                strokeWidth="1"
-                fill="none"
-                strokeDasharray="4 4"
-              />
-            </svg>
-
-            {/* Right curved arrow */}
-            <svg
-              className="hidden md:block absolute -right-[120px] top-1/2 -translate-y-1/2"
-              width="140"
-              height="300"
-              viewBox="0 0 140 300"
-              fill="none"
-            >
-              <path
-                d="M0 150 Q 120 150, 120 50 Q 120 0, 80 0"
-                stroke="#99c221"
-                strokeWidth="1"
-                fill="none"
-                strokeDasharray="4 4"
-              />
-              <path
-                d="M0 150 Q 120 150, 120 250 Q 120 300, 80 300"
-                stroke="#99c221"
-                strokeWidth="1"
-                fill="none"
-                strokeDasharray="4 4"
-              />
-            </svg>
-
             {/* Chip Image */}
             <div className="scale-75 md:scale-100 flex items-center justify-center">
               <img
