@@ -53,22 +53,21 @@ const body3Style: React.CSSProperties = {
 
 /** Map marker positions (x, y) in 1280×800 coordinate space */
 const MAP_MARKERS: MapMarker[] = [
-  { id: "m-1770813593350-u1i0ta", type: "office", x: 960, y: 397, year: "2025", country: "Singapore", city: "Singapore", image: "/offices/office-singapore.png", address: "21 Woodlands Close #04-30, Primz Bizhub, Singapore 737854", phone: "+49 6102 8169 0" },
-  { id: "m-1770813606417-ehuagt", type: "office", x: 1025, y: 353, year: "2024", country: "South Korea", city: "Seoul", image: "", address: "123 Teheran-ro, Gangnam-gu", phone: "+49 6102 8169 0" },
-  { id: "m-1770813613900-e6g65t", type: "office", x: 1022, y: 291, year: "2007", country: "China", city: "Shanghai", image: "/offices/office-china.png", address: "No.111 West Tianmu Road, Jing'an District, Shanghai 200000", phone: "+49 6102 8169 0" },
-  { id: "m-1770813646634-j10159", type: "office", x: 643, y: 232, year: "2001", country: "Germany", city: "Frankfurt", image: "/offices/office-germany.png", address: "Dornhofstraße 65, 63263 Neu-Isenburg, Germany", phone: "+49 6102 8169 0" },
-  { id: "m-1770813656617-t5fvfr", type: "office", x: 689, y: 229, year: "2025", country: "Italy", city: "Udine", image: "/offices/office-italy.png", address: "Via Molin Nuovo 37, 33100 Udine UD, Italy", phone: "+49 6102 8169 0" },
+  { id: "m-1770813593350-u1i0ta", type: "office", x: 968, y: 406, year: "2025", country: "Singapore", city: "Singapore", image: "/offices/office-singapore.png", address: "21 Woodlands Close #04-30, Primz Bizhub, Singapore 737854", phone: "+49 6102 8169 0" },
+  { id: "m-1770813613900-e6g65t", type: "office", x: 1023, y: 293, year: "2007", country: "China", city: "Shanghai", image: "/offices/office-china.png", address: "No.111 West Tianmu Road, Jing'an District, Shanghai 200000", phone: "+49 6102 8169 0" },
+  { id: "m-1770813646634-j10159", type: "office", x: 639, y: 211, year: "2001", country: "Germany", city: "Frankfurt", image: "/offices/office-germany.png", address: "Dornhofstraße 65, 63263 Neu-Isenburg, Germany", phone: "+49 6102 8169 0" },
+  { id: "m-1770813656617-t5fvfr", type: "office", x: 642, y: 235, year: "2025", country: "Italy", city: "Udine", image: "/offices/office-italy.png", address: "Via Molin Nuovo 37, 33100 Udine UD, Italy", phone: "+49 6102 8169 0" },
   { id: "m-1770813679234-vn10ds", type: "office", x: 589, y: 189, year: "2025", country: "United Kingdom", city: "York", image: "/offices/office-uk.png", address: "8 Bramleys, The Menagerie, York YO19 6ET, United Kingdom", phone: "+49 6102 8169 0" },
-  { id: "m-1770813697101-r7n9ld", type: "office", x: 636, y: 209, year: "2024", country: "Netherlands", city: "Amsterdam", image: "/offices/office-netherlands.png", address: "Joan Muyskenweg 30, 1114 AN Amsterdam, Netherlands", phone: "+49 6102 8169 0" },
-  { id: "m-1770813698967-fw9tlg", type: "office", x: 616, y: 204, year: "2023", country: "Romania", city: "Sibiu", image: "/offices/office-romania.png", address: "Strada Nicolaus Olahus 5, Sibiu, 550370, Romania", phone: "+49 6102 8169 0" },
+  { id: "m-1770813697101-r7n9ld", type: "office", x: 616, y: 196, year: "2024", country: "Netherlands", city: "Amsterdam", image: "/offices/office-netherlands.png", address: "Joan Muyskenweg 30, 1114 AN Amsterdam, Netherlands", phone: "+49 6102 8169 0" },
+  { id: "m-1770813698967-fw9tlg", type: "office", x: 686, y: 233, year: "2023", country: "Romania", city: "Sibiu", image: "/offices/office-romania.png", address: "Strada Nicolaus Olahus 5, Sibiu, 550370, Romania", phone: "+49 6102 8169 0" },
   { id: "m-1770813739116-qfc3c1", type: "office", x: 235, y: 330, year: "2023", country: "Mexico", city: "Guadalajara", image: "/offices/office-mexico.png", address: "Av. México 304, Floor 5, Office 5, Juan Manuel, Guadalajara, Jalisco 44680, Mexico", phone: "+49 6102 8169 0" },
   { id: "m-1770813750467-zgjuzv", type: "office", x: 184, y: 284, year: "2007", country: "USA", city: "Irvine", image: "/offices/office-usa.png", address: "16411 Scientific Way, Irvine, California 92618, USA", phone: "+49 6102 8169 0" },
-  { id: "m-1770813795520-7i235y", type: "office", x: 340, y: 244, year: "2009", country: "Philippines", city: "Manila", image: "/offices/office-philippines.png", address: "Unit 902B, Tektite West Tower, Ortigas Center, Pasig City, Philippines 1605", phone: "+49 6102 8169 0" },
-  { id: "m-wh-frankfurt", type: "warehouse-lab", x: 643, y: 232, year: "2001", country: "Germany", city: "Frankfurt", image: "/warehouses/wh-frankfurt.png", address: "Dornhofstraße 65, 63263 Neu-Isenburg, Germany", phone: "+49 6102 8169 0" },
-  { id: "m-wh-shenzhen", type: "warehouse-lab", x: 1010, y: 340, year: "2020", country: "China", city: "Shenzhen", image: "/warehouses/wh-shenzhen.png", address: "Tower A, Xiandaicheng Building, No.1058 Huaqiang North Road, Futian District, Shenzhen 518000, China", phone: "+49 6102 8169 0" },
-  { id: "m-wh-hongkong", type: "warehouse-lab", x: 1025, y: 355, year: "2019", country: "China", city: "Hong Kong", image: "/warehouses/wh-hongkong.png", address: "Room A2, A3, 5/F, Wing Tai Centre, 12 Hing Yip Street, Kowloon, Hong Kong", phone: "+49 6102 8169 0" },
-  { id: "m-wh-arlington", type: "warehouse-lab", x: 270, y: 300, year: "2007", country: "USA", city: "Arlington", image: "/warehouses/wh-arlington.png", address: "2202 E Randol Mill Rd, Arlington, Texas 76011, USA", phone: "+49 6102 8169 0" },
-  { id: "m-wh-boston", type: "warehouse-lab", x: 305, y: 255, year: "2025", country: "USA", city: "Boston", image: "/warehouses/wh-boston.png", address: "177 Huntington Ave 17th floor, Boston, Massachusetts 2115, USA", phone: "+49 6102 8169 0" },
+  { id: "m-1770813795520-7i235y", type: "office", x: 1029, y: 356, year: "2009", country: "Philippines", city: "Manila", image: "/offices/office-philippines.png", address: "Unit 902B, Tektite West Tower, Ortigas Center, Pasig City, Philippines 1605", phone: "+49 6102 8169 0" },
+  { id: "m-wh-frankfurt", type: "warehouse-lab", x: 640, y: 210, year: "2001", country: "Germany", city: "Frankfurt", image: "/warehouses/wh-frankfurt.png", address: "Dornhofstraße 65, 63263 Neu-Isenburg, Germany", phone: "+49 6102 8169 0" },
+  { id: "m-wh-shenzhen", type: "warehouse-lab", x: 1005, y: 309, year: "2020", country: "China", city: "Shenzhen", image: "/warehouses/wh-shenzhen.png", address: "Tower A, Xiandaicheng Building, No.1058 Huaqiang North Road, Futian District, Shenzhen 518000, China", phone: "+49 6102 8169 0" },
+  { id: "m-wh-hongkong", type: "warehouse-lab", x: 1003, y: 323, year: "2019", country: "China", city: "Hong Kong", image: "/warehouses/wh-hongkong.png", address: "Room A2, A3, 5/F, Wing Tai Centre, 12 Hing Yip Street, Kowloon, Hong Kong", phone: "+49 6102 8169 0" },
+  { id: "m-wh-arlington", type: "warehouse-lab", x: 254, y: 298, year: "2007", country: "USA", city: "Arlington", image: "/warehouses/wh-arlington.png", address: "2202 E Randol Mill Rd, Arlington, Texas 76011, USA", phone: "+49 6102 8169 0" },
+  { id: "m-wh-boston", type: "warehouse-lab", x: 335, y: 250, year: "2025", country: "USA", city: "Boston", image: "/warehouses/wh-boston.png", address: "177 Huntington Ave 17th floor, Boston, Massachusetts 2115, USA", phone: "+49 6102 8169 0" },
   { id: "m-1770813942685-rycn1a", type: "operational", x: 395, y: 440 },
   { id: "m-1770813948785-sbx92b", type: "operational", x: 340, y: 398 },
   { id: "m-1770813956502-pg0sq2", type: "operational", x: 202, y: 167 },
@@ -114,9 +113,7 @@ const ALL_REGION_INDICES = Array.from(
 const MOBILE_BREAKPOINT = 768;
 
 /** Resolve which path indices contain each marker (point-in-polygon). Run once when SVG is ready. */
-function buildMarkerRegionMap(
-  container: HTMLElement
-): Map<string, number[]> {
+function buildMarkerRegionMap(container: HTMLElement): Map<string, number[]> {
   const svg = container.querySelector("svg");
   const paths = container.querySelectorAll<SVGPathElement>("svg path");
   if (!svg || paths.length === 0) return new Map();

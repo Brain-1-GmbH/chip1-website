@@ -1,4 +1,4 @@
-import React, { useRef } from "react";
+import React, { useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ArrowUpRight } from "@carbon/icons-react";
 
@@ -59,6 +59,20 @@ const featureCards = [
 
 const certificates = [cert1, cert2, cert3, cert4, cert5, cert6, cert7];
 
+const partnerTabs = [
+  { id: "manufacturers", label: "Manufacturers" },
+  { id: "system-partners", label: "System partners" },
+  { id: "distributors", label: "Distributors" },
+  { id: "authorized-lines", label: "Authorized lines" },
+] as const;
+
+const partnerLogos: Record<(typeof partnerTabs)[number]["id"], string[]> = {
+  manufacturers: [cert1, cert2, cert3, cert4, cert5, cert6, cert7],
+  "system-partners": [cert2, cert3, cert4, cert5, cert6, cert7, cert1],
+  distributors: [cert3, cert4, cert5, cert6, cert7, cert1, cert2],
+  "authorized-lines": [cert4, cert5, cert6, cert7, cert1, cert2, cert3],
+};
+
 const insights = [
   {
     title: "Comprehensive Part Data",
@@ -117,6 +131,7 @@ const ReadMoreButton: React.FC = () => (
 export const AboutSection: React.FC = () => {
   const insightsContainerRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
+  const [activePartnerTab, setActivePartnerTab] = useState<(typeof partnerTabs)[number]["id"]>("manufacturers");
 
   const featureRoutes: Record<string, string> = {
     Products: "/products",
@@ -356,6 +371,60 @@ export const AboutSection: React.FC = () => {
               </div>
             ))}
           </div>
+          </div>
+
+          {/* Our Partners Section - same structure as Certificates, with tabs */}
+          <div className="bg-[rgba(19,21,26,0.05)] md:bg-[#0e0e0f] border border-[#212225] rounded-2xl md:rounded-3xl p-4 md:p-6 flex flex-col items-center overflow-hidden w-full">
+            <style>{`
+              @keyframes partners-scroll {
+                0% { transform: translateX(-50%); }
+                100% { transform: translateX(0%); }
+              }
+              .animate-partners-scroll {
+                animation: partners-scroll 25s linear infinite;
+              }
+              .animate-partners-scroll:hover { animation-play-state: paused; }
+            `}</style>
+            <h2
+              className="text-2xl md:text-[32px] font-semibold text-[#efeff0] leading-[1.4]"
+              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+            >
+              Our Partners
+            </h2>
+            {/* Tabs - 24px gap from title */}
+            <div className="flex flex-wrap justify-center gap-2 md:gap-6" style={{ marginTop: "24px" }}>
+              {partnerTabs.map((tab) => (
+                <button
+                  key={tab.id}
+                  onClick={() => setActivePartnerTab(tab.id)}
+                  className={`pb-2 text-sm md:text-base transition-colors ${
+                    activePartnerTab === tab.id
+                      ? "text-[#99c221] font-semibold border-b-2 border-[#99c221]"
+                      : "text-[#b6b6b7] hover:text-[#efeff0]"
+                  }`}
+                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                >
+                  {tab.label}
+                </button>
+              ))}
+            </div>
+            {/* Logos - horizontal scroll animation */}
+            <div className="mt-6 md:mt-10 w-full overflow-hidden">
+              <div className="flex gap-4 md:gap-6 animate-partners-scroll" style={{ width: "fit-content" }}>
+                {[...partnerLogos[activePartnerTab], ...partnerLogos[activePartnerTab]].map((logo, index) => (
+                  <div
+                    key={`${activePartnerTab}-${index}`}
+                    className="flex-shrink-0 flex items-center justify-center w-[70px] h-[70px] sm:w-[90px] sm:h-[90px] md:w-[107px] md:h-[107px]"
+                  >
+                    <img
+                      src={logo}
+                      alt={`Partner ${index + 1}`}
+                      className="max-w-full max-h-full object-contain"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Insights Section - narrower cards on mobile */}

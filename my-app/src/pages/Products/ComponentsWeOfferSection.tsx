@@ -118,7 +118,7 @@ const categoriesData: CategoryData[] = [
       { id: "cpu", name: "CPUs", image: imgCPU },
       { id: "gpu", name: "GPUs", image: imgGPU },
       { id: "mpu", name: "MPUs", image: imgMPU },
-      { id: "soc", name: "System on Chip", image: imgASICs },
+      { id: "soc", name: "SoCs", image: imgASICs },
     ],
   },
   {
@@ -162,7 +162,7 @@ const categoriesData: CategoryData[] = [
       { id: "pressure", name: "Pressure Sensors", image: imgPressureSensors },
       { id: "motion", name: "Motion Sensors", image: imgMotionSensors },
       { id: "proximity", name: "Proximity Sensors", image: imgProximitySensors },
-      { id: "sensors-extra", name: "IoT Modules", image: imgSensorsExtra },
+      { id: "sensors-extra", name: "Humidity Sensors", image: imgSensorsExtra },
     ],
   },
   {

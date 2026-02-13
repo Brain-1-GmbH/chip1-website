@@ -88,12 +88,14 @@ export const CareersDropdown: React.FC<CareersDropdownProps> = ({
 
       {isOpen && (
         <div 
-          className="absolute top-full left-0 mt-2 rounded-lg z-50 max-h-[200px] overflow-y-auto w-full px-2 py-1.5"
+          className="absolute top-full left-0 mt-2 rounded-lg z-[100] w-full py-1.5"
           style={{
             backgroundColor: "#1C1D22",
-            border: "1px solid #212225",
-            boxShadow: "-2px 4px 12px 0 rgba(17, 18, 21, 0.80)",
+            border: "1px solid #323335",
+            boxShadow: "0 4px 12px rgba(0, 0, 0, 0.4)",
             minWidth: `${width}px`,
+            borderBottomLeftRadius: "8px",
+            borderBottomRightRadius: "8px",
           }}
         >
           {options.map((option) => (
@@ -101,10 +103,10 @@ export const CareersDropdown: React.FC<CareersDropdownProps> = ({
               key={option.value}
               type="button"
               onClick={() => handleSelect(option.value)}
-              className={`w-full flex h-10 px-2 py-2 justify-center items-center rounded transition-colors ${
+              className={`w-full flex h-10 px-4 py-2 justify-start items-center text-left rounded-none transition-colors first:pt-2 last:pb-2 ${
                 value === option.value
                   ? "bg-[#323335]"
-                  : "bg-transparent hover:bg-[#212225]"
+                  : "bg-transparent hover:bg-[#25262a]"
               }`}
               style={{
                 fontFamily: "'Plus Jakarta Sans', sans-serif",
@@ -113,8 +115,6 @@ export const CareersDropdown: React.FC<CareersDropdownProps> = ({
                 fontWeight: 400,
                 lineHeight: "150%",
                 color: value === option.value ? "#99C221" : "#f7f7f7",
-                borderRadius: "4px",
-                gap: "8px",
               }}
             >
               {option.label}

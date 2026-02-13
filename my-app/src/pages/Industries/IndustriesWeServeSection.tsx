@@ -1,15 +1,15 @@
 import React, { useState } from "react";
 import { ChevronRight } from "@carbon/icons-react";
 
-// Import industry images (reusing available assets)
-import imgAutomotive from "../../assets/5e82b13a08d7f1bad166aa1bdc7a5a6b6b54a71c.png";
-import imgAerospace from "../../assets/62ae3ec5991e192f616b1284190f4ec8d85ff888.png";
-import imgIndustrial from "../../assets/1c2b0a965f3bdef5db739cb90876f5b18cf02b2b.png";
-import imgConsumer from "../../assets/de1648210b62a5961d1668957c37d1fcd28d0968.png";
-import imgMedical from "../../assets/c1fba696d974df18951bd2272cb397d04eb710a4.png";
-import imgTelecom from "../../assets/1fb182c6aa8da0a981a973159799127800762922.png";
-import imgEnergy from "../../assets/883d9511c3ffdf751aac039313198a88c3404a20.png";
-import imgComputing from "../../assets/96b0f35c690c0a959f0a383d4fefa74dfbbad950.png";
+// Import industry images
+import imgAutomotive from "../../assets/Container-169718be-b839-4cd6-946e-13c3df2c5bf4.png";
+import imgAerospace from "../../assets/Container2-419029ab-b23c-484c-af39-31f531fcd6d4.png";
+import imgIndustrial from "../../assets/Container3-90802cef-3618-4094-90b5-3c8b314b983e.png";
+import imgConsumer from "../../assets/Container4-f92d4836-b016-4a1c-b6e3-cec6e8bacaea.png";
+import imgMedical from "../../assets/Container5-830af0ee-4b7b-45b8-a421-565b443b2efd.png";
+import imgTelecom from "../../assets/Container6-16fee834-8039-4f8e-ad66-7720af7f1cce.png";
+import imgEnergy from "../../assets/Container7-3744d0d2-180e-4757-9b7d-b88603d25151.png";
+import imgComputing from "../../assets/Containe8r-bb441119-7c5f-466b-a35b-ba6babad6ae5.png";
 import imgIoT from "../../assets/575d16e137d3b53e7a89806ec3a48a1a3fd9eacf.png";
 
 interface IndustryData {
@@ -173,11 +173,11 @@ export const IndustriesWeServeSection: React.FC = () => {
                   </button>
                   {isExpanded && (
                     <div className="mt-3 mb-2 pl-0">
-                      <div className="w-full h-[200px] rounded-2xl overflow-hidden mb-3">
+                      <div className="w-full aspect-[696/400] max-h-[400px] rounded-2xl overflow-hidden mb-3">
                         <img
                           src={industry.image}
                           alt={industry.title}
-                          className="w-full h-full object-cover"
+                          className="w-full h-full object-fill"
                         />
                       </div>
                       <p
@@ -210,14 +210,14 @@ export const IndustriesWeServeSection: React.FC = () => {
 
           {/* Right - Industry Details */}
           <div className="flex-1 flex flex-col gap-6 items-center">
-            {/* Image */}
-            <div className="w-full h-[400px] rounded-2xl overflow-hidden relative">
+            {/* Image - 696×400px stretched */}
+            <div className="w-[696px] max-w-full h-[400px] rounded-2xl overflow-hidden relative">
               {industriesData.map((industry, index) => (
                 <img
                   key={industry.id}
                   src={industry.image}
                   alt={industry.title}
-                  className="absolute inset-0 w-full h-full object-cover transition-opacity duration-500 ease-in-out"
+                  className="absolute inset-0 w-full h-full object-fill transition-opacity duration-500 ease-in-out"
                   style={{
                     opacity: index === activeIndex ? 1 : 0,
                     pointerEvents: index === activeIndex ? "auto" : "none",

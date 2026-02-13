@@ -63,7 +63,7 @@ export const OpenPositionsSection: React.FC = () => {
   ];
 
   return (
-    <section className="relative w-full py-16 md:py-24 overflow-hidden mb-6 md:mb-[120px]">
+    <section className="relative w-full py-16 md:py-24 mb-6 md:mb-[120px]">
       {/* Background Gallery with Horizontal Scroll */}
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
         {/* Top Row - Scrolls Right */}

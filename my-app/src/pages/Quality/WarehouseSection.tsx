@@ -27,7 +27,7 @@ const warehouseFeatures: WarehouseFeature[] = [
     id: "lifecycle",
     title: "Lifecycle Analysis",
     description:
-      "Our component lifecycle management flags obsolescence risk and date-code trends, enabling last-time-buy plans and approved alternates so Chip 1 Exchange customers avoid costly redesigns and shortages.",
+      "Our component lifecycle management flags obsolescence risk and date-code trends, enabling last-time-buy plans and approved alternates so Chip 1 customers avoid costly redesigns and shortages.",
     image: img2,
   },
   {
