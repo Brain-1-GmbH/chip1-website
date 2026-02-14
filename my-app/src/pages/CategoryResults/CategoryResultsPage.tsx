@@ -1,77 +1,115 @@
-import React, { useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { Header } from "../../components/Header/Header";
 import { Footer } from "../../components/Footer/Footer";
 import { Search } from "@carbon/icons-react";
+import { fetchPartsList, buildPartsFilter } from "../../services/categoryApi";
+import type { PartsListFilter } from "../../types/category";
+import { CATEGORY_L1_KEYS } from "../../types/category";
 
-// Mock data for parts
-const mockParts = [
-  {
-    id: 1,
-    mpn: "M378A2G43CB3-CWE",
-    manufacturer: "Samsung",
-    category: "Memory Modules - Laptop Memory Modules",
-    description: "Samsung 16GB DDR4 3200 UDIMM 1.2V Mem...",
-    lifecycle: "—",
-    availability: "—",
-    countryOfOrigin: "—",
-    riskScore: "—",
-    riskLevel: "—",
-    parametric: { capacity: "32GB", ddrType: "DDR5", formFactor: "ECC SODIMM", speed: "4800 MHz", moduleType: "ECC SODIMM" },
-  },
-  {
-    id: 2,
-    mpn: "HMA82GS6CJR8N-XN",
-    manufacturer: "SK Hynix",
-    category: "Memory Modules - Desktop Memory Modules",
-    description: "SK Hynix 16GB DDR4 3200 SODIMM 1.2V...",
-    lifecycle: "—",
-    availability: "—",
-    countryOfOrigin: "—",
-    riskScore: "—",
-    riskLevel: "—",
-    parametric: { capacity: "16GB", ddrType: "DDR4", formFactor: "SODIMM", speed: "3200 MHz", moduleType: "SODIMM" },
-  },
-  {
-    id: 3,
-    mpn: "CT16G4DFD832A",
-    manufacturer: "Crucial",
-    category: "Memory Modules - Desktop Memory Modules",
-    description: "Crucial 16GB DDR4 3200 UDIMM 1.2V...",
-    lifecycle: "—",
-    availability: "—",
-    countryOfOrigin: "—",
-    riskScore: "—",
-    riskLevel: "—",
-    parametric: { capacity: "16GB", ddrType: "DDR4", formFactor: "UDIMM", speed: "3200 MHz", moduleType: "UDIMM" },
-  },
-  {
-    id: 4,
-    mpn: "KVR32N22D8/16",
-    manufacturer: "Kingston",
-    category: "Memory Modules - Server Memory Modules",
-    description: "Kingston 16GB DDR4 3200 UDIMM 1.2V...",
-    lifecycle: "—",
-    availability: "—",
-    countryOfOrigin: "—",
-    riskScore: "—",
-    riskLevel: "—",
-    parametric: { capacity: "16GB", ddrType: "DDR4", formFactor: "UDIMM", speed: "3200 MHz", moduleType: "UDIMM" },
-  },
-  {
-    id: 5,
-    mpn: "F4-3200C16D-16GIS",
-    manufacturer: "G.Skill",
-    category: "Memory Modules - Desktop Memory Modules",
-    description: "G.Skill 16GB DDR4 3200 UDIMM 1.2V...",
-    lifecycle: "—",
-    availability: "—",
-    countryOfOrigin: "—",
-    riskScore: "—",
-    riskLevel: "—",
-    parametric: { capacity: "16GB", ddrType: "DDR4", formFactor: "UDIMM", speed: "3200 MHz", moduleType: "UDIMM" },
-  },
-];
+// Type for location state passed from ByCategoryPage
+interface LocationState {
+  categoryL1Key?: string;
+  categoryL2Key?: string;
+  categoryL3Key?: string;
+}
+
+// A part is a generic record from the API
+type RawPart = Record<string, unknown>;
+
+// Column definition for the dynamic table
+interface ColumnDef {
+  key: string;
+  label: string;
+}
+
+// Extract display string from API value (may be string, number, or nested object)
+const toDisplayString = (v: unknown): string => {
+  if (v == null) return "—";
+  if (typeof v === "string") return v || "—";
+  if (typeof v === "number" || typeof v === "boolean") return String(v);
+  if (Array.isArray(v)) {
+    return v.map(toDisplayString).filter((s) => s !== "—").join(", ") || "—";
+  }
+  if (typeof v === "object" && v !== null) {
+    const obj = v as Record<string, unknown>;
+    for (const key of ["name", "value", "label", "title", "displayName", "description"]) {
+      if (key in obj && obj[key] != null) {
+        const result = toDisplayString(obj[key]);
+        if (result !== "—") return result;
+      }
+    }
+    for (const val of Object.values(obj)) {
+      if (typeof val === "string" && val) return val;
+      if (typeof val === "number") return String(val);
+    }
+    return "—";
+  }
+  return String(v);
+};
+
+// Keys to skip in the dynamic table (IDs, metadata, technical/internal fields)
+const HIDDEN_KEYS = new Set([
+  // IDs and references
+  "id", "crmId", "crmPartId", "partId", "internalId", "externalId",
+  "objectId", "uid", "uuid", "guid", "sku", "slug",
+  // Timestamps and audit
+  "createdAt", "updatedAt", "createdBy", "updatedBy",
+  "created", "updated", "modified", "modifiedAt", "modifiedBy",
+  "lastModified", "lastUpdated", "timestamp",
+  // Media / links
+  "imageUrl", "thumbnailUrl", "images", "image", "links", "url",
+  "href", "icon", "logo", "thumbnail", "photos", "attachments",
+  // Technical / internal
+  "dataBits", "parametric", "rawData", "metadata", "meta",
+  "filters", "hasMore", "totalCount", "sort", "sortOrder",
+  "version", "revision", "hash", "checksum", "etag",
+  "tags", "flags", "status", "active", "deleted", "archived",
+  "type", "kind", "class", "className", "objectType",
+  // API pagination artifacts
+  "page", "size", "number", "first", "last", "empty",
+  "totalElements", "totalPages", "pageable", "numberOfElements",
+]);
+
+// Pretty-print a camelCase or snake_case key to a column header
+const formatColumnLabel = (key: string): string => {
+  return key
+    // camelCase -> spaces
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    // snake_case -> spaces
+    .replace(/_/g, " ")
+    // capitalize first letter of each word
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+};
+
+// Check if a key name looks like an ID or technical field by pattern
+const looksLikeIdOrTechnical = (key: string): boolean => {
+  const lower = key.toLowerCase();
+  // Ends with "id", "Id", "_id", "Ref", "ref", "key", "Key", "code"
+  if (/(?:_id|id|ref|key|code|hash|token|secret)$/i.test(lower)) return true;
+  // Starts with "is_", "has_", "can_"
+  if (/^(?:is[_A-Z]|has[_A-Z]|can[_A-Z])/.test(key)) return true;
+  return false;
+};
+
+// Derive visible columns from the first N parts
+const deriveColumns = (parts: RawPart[]): ColumnDef[] => {
+  const keySet = new Map<string, number>(); // key -> count of non-null values
+  for (const part of parts) {
+    for (const [key, val] of Object.entries(part)) {
+      if (HIDDEN_KEYS.has(key)) continue;
+      if (looksLikeIdOrTechnical(key)) continue;
+      keySet.set(key, (keySet.get(key) || 0) + (val != null ? 1 : 0));
+    }
+  }
+  // Filter to keys that have at least one non-null value
+  return Array.from(keySet.entries())
+    .filter(([, count]) => count > 0)
+    .map(([key]) => ({
+      key,
+      label: formatColumnLabel(key),
+    }));
+};
 
 export const CategoryResultsPage: React.FC = () => {
   const { type, category, subtype } = useParams<{
@@ -80,43 +118,93 @@ export const CategoryResultsPage: React.FC = () => {
     subtype: string;
   }>();
   const navigate = useNavigate();
+  const location = useLocation();
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter states
-  const [selectedCapacities, setSelectedCapacities] = useState<string[]>([]);
-  const [selectedDdrTypes, setSelectedDdrTypes] = useState<string[]>([]);
-  const [selectedFormFactors, setSelectedFormFactors] = useState<string[]>([]);
+  // Get category keys from location state (passed from ByCategoryPage)
+  const locationState = location.state as LocationState | null;
 
-  const capacities = ["1GB", "2GB", "4GB", "8GB", "16GB", "32GB", "48GB"];
-  const ddrTypes = ["DDR2", "DDR3", "DDR4", "DDR5"];
-  const formFactors = ["DIMM", "SODIMM", "ECC DIMM", "UDIMM", "RDIMM", "LRDIMM", "MicroDIMM", "MiniDIMM"];
+  // Parts data state — store raw API objects for dynamic column rendering
+  const [parts, setParts] = useState<RawPart[]>([]);
+  const [totalParts, setTotalParts] = useState(0);
+  const [currentPage, setCurrentPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const pageSize = 10;
 
-  const handleCapacityToggle = (capacity: string) => {
-    setSelectedCapacities((prev) =>
-      prev.includes(capacity) ? prev.filter((c) => c !== capacity) : [...prev, capacity]
-    );
+  // Dynamic filter state — built from API response `filters` field
+  const [filterSelections, setFilterSelections] = useState<Record<string, string[]>>({});
+
+  // Build filter from location state or URL params
+  const getPartsFilter = useCallback((): PartsListFilter => {
+    // Use location state if available (more accurate)
+    if (locationState?.categoryL1Key) {
+      return buildPartsFilter(
+        locationState.categoryL1Key,
+        locationState.categoryL2Key,
+        locationState.categoryL3Key
+      );
+    }
+    // Fallback: derive from URL params
+    const categoryL1Key = type === "semiconductors"
+      ? CATEGORY_L1_KEYS.SEMICONDUCTOR
+      : CATEGORY_L1_KEYS.HARDWARE;
+    return { categoryL1Key };
+  }, [locationState, type]);
+
+  // Fetch parts from API
+  const loadParts = useCallback(async (page: number = 0) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const filter = getPartsFilter();
+      const response = await fetchPartsList(filter, page, pageSize);
+      setParts(response.data.content as RawPart[]);
+      setTotalParts(response.data.totalElements);
+      setTotalPages(response.data.totalPages);
+      setCurrentPage(response.data.number);
+    } catch (err) {
+      console.error("Failed to fetch parts:", err);
+      setError("Failed to load parts. Please try again later.");
+    } finally {
+      setLoading(false);
+    }
+  }, [getPartsFilter, pageSize]);
+
+  // Load parts on mount and when filter changes
+  useEffect(() => {
+    loadParts(0);
+  }, [loadParts]);
+
+  // Handle page change
+  const handlePageChange = (newPage: number) => {
+    if (newPage >= 0 && newPage < totalPages) {
+      loadParts(newPage);
+    }
   };
 
-  const handleDdrTypeToggle = (ddrType: string) => {
-    setSelectedDdrTypes((prev) =>
-      prev.includes(ddrType) ? prev.filter((d) => d !== ddrType) : [...prev, ddrType]
-    );
-  };
-
-  const handleFormFactorToggle = (formFactor: string) => {
-    setSelectedFormFactors((prev) =>
-      prev.includes(formFactor) ? prev.filter((f) => f !== formFactor) : [...prev, formFactor]
-    );
+  const handleFilterToggle = (filterKey: string, value: string) => {
+    setFilterSelections((prev) => {
+      const current = prev[filterKey] || [];
+      const updated = current.includes(value)
+        ? current.filter((v) => v !== value)
+        : [...current, value];
+      return { ...prev, [filterKey]: updated };
+    });
   };
 
   const clearFilters = () => {
-    setSelectedCapacities([]);
-    setSelectedDdrTypes([]);
-    setSelectedFormFactors([]);
+    setFilterSelections({});
   };
 
-  const appliedFiltersCount =
-    selectedCapacities.length + selectedDdrTypes.length + selectedFormFactors.length;
+  const appliedFiltersCount = Object.values(filterSelections).reduce(
+    (sum, arr) => sum + arr.length, 0
+  );
+
+  // Derive table columns dynamically from the loaded parts
+  const columns = useMemo(() => deriveColumns(parts), [parts]);
+  const colCount = columns.length + 1; // +1 for checkbox column
 
   const categoryDisplayName = (category?.replace(/-/g, " ") || "")
     .split(" ")
@@ -186,7 +274,7 @@ export const CategoryResultsPage: React.FC = () => {
       <section className="pb-24">
         <div className="max-w-[1280px] mx-auto px-4 md:px-[80px]">
           <div className="flex gap-6">
-            {/* Left Sidebar - Filters */}
+            {/* Left Sidebar - Dynamic Filters built from column data */}
             <div className="relative overflow-visible w-64 shrink-0 bg-[#0F0F0F] border border-[#1C1D22] p-4 h-fit sticky top-24">
               {/* Corner circles */}
               <span className="absolute top-0 left-0 w-1.5 h-1.5 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#1C1D22]" aria-hidden />
@@ -203,129 +291,72 @@ export const CategoryResultsPage: React.FC = () => {
                 <p className="text-sm text-[#8e8e8f]">{appliedFiltersCount} Applied</p>
               </div>
 
-              {/* Capacity Filter */}
-              <div className="mb-6">
-                <h3
-                  className="text-sm font-medium text-[#fcfdfc] mb-3"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                >
-                  Capacity/Size
-                </h3>
-                <div className="space-y-2">
-                  {capacities.slice(0, 4).map((capacity) => (
-                    <label
-                      key={capacity}
-                      className="flex items-center gap-2 cursor-pointer hover:text-[#fcfdfc] transition-colors"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedCapacities.includes(capacity)}
-                        onChange={() => handleCapacityToggle(capacity)}
-                        className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
-                    style={{
-                      borderRadius: "var(--Radius-xs, 4px)",
-                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
-                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
-                      appearance: "none",
-                      WebkitAppearance: "none",
-                      accentColor: "#99C221",
-                    }}
-                      />
-                      <span className="text-sm text-[#b6b6b7]">{capacity}</span>
-                    </label>
-                  ))}
-                  <button className="text-sm text-[#99c221] hover:text-[#b6db40] transition-colors">
-                    See More
-                  </button>
-                </div>
-              </div>
-
-              {/* DDR Type Filter */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-3">
-                  <h3
-                    className="text-sm font-medium text-[#fcfdfc]"
-                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                  >
-                    DDR Type ({ddrTypes.length})
-                  </h3>
-                  {selectedDdrTypes.length > 0 && (
-                    <span className="text-xs text-[#8e8e8f]">
-                      {selectedDdrTypes.length} selected{" "}
-                      <button
-                        onClick={() => setSelectedDdrTypes([])}
-                        className="text-[#99c221] hover:text-[#b6db40] transition-colors"
+              {/* Dynamic filter groups — derive unique values from visible columns */}
+              {columns.slice(0, 6).map((col) => {
+                // Collect unique display values for this column
+                const uniqueVals = Array.from(
+                  new Set(parts.map((p) => toDisplayString(p[col.key])))
+                ).filter((v) => v !== "—").slice(0, 10);
+                if (uniqueVals.length < 2) return null; // Skip columns with <2 unique values
+                const selected = filterSelections[col.key] || [];
+                return (
+                  <div key={col.key} className="mb-6">
+                    <div className="flex items-center justify-between mb-3">
+                      <h3
+                        className="text-sm font-medium text-[#fcfdfc]"
+                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                       >
-                        X
-                      </button>
-                    </span>
-                  )}
-                </div>
-                <div className="space-y-2">
-                  {ddrTypes.map((ddrType) => (
-                    <label
-                      key={ddrType}
-                      className={`flex items-center gap-2 cursor-pointer p-2 rounded transition-colors ${
-                        selectedDdrTypes.includes(ddrType)
-                          ? "bg-[#252833] border border-[rgba(184,212,52,0.2)]"
-                          : "hover:bg-[#252833]"
-                      }`}
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedDdrTypes.includes(ddrType)}
-                        onChange={() => handleDdrTypeToggle(ddrType)}
-                        className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
-                    style={{
-                      borderRadius: "var(--Radius-xs, 4px)",
-                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
-                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
-                      appearance: "none",
-                      WebkitAppearance: "none",
-                      accentColor: "#99C221",
-                    }}
-                      />
-                      <span className="text-sm text-[#b6b6b7]">{ddrType}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
+                        {col.label} ({uniqueVals.length})
+                      </h3>
+                      {selected.length > 0 && (
+                        <span className="text-xs text-[#8e8e8f]">
+                          {selected.length} selected{" "}
+                          <button
+                            onClick={() =>
+                              setFilterSelections((prev) => ({ ...prev, [col.key]: [] }))
+                            }
+                            className="text-[#99c221] hover:text-[#b6db40] transition-colors"
+                          >
+                            X
+                          </button>
+                        </span>
+                      )}
+                    </div>
+                    <div className="space-y-2 max-h-40 overflow-y-auto">
+                      {uniqueVals.map((val) => (
+                        <label
+                          key={val}
+                          className={`flex items-center gap-2 cursor-pointer p-1.5 rounded transition-colors ${
+                            selected.includes(val)
+                              ? "bg-[#252833] border border-[rgba(184,212,52,0.2)]"
+                              : "hover:bg-[#252833]"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            checked={selected.includes(val)}
+                            onChange={() => handleFilterToggle(col.key, val)}
+                            className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
+                            style={{
+                              borderRadius: "var(--Radius-xs, 4px)",
+                              border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
+                              background: "var(--Mobile-Basic-Layer-1, #1E2024)",
+                              appearance: "none",
+                              WebkitAppearance: "none",
+                              accentColor: "#99C221",
+                            }}
+                          />
+                          <span className="text-sm text-[#b6b6b7] truncate" title={val}>
+                            {val}
+                          </span>
+                        </label>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })}
 
-              {/* Form Factor Filter */}
-              <div className="mb-6">
-                <h3
-                  className="text-sm font-medium text-[#fcfdfc] mb-3"
-                  style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                >
-                  Form Factor ({formFactors.length})
-                </h3>
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {formFactors.map((formFactor) => (
-                    <label
-                      key={formFactor}
-                      className="flex items-center gap-2 cursor-pointer hover:text-[#fcfdfc] transition-colors"
-                    >
-                      <input
-                        type="checkbox"
-                        checked={selectedFormFactors.includes(formFactor)}
-                        onChange={() => handleFormFactorToggle(formFactor)}
-                        className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
-                    style={{
-                      borderRadius: "var(--Radius-xs, 4px)",
-                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
-                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
-                      appearance: "none",
-                      WebkitAppearance: "none",
-                      accentColor: "#99C221",
-                    }}
-                      />
-                      <span className="text-sm text-[#b6b6b7]">{formFactor}</span>
-                    </label>
-                  ))}
-                </div>
-              </div>
-
-              {/* Action Buttons - bottom centered */}
+              {/* Action Buttons */}
               <div className="flex flex-col items-center gap-2 pt-4 border-t border-[#1C1D22]">
                 <button
                   onClick={clearFilters}
@@ -364,7 +395,7 @@ export const CategoryResultsPage: React.FC = () => {
                   className="text-sm text-[#8e8e8f]"
                   style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
                 >
-                  {mockParts.length} parts
+                  {loading ? "Loading..." : `${totalParts.toLocaleString()} parts`}
                 </p>
                 <div className="relative w-64">
                   <Search
@@ -389,64 +420,112 @@ export const CategoryResultsPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* Table */}
-              <div className="overflow-x-auto">
-                <table className="w-full">
+              {/* Dynamic Table — horizontal scroll when columns exceed viewport */}
+              <div
+                className="overflow-x-auto"
+                style={{
+                  scrollbarWidth: "thin",
+                  scrollbarColor: "#494B59 transparent",
+                }}
+              >
+                <table className="w-full" style={{ minWidth: `${Math.max(columns.length * 180 + 60, 600)}px` }}>
                   <thead className="bg-[#0F0F0F] border-b border-[#1C1D22]">
                     <tr>
-                      <th className="px-4 py-3 text-left">
+                      <th
+                        className="px-4 py-3 text-left w-10 sticky left-0 z-10 bg-[#0F0F0F]"
+                      >
                         <input
                           type="checkbox"
                           className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
-                    style={{
-                      borderRadius: "var(--Radius-xs, 4px)",
-                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
-                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
-                      appearance: "none",
-                      WebkitAppearance: "none",
-                      accentColor: "#99C221",
-                    }}
+                          style={{
+                            borderRadius: "var(--Radius-xs, 4px)",
+                            border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
+                            background: "var(--Mobile-Basic-Layer-1, #1E2024)",
+                            appearance: "none",
+                            WebkitAppearance: "none",
+                            accentColor: "#99C221",
+                          }}
                         />
                       </th>
-                      <th
-                        className="px-4 py-3 text-left text-sm font-semibold text-[#fcfdfc]"
-                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                      >
-                        Mfr Part # | Manufacturer
-                      </th>
-                      <th
-                        className="px-4 py-3 text-left text-sm font-semibold text-[#fcfdfc]"
-                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                      >
-                        Category | Description
-                      </th>
-                      <th
-                        className="px-4 py-3 text-left text-sm font-semibold text-[#fcfdfc]"
-                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                      >
-                        Lifecycle | Availability
-                      </th>
-                      <th
-                        className="px-4 py-3 text-left text-sm font-semibold text-[#fcfdfc]"
-                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                      >
-                        Country of Origin
-                      </th>
-                      <th
-                        className="px-4 py-3 text-left text-sm font-semibold text-[#fcfdfc]"
-                        style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                      >
-                        Risk Score | Level
-                      </th>
-                      <th className="px-4 py-3 text-left">
-                        <span className="text-[#8e8e8f]">⋯</span>
-                      </th>
+                      {columns.map((col) => (
+                        <th
+                          key={col.key}
+                          className="px-4 py-3 text-left text-sm font-semibold text-[#fcfdfc] whitespace-nowrap"
+                          style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", minWidth: "150px" }}
+                        >
+                          {col.label}
+                        </th>
+                      ))}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-[#1C1D22]">
-                    {mockParts.map((part) => (
+                    {/* Loading State */}
+                    {loading && (
+                      <tr>
+                        <td colSpan={colCount} className="px-4 py-12">
+                          <div className="flex items-center justify-center">
+                            <div className="flex flex-col items-center gap-4">
+                              <div className="w-8 h-8 border-3 border-[#99c221] border-t-transparent rounded-full animate-spin" />
+                              <p
+                                className="text-[#8e8e8f] text-sm"
+                                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                              >
+                                Loading parts...
+                              </p>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+
+                    {/* Error State */}
+                    {error && !loading && (
+                      <tr>
+                        <td colSpan={colCount} className="px-4 py-12">
+                          <div className="flex items-center justify-center">
+                            <div className="flex flex-col items-center gap-4">
+                              <p
+                                className="text-red-400 text-sm"
+                                style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                              >
+                                {error}
+                              </p>
+                              <button
+                                onClick={() => loadParts(currentPage)}
+                                className="px-4 py-2 text-sm text-[#0F0F0F] font-medium rounded-full"
+                                style={{
+                                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                                  background: "#99C221",
+                                }}
+                              >
+                                Retry
+                              </button>
+                            </div>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+
+                    {/* Empty State */}
+                    {!loading && !error && parts.length === 0 && (
+                      <tr>
+                        <td colSpan={colCount} className="px-4 py-12">
+                          <div className="flex items-center justify-center">
+                            <p
+                              className="text-[#8e8e8f] text-sm"
+                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                            >
+                              No parts found for this category
+                            </p>
+                          </div>
+                        </td>
+                      </tr>
+                    )}
+
+                    {/* Parts rows — dynamic columns */}
+                    {!loading && !error && parts.map((part, rowIdx) => (
                       <tr
-                        key={part.id}
+                        key={String(part.id ?? rowIdx)}
                         className="hover:bg-[#252833] transition-colors cursor-pointer"
                         onClick={() =>
                           navigate("/product", {
@@ -454,102 +533,141 @@ export const CategoryResultsPage: React.FC = () => {
                           })
                         }
                       >
-                        <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
+                        <td
+                          className="px-4 py-4 w-10 sticky left-0 z-10 bg-[#0F0F0F]"
+                          onClick={(e) => e.stopPropagation()}
+                        >
                           <input
                             type="checkbox"
                             className="w-4 h-4 text-[#99c221] focus:ring-[#99c221] focus:ring-offset-0"
-                    style={{
-                      borderRadius: "var(--Radius-xs, 4px)",
-                      border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
-                      background: "var(--Mobile-Basic-Layer-1, #1E2024)",
-                      appearance: "none",
-                      WebkitAppearance: "none",
-                      accentColor: "#99C221",
-                    }}
+                            style={{
+                              borderRadius: "var(--Radius-xs, 4px)",
+                              border: "1px solid var(--Main-Primary-Scale-Primary, #99C221)",
+                              background: "var(--Mobile-Basic-Layer-1, #1E2024)",
+                              appearance: "none",
+                              WebkitAppearance: "none",
+                              accentColor: "#99C221",
+                            }}
                           />
                         </td>
-                        <td className="px-4 py-4">
-                          <div className="flex flex-col">
-                            <span
-                              className="text-sm font-medium text-[#fcfdfc]"
-                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                            >
-                              {part.mpn}
-                            </span>
-                            <span
-                              className="text-sm text-[#8e8e8f]"
-                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                            >
-                              {part.manufacturer}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex flex-col">
-                            <span
-                              className="text-sm text-[#fcfdfc]"
-                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                            >
-                              {part.category}
-                            </span>
-                            <span
-                              className="text-sm text-[#8e8e8f]"
-                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                            >
-                              {part.description}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex flex-col">
-                            <span
-                              className="text-sm text-[#fcfdfc]"
-                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                            >
-                              {part.lifecycle}
-                            </span>
-                            <span
-                              className="text-sm text-[#8e8e8f]"
-                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                            >
-                              {part.availability}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4">
-                          <span
-                            className="text-sm text-[#fcfdfc]"
+                        {columns.map((col) => (
+                          <td
+                            key={col.key}
+                            className="px-4 py-4 text-sm text-[#fcfdfc] max-w-[220px] truncate"
                             style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                            title={toDisplayString(part[col.key])}
                           >
-                            {part.countryOfOrigin}
-                          </span>
-                        </td>
-                        <td className="px-4 py-4">
-                          <div className="flex flex-col">
-                            <span
-                              className="text-sm text-[#fcfdfc]"
-                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                            >
-                              {part.riskScore}
-                            </span>
-                            <span
-                              className="text-sm text-[#8e8e8f]"
-                              style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
-                            >
-                              {part.riskLevel}
-                            </span>
-                          </div>
-                        </td>
-                        <td className="px-4 py-4" onClick={(e) => e.stopPropagation()}>
-                          <button className="text-[#8e8e8f] hover:text-[#b6b6b7] transition-colors">
-                            ⋯
-                          </button>
-                        </td>
+                            {toDisplayString(part[col.key])}
+                          </td>
+                        ))}
                       </tr>
                     ))}
                   </tbody>
                 </table>
               </div>
+
+              {/* Pagination */}
+              {!loading && !error && totalPages > 0 && (
+                <div className="p-4 border-t border-[#1C1D22] flex items-center justify-between bg-[#0F0F0F]">
+                  {/* Showing X-Y of Z */}
+                  <p
+                    className="text-sm text-[#8e8e8f]"
+                    style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                  >
+                    Showing {currentPage * pageSize + 1}-{Math.min((currentPage + 1) * pageSize, totalParts)} of {totalParts.toLocaleString()} parts
+                  </p>
+
+                  {/* Page numbers and navigation */}
+                  <div className="flex items-center gap-1">
+                    {/* Previous button */}
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 0}
+                      className={`px-3 py-1.5 text-sm rounded transition-colors ${
+                        currentPage === 0
+                          ? "text-[#545556] cursor-not-allowed"
+                          : "text-[#b6b6b7] hover:text-[#fcfdfc] hover:bg-[#252833]"
+                      }`}
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      ‹
+                    </button>
+
+                    {/* Page numbers */}
+                    {(() => {
+                      const pages: (number | string)[] = [];
+                      const maxVisible = 7;
+                      
+                      if (totalPages <= maxVisible) {
+                        // Show all pages
+                        for (let i = 0; i < totalPages; i++) pages.push(i);
+                      } else {
+                        // Always show first page
+                        pages.push(0);
+                        
+                        if (currentPage > 2) {
+                          pages.push("...");
+                        }
+                        
+                        // Pages around current
+                        const start = Math.max(1, currentPage - 1);
+                        const end = Math.min(totalPages - 2, currentPage + 1);
+                        for (let i = start; i <= end; i++) {
+                          if (!pages.includes(i)) pages.push(i);
+                        }
+                        
+                        if (currentPage < totalPages - 3) {
+                          pages.push("...");
+                        }
+                        
+                        // Always show last page
+                        if (!pages.includes(totalPages - 1)) {
+                          pages.push(totalPages - 1);
+                        }
+                      }
+
+                      return pages.map((page, idx) =>
+                        typeof page === "string" ? (
+                          <span
+                            key={`ellipsis-${idx}`}
+                            className="px-2 py-1 text-sm text-[#545556]"
+                            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                          >
+                            …
+                          </span>
+                        ) : (
+                          <button
+                            key={page}
+                            onClick={() => handlePageChange(page)}
+                            className={`min-w-[32px] px-2 py-1.5 text-sm rounded transition-colors ${
+                              page === currentPage
+                                ? "bg-[#99c221] text-[#0F0F0F] font-medium"
+                                : "text-[#b6b6b7] hover:text-[#fcfdfc] hover:bg-[#252833]"
+                            }`}
+                            style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                          >
+                            {page + 1}
+                          </button>
+                        )
+                      );
+                    })()}
+
+                    {/* Next button */}
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage >= totalPages - 1}
+                      className={`px-3 py-1.5 text-sm rounded transition-colors ${
+                        currentPage >= totalPages - 1
+                          ? "text-[#545556] cursor-not-allowed"
+                          : "text-[#b6b6b7] hover:text-[#fcfdfc] hover:bg-[#252833]"
+                      }`}
+                      style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}
+                    >
+                      ›
+                    </button>
+                  </div>
+                </div>
+              )}
 
             </div>
           </div>

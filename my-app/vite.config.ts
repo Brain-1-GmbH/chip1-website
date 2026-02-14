@@ -7,6 +7,12 @@ export default defineConfig({
   plugins: [react(), tailwindcss()],
   server: {
       proxy: {
+        // Categories & parts list API -> my.chip1.com (avoids CORS from localhost)
+        '/api/part/public': {
+          target: 'https://my.chip1.com',
+          changeOrigin: true,
+          secure: false,
+        },
         // Part search endpoints -> my.chip1.com
         '/api/transaction': {
           target: 'https://my.chip1.com',
